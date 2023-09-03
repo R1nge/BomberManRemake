@@ -12,7 +12,7 @@ public class MainMenuUI : MonoBehaviour
         host.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
         });
         
         join.onClick.AddListener(() => { NetworkManager.Singleton.StartClient(); });
