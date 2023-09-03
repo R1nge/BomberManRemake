@@ -22,7 +22,7 @@ namespace Lobby
             _lobby = lobby;
         }
 
-        private void Awake() => _playerModels = new List<PlayerModel>();
+        private void Awake() => _playerModels ??= new List<PlayerModel>();
 
         public override void OnNetworkSpawn()
         {
@@ -39,7 +39,8 @@ namespace Lobby
             
             for (int i = 0; i < _playerModels.Count; i++)
             {
-                _playerModels[i].UpdateUIServerRpc(_lobby.PlayerData[i].IsReady);
+                var data = _lobby.PlayerData[i];
+                _playerModels[i].UpdateUIServerRpc(data.NickName, data.IsReady);
             }
         }
 
@@ -51,7 +52,8 @@ namespace Lobby
             {
                 if (_playerModels[i].OwnerClientId == clientId)
                 {
-                    _playerModels[i].UpdateUIServerRpc(isReady);
+                    var data = _lobby.PlayerData[i];
+                    _playerModels[i].UpdateUIServerRpc(data.NickName, isReady);
                 }
             }
         }
@@ -68,7 +70,7 @@ namespace Lobby
                 null
             );
 
-            model.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
+            model.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
             _lastIndex++;
             _playerModels.Add(model);
             ChangeReadyState(clientId, false);

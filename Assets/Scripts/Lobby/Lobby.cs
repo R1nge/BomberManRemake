@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace Lobby
 {
@@ -14,7 +15,7 @@ namespace Lobby
 
         private void Awake()
         {
-            _players = new NetworkList<LobbyData>(new LobbyData[4]);
+            _players ??= new NetworkList<LobbyData>();
             NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnected;
         }
 
@@ -33,9 +34,8 @@ namespace Lobby
         private void CreatePlayerData(ulong clientId)
         {
             if (!IsServer) return;
-            var data = new LobbyData(clientId, false);
+            var data = new LobbyData(PlayerPrefs.GetString("Nick"), clientId, false);
             _players.Add(data);
-            print(data.ClientId);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -47,6 +47,7 @@ namespace Lobby
                 {
                     _players[i] = new LobbyData
                     {
+                        NickName = _players[i].NickName,
                         ClientId = clientId,
                         IsReady = !_players[i].IsReady
                     };
