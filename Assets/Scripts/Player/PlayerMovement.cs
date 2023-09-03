@@ -1,51 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
-using Zenject;
+using UnityEngine.InputSystem;
 
 namespace Player
 {
+    [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : NetworkBehaviour
     {
-        private TestSingleton _test;
+        [SerializeField] private PlayerInput playerInput;
+        [SerializeField] private float speed;
+        private CharacterController _characterController;
+        private NetworkVariable<bool> _canMove;
 
-        [Inject]
-        private void Inject(TestSingleton testSingleton)
+        private void Awake()
         {
-            _test = testSingleton;
+            _characterController = GetComponent<CharacterController>();
+            _canMove = new NetworkVariable<bool>();
         }
 
-        private void Start()
+        public void OnMove(InputValue value)
         {
             if (!IsOwner) return;
-            TestServerRpc();
+            MoveServerRpc(value.Get<Vector2>());
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void TestServerRpc()
+        [ServerRpc]
+        private void MoveServerRpc(Vector3 direction)
         {
-            var number = _test.GetNumber();
-            Debug.Log($"Server: {number}");
-
-            var targetClient = new ClientRpcParams()
-            {
-                Send = new ClientRpcSendParams()
-                {
-                    TargetClientIds = new List<ulong>(1)
-                    {
-                        1
-                    }
-                }
-            };
-
-            TestClientRpc(number, targetClient);
-        }
-
-        [ClientRpc]
-        private void TestClientRpc(int number, ClientRpcParams rpcParams)
-        {
-            Debug.Log($"Server to Client: {number}");
+            transform.position += direction;
         }
     }
 }
