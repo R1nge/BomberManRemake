@@ -10,6 +10,8 @@ namespace Lobby
         public event Action<ulong, bool> OnReadyStateChanged;
         private NetworkList<LobbyData> _players;
 
+        public NetworkList<LobbyData> PlayerData => _players;
+
         private void Awake()
         {
             _players = new NetworkList<LobbyData>(new LobbyData[4]);
@@ -50,8 +52,8 @@ namespace Lobby
                     };
 
                     var isReady = _players[i].IsReady;
+
                     ChangeReadyStateClientRpc(clientId, isReady);
-                    OnReadyStateChanged?.Invoke(clientId, isReady);
                     break;
                 }
             }
@@ -60,7 +62,7 @@ namespace Lobby
         [ClientRpc]
         private void ChangeReadyStateClientRpc(ulong clientId, bool ready)
         {
-           // OnReadyStateChanged?.Invoke(clientId, ready);
+            OnReadyStateChanged?.Invoke(clientId, ready);
         }
     }
 }
