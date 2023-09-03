@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using Game;
+﻿using Game;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,10 +9,10 @@ namespace Player
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : NetworkBehaviour
     {
-        [SerializeField] private PlayerInput playerInput;
         [SerializeField] private float speed;
         private CharacterController _characterController;
         private NetworkVariable<bool> _canMove;
+        private float _speedX, _speedZ;
         private GameStateControllerView _gameStateController;
 
         [Inject]
@@ -26,8 +24,16 @@ namespace Player
 
         private void Awake()
         {
+            NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
             _canMove = new NetworkVariable<bool>();
             _characterController = GetComponent<CharacterController>();
+        }
+
+        private void OnTick()
+        {
+            if (!IsOwner) return;
+            var direction = Vector3.forward * _speedX + Vector3.right * _speedZ;
+            MoveServerRpc(direction);
         }
 
         public override void OnNetworkSpawn()
@@ -49,13 +55,14 @@ namespace Player
         {
             if (!IsOwner) return;
             if (!_canMove.Value) return;
-            MoveServerRpc(value.Get<Vector2>());
+            _speedX = value.Get<Vector2>().y * speed;
+            _speedZ = value.Get<Vector2>().x * speed;
         }
 
         [ServerRpc]
         private void MoveServerRpc(Vector3 direction)
         {
-            transform.position += direction;
+            _characterController.Move(direction);
         }
     }
 }
