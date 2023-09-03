@@ -86,7 +86,7 @@ namespace Game
                 {
                     if (x % 2 == 1 && z % 2 == 1)
                     {
-                        //if (IsCenter(x, z)) continue;
+                        if (IsCenter(x, z)) continue;
 
                         Spawn(config.Wall, x * config.Size, z * config.Size);
                     }
