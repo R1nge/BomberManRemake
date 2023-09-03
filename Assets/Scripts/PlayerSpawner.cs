@@ -13,29 +13,15 @@ public class PlayerSpawner : NetworkBehaviour
         _diContainer = diContainer;
     }
 
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        NetworkManager.Singleton.OnClientConnectedCallback += SingletonOnOnClientConnectedCallback;
-    }
-
-    private void SingletonOnOnClientConnectedCallback(ulong obj)
-    {
-        if (obj == 0) return;
         SpawnServerRpc();
     }
 
-    public override void OnNetworkSpawn()
-    {
-        if (IsServer)
-        {
-            SpawnServerRpc();
-        }
-    }
-
     [ServerRpc(RequireOwnership = false)]
-    private void SpawnServerRpc()
+    private void SpawnServerRpc(ServerRpcParams rpcParams = default)
     {
         var player = _diContainer.InstantiatePrefab(playerPrefab);
-        player.GetComponent<NetworkObject>().Spawn();
+        player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
     }
 }
