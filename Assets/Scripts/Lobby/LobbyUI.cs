@@ -13,10 +13,7 @@ namespace Lobby
         private Lobby _lobby;
 
         [Inject]
-        private void Inject(Lobby lobby)
-        {
-            _lobby = lobby;
-        }
+        private void Inject(Lobby lobby) => _lobby = lobby;
 
         private void Awake()
         {
