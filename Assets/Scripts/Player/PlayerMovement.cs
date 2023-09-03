@@ -32,7 +32,9 @@ namespace Player
         private void OnTick()
         {
             if (!IsOwner) return;
-            var direction = Vector3.forward * _speedX + Vector3.right * _speedZ;
+            Vector3 forward = transform.TransformDirection(Vector3.forward);
+            Vector3 right = transform.TransformDirection(Vector3.right);
+            var direction = forward * _speedX + right * _speedZ;
             MoveServerRpc(direction);
         }
 
