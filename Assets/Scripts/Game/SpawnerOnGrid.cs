@@ -34,6 +34,13 @@ namespace Game
             print("SPAWN DESTRUCTABLE");
         }
 
+        public void SpawnInject(GameObject prefab, Vector3 position)
+        {
+            position = GetNearestGridPosition(position);
+            var go = _diContainer.InstantiatePrefab(prefab, position, Quaternion.identity, null);
+            go.GetComponent<NetworkObject>().Spawn(true);
+        }
+
         public void SpawnBombVfx(Vector3 position)
         {
             position = GetNearestGridPosition(position);

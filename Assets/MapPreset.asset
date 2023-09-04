@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4e122c6ffe48a0aa8df32c38099573, type: 3}
   m_Name: MapPreset
   m_EditorClassIdentifier: 
-  width: 21
-  length: 21
   border: {fileID: 1596841220350852719, guid: 9743c88217ca5f141a23c225b76e1af4, type: 3}
   floor: {fileID: 8083657641590077007, guid: 0f0dd9c5da191c44883bc132053a7758, type: 3}
   destructable: {fileID: 6634781913677902510, guid: 232690b6c0a9b9b47841a55d44fb08b9, type: 3}
   wall: {fileID: 1596841220350852719, guid: 9743c88217ca5f141a23c225b76e1af4, type: 3}
+  drops:
+  - {fileID: 2865074018043587239, guid: c8d92c1eb8372b948bf88bc1ab0457e1, type: 3}
   size: 2

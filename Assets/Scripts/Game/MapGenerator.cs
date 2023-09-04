@@ -8,10 +8,12 @@ namespace Game
     {
         [SerializeField] private MapPreset preset;
         private MapSettings _mapSettings;
+        private DiContainer _diContainer;
 
         [Inject]
-        private void Inject(MapSettings mapSettings)
+        private void Inject(DiContainer diContainer, MapSettings mapSettings)
         {
+            _diContainer = diContainer;
             _mapSettings = mapSettings;
         }
 
@@ -167,7 +169,7 @@ namespace Game
 
         private void Spawn(GameObject go, int x, int z)
         {
-            var instance = Instantiate(go, new Vector3(x, 0, z), Quaternion.identity);
+            var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), Quaternion.identity, null);
             instance.GetComponent<NetworkObject>().Spawn(false);
         }
     }

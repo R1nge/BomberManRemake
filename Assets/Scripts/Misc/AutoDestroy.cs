@@ -1,18 +1,13 @@
-﻿using Unity.Netcode;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Misc
 {
-    public class AutoDestroy : NetworkBehaviour
+    public class AutoDestroy : MonoBehaviour
     {
         [SerializeField] private float delay;
 
-        public override void OnNetworkSpawn()
-        {
-            if (!IsServer) return;
-            Invoke(nameof(Destroy), delay);
-        }
+        private void Awake() => Invoke(nameof(Destroy), delay);
 
-        private void Destroy() => NetworkObject.Despawn(true);
+        private void Destroy() => Destroy(gameObject);
     }
 }

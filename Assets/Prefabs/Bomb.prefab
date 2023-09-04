@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 202909026859545161}
   - component: {fileID: 5858353450751173510}
   - component: {fileID: -8617958430750480658}
+  - component: {fileID: -3773609163051112138}
   m_Layer: 0
   m_Name: Bomb
   m_TagString: Untagged
@@ -142,6 +143,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionColor: {r: 0.8113208, g: 0.15690637, b: 0.15690637, a: 1}
   meshRenderer: {fileID: 918210511892109401}
+--- !u!114 &-3773609163051112138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2922624213556991965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e88bca52187b4b8db883996be0993a57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soundPrefab: {fileID: 2288232626224301694, guid: 4094c8172237387458e0eb51120da03a, type: 3}
 --- !u!1 &6482425044408812300
 GameObject:
   m_ObjectHideFlags: 0

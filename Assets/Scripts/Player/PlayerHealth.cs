@@ -29,11 +29,17 @@ namespace Player
         private void OnValueChanged(int _, int health)
         {
             OnDamageTaken?.Invoke(health);
-            
+
             if (health == 0)
             {
                 OnDeath?.Invoke();
             }
+        }
+
+        [ServerRpc]
+        public void IncreaseHealthServerRpc(int amount)
+        {
+            _currentHealth.Value += amount;
         }
     }
 }
