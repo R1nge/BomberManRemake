@@ -160,7 +160,7 @@ namespace Game
         private void Spawn(GameObject go, int x, int z)
         {
             var instance = Instantiate(go, new Vector3(x, 0, z), Quaternion.identity);
-            instance.GetComponent<NetworkObject>().Spawn(true);
+            instance.GetComponent<NetworkObject>().Spawn(false);
         }
     }
 }
