@@ -19,7 +19,7 @@ namespace Game
 
         private IEnumerator Start_C()
         {
-            yield return new WaitForSeconds(15);
+            yield return new WaitForSeconds(5);
             StartGameServerRpc();
         }
 

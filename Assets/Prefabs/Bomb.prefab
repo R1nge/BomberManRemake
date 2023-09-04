@@ -113,6 +113,7 @@ MonoBehaviour:
   triggerCollider: {fileID: 1309592058766482798}
   collider: {fileID: 8291953362616960461}
   preset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
+  explodeDelay: 4
 --- !u!1 &6482425044408812300
 GameObject:
   m_ObjectHideFlags: 0

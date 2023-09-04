@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using Zenject;
 
@@ -18,6 +17,7 @@ namespace Game
 
         private void Awake()
         {
+            //TODO: allow only odd numbers
             sizeX.onEndEdit.AddListener(s => { _mapSettings.SetWidth(int.Parse(s)); });
             sizeZ.onEndEdit.AddListener(s => { _mapSettings.SetLength(int.Parse(s)); });
         }

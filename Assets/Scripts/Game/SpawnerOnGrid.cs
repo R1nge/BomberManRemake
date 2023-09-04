@@ -1,5 +1,6 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
+using Zenject;
 
 namespace Game
 {
@@ -8,6 +9,13 @@ namespace Game
         [SerializeField] private MapPreset preset;
         [SerializeField] private GameObject bombPrefab;
         [SerializeField] private GameObject bombVfxPrefab;
+        private DiContainer _diContainer;
+
+        [Inject]
+        private void Inject(DiContainer diContainer)
+        {
+            _diContainer = diContainer;
+        }
 
         public void SpawnBomb(Vector3 position)
         {
@@ -17,7 +25,7 @@ namespace Game
                 RoundToNearestGrid(position.z)
             );
             print($"SPAWN BOMB AT FLOOR: {position}");
-            var bomb = Instantiate(bombPrefab, position, Quaternion.identity);
+            var bomb = _diContainer.InstantiatePrefab(bombPrefab, position, Quaternion.identity, null);
             bomb.GetComponent<NetworkObject>().Spawn(true);
         }
 
