@@ -29,17 +29,13 @@ namespace Player
             bombInput.performed += SpawnBomb;
         }
 
-        private void OnBombValueChanged(int _, int amount)
-        {
-            OnBombAmountChanged?.Invoke(amount);
-        }
+        private void OnBombValueChanged(int _, int amount) => OnBombAmountChanged?.Invoke(amount);
 
         private void Start() => OnInit?.Invoke(_bombsAvailable.Value);
 
         private void SpawnBomb(InputAction.CallbackContext callback)
         {
             if (!IsOwner) return;
-            print(_bombsAvailable.Value);
             if (_bombsAvailable.Value == 0) return;
             SpawnBombServerRpc();
         }
@@ -57,7 +53,6 @@ namespace Player
         {
             bomb.OnExplosion -= ReturnBomb;
             _bombsAvailable.Value++;
-            print(_bombsAvailable.Value);
         }
     }
 }

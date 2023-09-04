@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,23 +7,41 @@ namespace Game
     public class GameStateControllerView : NetworkBehaviour
     {
         public event Action OnGameStarted;
+        public event Action<float> OnTimeChanged;
+        [SerializeField] private int countdownTime;
+        private NetworkVariable<float> _time;
+        private NetworkVariable<bool> _gameStarted;
 
-        private void Start()
+        private void Awake()
         {
-            if (IsServer && IsOwner)
+            NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
+            _time = new NetworkVariable<float>(countdownTime);
+            _time.OnValueChanged += OnValueChanged;
+            _gameStarted = new NetworkVariable<bool>();
+        }
+
+        private void OnValueChanged(float _, float time)
+        {
+            OnTimeChanged?.Invoke(time);
+            if (time == 0)
             {
-                StartCoroutine(Start_C());
+                if (IsServer)
+                {
+                    _gameStarted.Value = true;
+                    StartGameClientRpc();
+                }
+
+                NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
             }
         }
 
-        private IEnumerator Start_C()
+        private void Tick()
         {
-            yield return new WaitForSeconds(5);
-            StartGameServerRpc();
+            if (!IsServer) return;
+            if (_gameStarted.Value) return;
+            var delta = 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
+            _time.Value -= delta;
         }
-
-        [ServerRpc]
-        private void StartGameServerRpc() => StartGameClientRpc();
 
         [ClientRpc]
         private void StartGameClientRpc()
