@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Game
 {
-    public class BombSound : MonoBehaviour
+    public class BombSound : NetworkBehaviour
     {
-        [SerializeField] private GameObject soundPrefab;
+        [SerializeField] private NetworkObject soundPrefab;
         private BombTimer _bombTimer;
 
         private void Awake()
@@ -16,12 +16,11 @@ namespace Game
 
         [ServerRpc(RequireOwnership = false)]
         private void SpawnSoundServerRpc()
-
         {
             var sound = Instantiate(soundPrefab, transform.position, Quaternion.identity);
-            sound.GetComponent<NetworkObject>().Spawn();
+            sound.Spawn();
         }
 
-        private void OnDestroy() => _bombTimer.OnTimeRunOut -= SpawnSoundServerRpc;
+        public override void OnDestroy() => _bombTimer.OnTimeRunOut -= SpawnSoundServerRpc;
     }
 }

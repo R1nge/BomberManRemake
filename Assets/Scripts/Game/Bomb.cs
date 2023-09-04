@@ -7,7 +7,7 @@ namespace Game
 {
     public class Bomb : NetworkBehaviour, IDamageable
     {
-        public event Action<Bomb> OnExplosion; 
+        public event Action<Bomb> OnExplosion;
         [SerializeField] private Collider triggerCollider, collider;
         [SerializeField] private MapPreset preset;
         private const int DAMAGE = 1;
@@ -30,15 +30,11 @@ namespace Game
 
         private void OnTimeRunOut() => Explode();
 
-        public void TakeDamage(int amount)
-        {
-            if (_exploded.Value) return;
-            Explode();
-            print("TAKE DAMAGE");
-        }
+        public void TakeDamage(int amount) => Explode();
 
         private void Explode()
         {
+            if (_exploded.Value) return;
             _exploded.Value = true;
             var position = transform.position;
             _spawnerOnGrid.SpawnBombVfx(position);
@@ -47,9 +43,7 @@ namespace Game
             Raycast(position, Vector3.left, 10, 2);
             Raycast(position, Vector3.right, 10, 2);
             DoDamageInside();
-            print("EXPLODE");
             OnExplosion?.Invoke(this);
-            NetworkObject.Despawn(true);
         }
 
         private void Raycast(Vector3 pos, Vector3 dir, int dist, float rad)
