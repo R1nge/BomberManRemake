@@ -5,8 +5,9 @@ namespace Game
 {
     public class SpawnerOnGrid : MonoBehaviour
     {
-        [SerializeField] private MapConfig config;
+        [SerializeField] private MapPreset preset;
         [SerializeField] private GameObject bombPrefab;
+        [SerializeField] private GameObject bombVfxPrefab;
 
         public void SpawnBomb(Vector3 position)
         {
@@ -26,9 +27,21 @@ namespace Game
             //Instantiate(config.Destructable)
         }
 
+        public void SpawnBombVfx(Vector3 position)
+        {
+            position = new Vector3(
+                RoundToNearestGrid(position.x),
+                0,
+                RoundToNearestGrid(position.z)
+            );
+            print("SPAWN BOMB VFX");
+            var vfx = Instantiate(bombVfxPrefab, position, Quaternion.identity);
+            vfx.GetComponent<NetworkObject>().Spawn(true);
+        }
+
         private float RoundToNearestGrid(float position)
         {
-            var gridSize = config.Size;
+            var gridSize = preset.Size;
             float xDiff = position % gridSize;
             position -= xDiff;
             if (xDiff > gridSize / 2f)

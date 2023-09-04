@@ -132,8 +132,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 133205623}
-  - component: {fileID: 133205622}
   - component: {fileID: 133205624}
+  - component: {fileID: 133205622}
   m_Layer: 0
   m_Name: MapGenerator
   m_TagString: Untagged
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57054b7388cd418bbbad4402d29ac670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
+  preset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
 --- !u!4 &133205623
 Transform:
   m_ObjectHideFlags: 0
@@ -491,8 +491,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda6ba49920b44a4b5147a20c383095d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
+  preset: {fileID: 0}
   bombPrefab: {fileID: 2922624213556991965, guid: 3ab228f41c1ec7c40b7b053d261f4019, type: 3}
+  bombVfxPrefab: {fileID: 0}
 --- !u!1 &1895247312
 GameObject:
   m_ObjectHideFlags: 0
