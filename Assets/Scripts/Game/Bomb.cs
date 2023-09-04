@@ -7,6 +7,7 @@ namespace Game
 {
     public class Bomb : NetworkBehaviour, IDamageable
     {
+        public event Action<Bomb> OnExplosion; 
         [SerializeField] private Collider triggerCollider, collider;
         [SerializeField] private MapPreset preset;
         [SerializeField] private float explodeDelay;
@@ -61,6 +62,7 @@ namespace Game
             Raycast(position, Vector3.right, 10, 2);
             DoDamageInside();
             print("EXPLODE");
+            OnExplosion?.Invoke(this);
             NetworkObject.Despawn(true);
         }
 

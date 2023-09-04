@@ -19,21 +19,18 @@ namespace Player
             _currentHealth.OnValueChanged += OnValueChanged;
         }
 
-        private void OnValueChanged(int _, int health)
-        {
-            OnDamageTaken?.Invoke(health);
-        }
-
-        private void Start()
-        {
-            OnInit?.Invoke(_currentHealth.Value);
-        }
+        private void Start() => OnInit?.Invoke(_currentHealth.Value);
 
         public void TakeDamage(int amount)
         {
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
+        }
+
+        private void OnValueChanged(int _, int health)
+        {
+            OnDamageTaken?.Invoke(health);
             
-            if (_currentHealth.Value == 0)
+            if (health == 0)
             {
                 OnDeath?.Invoke();
             }

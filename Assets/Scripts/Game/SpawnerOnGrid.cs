@@ -17,34 +17,39 @@ namespace Game
             _diContainer = diContainer;
         }
 
-        public void SpawnBomb(Vector3 position)
+        public Bomb SpawnBomb(Vector3 position)
         {
-            position = new Vector3(
-                RoundToNearestGrid(position.x),
-                0,
-                RoundToNearestGrid(position.z)
-            );
-            print($"SPAWN BOMB AT FLOOR: {position}");
-            var bomb = _diContainer.InstantiatePrefab(bombPrefab, position, Quaternion.identity, null);
+            position = GetNearestGridPosition(position);
+            var bomb = _diContainer.InstantiatePrefabForComponent<Bomb>(bombPrefab, position, Quaternion.identity, null);
             bomb.GetComponent<NetworkObject>().Spawn(true);
+            print($"SPAWN BOMB AT FLOOR: {position}");
+            return bomb;
         }
 
-        public void SpawnDestructable()
+        public void SpawnDestructable(Vector3 position)
         {
+            position = GetNearestGridPosition(position);
+            var vfx = Instantiate(preset.Destructable, position, Quaternion.identity);
+            vfx.GetComponent<NetworkObject>().Spawn(true);
             print("SPAWN DESTRUCTABLE");
-            //Instantiate(config.Destructable)
         }
 
         public void SpawnBombVfx(Vector3 position)
         {
+            position = GetNearestGridPosition(position);
+            var vfx = Instantiate(bombVfxPrefab, position, Quaternion.identity);
+            vfx.GetComponent<NetworkObject>().Spawn(true);
+            print("SPAWN BOMB VFX");
+        }
+
+        private Vector3 GetNearestGridPosition(Vector3 position)
+        {
             position = new Vector3(
                 RoundToNearestGrid(position.x),
                 0,
                 RoundToNearestGrid(position.z)
             );
-            print("SPAWN BOMB VFX");
-            var vfx = Instantiate(bombVfxPrefab, position, Quaternion.identity);
-            vfx.GetComponent<NetworkObject>().Spawn(true);
+            return position;
         }
 
         private float RoundToNearestGrid(float position)

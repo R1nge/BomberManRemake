@@ -9,7 +9,10 @@ namespace Player
 {
     public class PlayerBombController : NetworkBehaviour
     {
+        public event Action<int> OnInit, OnBombAmountChanged;
+        [SerializeField] private int bombStartAmount;
         [SerializeField] private PlayerInput playerInput;
+        private NetworkVariable<int> _bombsAvailable;
         private SpawnerOnGrid _spawnerOnGrid;
 
         [Inject]
@@ -20,20 +23,41 @@ namespace Player
 
         private void Awake()
         {
+            _bombsAvailable = new NetworkVariable<int>(bombStartAmount);
+            _bombsAvailable.OnValueChanged += OnBombValueChanged;
             var bombInput = playerInput.actions.FindActionMap("Player").FindAction("Bomb");
             bombInput.performed += SpawnBomb;
         }
 
+        private void OnBombValueChanged(int _, int amount)
+        {
+            OnBombAmountChanged?.Invoke(amount);
+        }
+
+        private void Start() => OnInit?.Invoke(_bombsAvailable.Value);
+
         private void SpawnBomb(InputAction.CallbackContext callback)
         {
             if (!IsOwner) return;
+            print(_bombsAvailable.Value);
+            if (_bombsAvailable.Value == 0) return;
             SpawnBombServerRpc();
         }
 
         [ServerRpc]
         private void SpawnBombServerRpc()
         {
-            _spawnerOnGrid.SpawnBomb(transform.position);
+            _bombsAvailable.Value--;
+            var bomb = _spawnerOnGrid.SpawnBomb(transform.position);
+            bomb.OnExplosion += ReturnBomb;
+        }
+
+
+        private void ReturnBomb(Bomb bomb)
+        {
+            bomb.OnExplosion -= ReturnBomb;
+            _bombsAvailable.Value++;
+            print(_bombsAvailable.Value);
         }
     }
 }
