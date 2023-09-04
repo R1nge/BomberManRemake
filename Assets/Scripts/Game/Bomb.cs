@@ -10,11 +10,10 @@ namespace Game
         public event Action<Bomb> OnExplosion; 
         [SerializeField] private Collider triggerCollider, collider;
         [SerializeField] private MapPreset preset;
-        [SerializeField] private float explodeDelay;
         private const int DAMAGE = 1;
-        private NetworkVariable<float> _time;
         private NetworkVariable<bool> _exploded;
         private SpawnerOnGrid _spawnerOnGrid;
+        private BombTimer _bombTimer;
 
         [Inject]
         private void Inject(SpawnerOnGrid spawnerOnGrid)
@@ -24,25 +23,12 @@ namespace Game
 
         private void Awake()
         {
-            _time = new NetworkVariable<float>();
+            _bombTimer = GetComponent<BombTimer>();
+            _bombTimer.OnTimeRunOut += OnTimeRunOut;
             _exploded = new NetworkVariable<bool>();
-            NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
         }
 
-        private void Tick()
-        {
-            if (IsServer)
-            {
-                if (_time.Value < explodeDelay)
-                {
-                    _time.Value += 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
-                }
-                else
-                {
-                    Explode();
-                }
-            }
-        }
+        private void OnTimeRunOut() => Explode();
 
         public void TakeDamage(int amount)
         {
@@ -146,9 +132,9 @@ namespace Game
             triggerCollider.enabled = false;
         }
 
-        public override void OnNetworkDespawn()
+        public override void OnDestroy()
         {
-            NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
+            _bombTimer.OnTimeRunOut -= OnTimeRunOut;
         }
     }
 }
