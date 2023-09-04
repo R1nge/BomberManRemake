@@ -12,6 +12,7 @@ namespace Player
         [SerializeField] private float speed;
         private CharacterController _characterController;
         private NetworkVariable<bool> _canMove;
+        private NetworkVariable<float> _currentSpeed;
         private float _speedX, _speedZ;
         private GameStateControllerView _gameStateController;
 
@@ -26,6 +27,7 @@ namespace Player
         {
             NetworkManager.Singleton.NetworkTickSystem.Tick += OnTick;
             _canMove = new NetworkVariable<bool>();
+            _currentSpeed = new NetworkVariable<float>(speed);
             _characterController = GetComponent<CharacterController>();
         }
 
@@ -65,6 +67,12 @@ namespace Player
         private void MoveServerRpc(Vector3 direction)
         {
             _characterController.Move(direction);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void IncreaseSpeedServerRpc(float amount)
+        {
+            _currentSpeed.Value += amount;
         }
     }
 }

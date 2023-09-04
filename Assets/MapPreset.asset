@@ -18,4 +18,5 @@ MonoBehaviour:
   wall: {fileID: 1596841220350852719, guid: 9743c88217ca5f141a23c225b76e1af4, type: 3}
   drops:
   - {fileID: 2865074018043587239, guid: c8d92c1eb8372b948bf88bc1ab0457e1, type: 3}
+  - {fileID: 3563662994330632757, guid: 7cf9e93be35250445916dae175c6b01c, type: 3}
   size: 2
