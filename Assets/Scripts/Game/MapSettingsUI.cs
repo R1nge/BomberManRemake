@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
@@ -13,6 +14,12 @@ namespace Game
         private void Inject(MapSettings mapSettings)
         {
             _mapSettings = mapSettings;
+        }
+
+        private void Awake()
+        {
+            sizeX.onEndEdit.AddListener(s => { _mapSettings.SetWidth(int.Parse(s)); });
+            sizeZ.onEndEdit.AddListener(s => { _mapSettings.SetLength(int.Parse(s)); });
         }
     }
 }
