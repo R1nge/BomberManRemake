@@ -1,9 +1,10 @@
 ﻿using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Player
 {
-    public class PlayerHealthUI : MonoBehaviour
+    public class PlayerHealthUI : NetworkBehaviour
     {
         [SerializeField] private TextMeshProUGUI healthText;
         private PlayerHealth _playerHealth;
@@ -15,9 +16,11 @@ namespace Player
             _playerHealth.OnDamageTaken += UpdateUI;
         }
 
+        public override void OnNetworkSpawn() => healthText.gameObject.SetActive(IsOwner);
+
         private void UpdateUI(int health) => healthText.text = $"Health: {health}";
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             _playerHealth.OnInit -= UpdateUI;
             _playerHealth.OnDamageTaken -= UpdateUI;

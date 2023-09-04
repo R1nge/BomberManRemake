@@ -121,12 +121,12 @@ namespace Game
                 Quaternion.identity);
             for (int i = 0; i < size; i++)
             {
-                if (coll[i].TryGetComponent(out IDamageable _))
+                if (coll[i].TryGetComponent(out IDamageable damageable))
                 {
                     if (coll[i].TryGetComponent(out NetworkObject obj))
                     {
                         if (obj == null || !obj.IsSpawned || obj == NetworkObject) return;
-                        //DoDamage
+                        damageable.TakeDamage(DAMAGE);
                     }
                 }
             }

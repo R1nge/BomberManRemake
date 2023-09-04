@@ -16,6 +16,12 @@ namespace Player
         private void Awake()
         {
             _currentHealth = new NetworkVariable<int>(startHealth);
+            _currentHealth.OnValueChanged += OnValueChanged;
+        }
+
+        private void OnValueChanged(int _, int health)
+        {
+            OnDamageTaken?.Invoke(health);
         }
 
         private void Start()
@@ -26,9 +32,7 @@ namespace Player
         public void TakeDamage(int amount)
         {
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
-
-            OnDamageTaken?.Invoke(_currentHealth.Value);
-
+            
             if (_currentHealth.Value == 0)
             {
                 OnDeath?.Invoke();
