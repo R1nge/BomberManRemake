@@ -10,6 +10,7 @@ namespace Game
         public event Action<Bomb> OnExplosion;
         [SerializeField] private Collider triggerCollider, collider;
         [SerializeField] private MapPreset preset;
+        [SerializeField] private LayerMask ignore;
         private const int DAMAGE = 1;
         private NetworkVariable<bool> _exploded;
         private SpawnerOnGrid _spawnerOnGrid;
@@ -57,7 +58,7 @@ namespace Game
             //     }
             // }
 
-            if (Physics.Raycast(ray, out var hit, dist * preset.Size))
+            if (Physics.Raycast(ray, out var hit, dist * preset.Size, ~ignore))
             {
                 if (hit.transform.TryGetComponent(out NetworkObject net))
                 {
@@ -66,6 +67,7 @@ namespace Game
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {
                         amount += 1;
+                        print($"DAMAGED {net.gameObject.name}");
                         DoDamageServerRpc(net, DAMAGE);
                     }
 

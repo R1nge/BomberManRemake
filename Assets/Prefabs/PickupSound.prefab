@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8629317247810046792}
   - component: {fileID: 177305889190399702}
-  - component: {fileID: 1745892714459952296}
+  - component: {fileID: -4197437361607310179}
   m_Layer: 0
   m_Name: PickupSound
   m_TagString: Untagged
@@ -129,7 +129,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1745892714459952296
+--- !u!114 &-4197437361607310179
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4951760305300200346}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 707c46dd4a50402fb9d653d3aeb1f4e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 57072e7f808f40cc9e0f48a70b19e157, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 5
+  delay: 4

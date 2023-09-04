@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2aff20f9eeb4de8a9c1feb10b61020b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explodeDelay: 4
+  explodeDelay: 2
   meshRenderer: {fileID: 918210511892109401}
   collider1: {fileID: 1309592058766482798}
   collider2: {fileID: 8291953362616960461}
@@ -133,6 +133,9 @@ MonoBehaviour:
   triggerCollider: {fileID: 1309592058766482798}
   collider: {fileID: 8291953362616960461}
   preset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
+  ignore:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &-8617958430750480658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,7 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 707c46dd4a50402fb9d653d3aeb1f4e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 4.1
+  delay: 2.1
 --- !u!1 &6482425044408812300
 GameObject:
   m_ObjectHideFlags: 0

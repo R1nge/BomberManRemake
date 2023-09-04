@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8927269808276282776}
   - component: {fileID: 7135241244920027539}
   - component: {fileID: 8491427633619751694}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: BombPowerup
   m_TagString: Untagged
   m_Icon: {fileID: 0}

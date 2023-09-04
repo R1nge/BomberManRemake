@@ -33,10 +33,30 @@ namespace Player
 
         private void Start() => OnInit?.Invoke(_bombsAvailable.Value);
 
+        private bool CanSpawn()
+        {
+            var coll = new Collider[4];
+
+            var size = Physics.OverlapBoxNonAlloc(transform.position, transform.localScale / 4, coll,
+                Quaternion.identity);
+
+            for (int i = 0; i < size; i++)
+            {
+                if (coll[i].TryGetComponent(out Bomb _))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+
         private void SpawnBomb(InputAction.CallbackContext callback)
         {
             if (!IsOwner) return;
             if (_bombsAvailable.Value == 0) return;
+            if (!CanSpawn()) return;
             SpawnBombServerRpc();
         }
 
