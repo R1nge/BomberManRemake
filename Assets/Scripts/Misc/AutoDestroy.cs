@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Misc
 {
-    public class AutoDestroy : NetworkBehaviour
+    public class AutoDestroy : MonoBehaviour
     {
         [SerializeField] private float delay;
 
@@ -20,7 +20,7 @@ namespace Misc
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void DespawnServerRpc() => NetworkObject.Despawn(true);
+        private void DespawnServerRpc() => GetComponent<NetworkObject>().Despawn(true);
 
         private void Destroy() => Destroy(gameObject);
     }

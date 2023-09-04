@@ -19,4 +19,5 @@ MonoBehaviour:
   drops:
   - {fileID: 2865074018043587239, guid: c8d92c1eb8372b948bf88bc1ab0457e1, type: 3}
   - {fileID: 3563662994330632757, guid: 7cf9e93be35250445916dae175c6b01c, type: 3}
+  - {fileID: 8491427633619751694, guid: bf668a2ed2870cc4c9eaa34a80caba2c, type: 3}
   size: 2

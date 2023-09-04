@@ -54,5 +54,11 @@ namespace Player
             bomb.OnExplosion -= ReturnBomb;
             _bombsAvailable.Value++;
         }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void IncreaseBombAmountServerRpc(int amount)
+        {
+            _bombsAvailable.Value += amount;
+        }
     }
 }
