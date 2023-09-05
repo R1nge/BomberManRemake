@@ -22,7 +22,6 @@ namespace Lobby
             start.onClick.AddListener(() =>
             {
                 NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
-                SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
             });
 
             ready.onClick.AddListener(() =>

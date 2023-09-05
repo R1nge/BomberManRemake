@@ -7,9 +7,12 @@ namespace Misc
     {
         [SerializeField] private float delay;
 
-        private void Awake() => Invoke(nameof(DespawnServerRpc), delay);
+        public override void OnNetworkSpawn()
+        {
+            if (!IsServer) return;
+            Invoke(nameof(Destroy), delay);
+        }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void DespawnServerRpc() => GetComponent<NetworkObject>().Despawn(true);
+        private void Destroy() => NetworkObject.Despawn(true);
     }
 }

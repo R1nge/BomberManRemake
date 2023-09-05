@@ -34,20 +34,24 @@ namespace Lobby
         {
             _players ??= new NetworkList<LobbyData>();
             NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnected;
-            
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("MainMenu"));
         }
 
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
         {
             if (sceneName == "LobbyDataSingleton")
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
-            }
-            else if (sceneName == "Lobby")
-            {
                 SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("MainMenu"));
+                SceneManager.sceneUnloaded += SceneUnloaded;
+            }
+        }
+
+        private void SceneUnloaded(Scene scene)
+        {
+            if (scene.name == "MainMenu")
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
+                SceneManager.sceneUnloaded -= SceneUnloaded;
             }
         }
 

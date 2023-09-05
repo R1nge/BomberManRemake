@@ -15,28 +15,22 @@ namespace Game
         private SpawnerOnGrid _spawnerOnGrid;
 
         [Inject]
-        private void Inject(SpawnerOnGrid spawnerOnGrid)
-        {
-            _spawnerOnGrid = spawnerOnGrid;
-        }
+        private void Inject(SpawnerOnGrid spawnerOnGrid) => _spawnerOnGrid = spawnerOnGrid;
 
-        private void Awake()
-        {
-            _dropIndex = new NetworkVariable<int>();
-        }
+        private void Awake() => _dropIndex = new NetworkVariable<int>();
 
-        public void TakeDamage(int amount, ulong killerId)
-        {
-            SpawnDropServerRpc();
-            NetworkObject.Despawn(true);
-        }
+        public void TakeDamage(int amount, ulong killerId) => SpawnDropServerRpc();
 
         [ServerRpc(RequireOwnership = false)]
         private void SpawnDropServerRpc()
         {
-            if (Random.value < 1 - dropChance.Value) return;
-            _dropIndex.Value = Random.Range(0, preset.Drops.Length);
-            _spawnerOnGrid.SpawnInject(preset.Drops[_dropIndex.Value].gameObject, transform.position + dropOffset);
+            if (Random.value >= 1 - dropChance.Value)
+            {
+                _dropIndex.Value = Random.Range(0, preset.Drops.Length);
+                _spawnerOnGrid.SpawnInject(preset.Drops[_dropIndex.Value].gameObject, transform.position + dropOffset);
+            }
+
+            NetworkObject.Despawn(true);
         }
     }
 }

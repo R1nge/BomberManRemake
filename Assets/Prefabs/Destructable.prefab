@@ -173,5 +173,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   preset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
   dropChance:
-    m_InternalValue: 1
+    m_InternalValue: 0.1
   dropOffset: {x: 0, y: 0, z: 0}
