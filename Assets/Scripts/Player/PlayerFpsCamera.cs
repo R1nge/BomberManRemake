@@ -28,7 +28,8 @@ namespace Player
             _rotationX += -Input.GetAxis("Mouse Y") * sensitivity;
             _rotationX = Mathf.Clamp(_rotationX, -limitX, limitX);
             camera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
-            RotateServerRpc(Input.GetAxis("Mouse X") * sensitivity);
+            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * sensitivity, 0);
+            //RotateServerRpc(Input.GetAxis("Mouse X") * sensitivity);
         }
 
         [ServerRpc]
