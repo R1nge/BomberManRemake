@@ -1,10 +1,11 @@
 ﻿using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
 namespace Game
 {
-    public class MapSettingsUI : MonoBehaviour
+    public class MapSettingsUI : NetworkBehaviour
     {
         [SerializeField] private TMP_InputField sizeX, sizeZ;
         private MapSettings _mapSettings;
@@ -17,9 +18,34 @@ namespace Game
 
         private void Awake()
         {
-            //TODO: allow only odd numbers
-            sizeX.onEndEdit.AddListener(s => { _mapSettings.SetWidth(int.Parse(s)); });
-            sizeZ.onEndEdit.AddListener(s => { _mapSettings.SetLength(int.Parse(s)); });
+            sizeX.onEndEdit.AddListener(s =>
+            {
+                var size = int.Parse(s);
+                
+                if (size % 2 != 1)
+                {
+                    size++;
+                }
+
+                _mapSettings.SetWidth(size);
+            });
+            sizeZ.onEndEdit.AddListener(s =>
+            {
+                var size = int.Parse(s);
+                
+                if (size % 2 != 1)
+                {
+                    size++;
+                }
+
+                _mapSettings.SetLength(size);
+            });
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            sizeX.gameObject.SetActive(IsOwner);
+            sizeZ.gameObject.SetActive(IsOwner);
         }
     }
 }

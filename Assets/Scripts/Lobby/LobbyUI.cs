@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -27,8 +26,34 @@ namespace Lobby
                 _lobby.ChangeReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
                 print(NetworkManager.Singleton.LocalClientId);
             });
+
+            _lobby.OnReadyStateChanged += ReadyStateChanged;
         }
 
-        private void Start() => start.gameObject.SetActive(IsOwner);
+        private void ReadyStateChanged(ulong clientId, bool isReady)
+        {
+            bool everyoneIsReady = true;
+            
+            for (int i = 0; i < _lobby.PlayerData.Count; i++)
+            {
+                if (!_lobby.PlayerData[i].IsReady)
+                {
+                    everyoneIsReady = false;
+                }
+            }
+
+            start.interactable = everyoneIsReady;
+        }
+
+        private void Start()
+        {
+            start.gameObject.SetActive(IsOwner);
+            start.interactable = false;
+        }
+
+        public override void OnDestroy()
+        {
+            _lobby.OnReadyStateChanged -= ReadyStateChanged;
+        }
     }
 }
