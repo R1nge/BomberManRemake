@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
@@ -33,10 +32,10 @@ namespace Lobby
             SpawnPlayer(0);
         }
 
-        private void UpdateUIForClients(ulong obj)
+        private void UpdateUIForClients(ulong clientId)
         {
             if (!IsServer) return;
-            
+
             for (int i = 0; i < _playerModels.Count; i++)
             {
                 var data = _lobby.PlayerData[i];
@@ -76,9 +75,28 @@ namespace Lobby
             ChangeReadyState(clientId, false);
         }
 
-        private void DestroyPlayer()
+        private void DestroyPlayer(ulong clientId)
         {
+            if (!IsServer) return;
+            
             _lastIndex--;
+            for (int i = 0; i < _playerModels.Count; i++)
+            {
+                if (_playerModels[i].OwnerClientId == clientId)
+                {
+                    _playerModels.RemoveAt(i);
+                }
+            }
+
+            UpdateUIForClients(clientId);
+        }
+
+        public override void OnDestroy()
+        {
+            _lobby.OnPlayerConnected -= SpawnPlayer;
+            _lobby.OnPlayerConnected -= UpdateUIForClients;
+            _lobby.OnPlayerDisconnected -= DestroyPlayer;
+            _lobby.OnReadyStateChanged -= ChangeReadyState;
         }
     }
 }

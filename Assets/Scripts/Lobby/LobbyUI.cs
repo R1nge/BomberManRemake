@@ -27,8 +27,11 @@ namespace Lobby
                 _lobby.ChangeReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
             });
 
+            NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
             _lobby.OnReadyStateChanged += ReadyStateChanged;
         }
+
+        private void ClientConnected(ulong clientId) => ReadyStateChanged(clientId, false);
 
         private void ReadyStateChanged(ulong clientId, bool isReady)
         {

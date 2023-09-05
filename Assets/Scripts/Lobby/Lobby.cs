@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Lobby
 {
     public class Lobby : NetworkBehaviour
     {
         public event Action<ulong> OnPlayerConnected;
-        public event Action OnPlayerDisconnected;
+        public event Action<ulong> OnPlayerDisconnected;
         public event Action<ulong, bool> OnReadyStateChanged;
         private NetworkList<LobbyData> _players;
 
@@ -34,25 +32,7 @@ namespace Lobby
         {
             _players ??= new NetworkList<LobbyData>();
             NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnected;
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-        }
-
-        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
-        {
-            if (sceneName == "LobbyDataSingleton")
-            {
-                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("MainMenu"));
-                SceneManager.sceneUnloaded += SceneUnloaded;
-            }
-        }
-
-        private void SceneUnloaded(Scene scene)
-        {
-            if (scene.name == "MainMenu")
-            {
-                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
-                SceneManager.sceneUnloaded -= SceneUnloaded;
-            }
+            NetworkManager.Singleton.OnClientDisconnectCallback += PlayerDisconnected;
         }
 
         public override void OnNetworkSpawn()
@@ -65,6 +45,18 @@ namespace Lobby
         {
             CreatePlayerData(clientId);
             OnPlayerConnected?.Invoke(clientId);
+        }
+
+        private void PlayerDisconnected(ulong clientId)
+        {
+            if (!IsServer) return;
+            var data = GetData(clientId);
+            if (data != null)
+            {
+                _players.Remove(data.Value);
+            }
+
+            OnPlayerDisconnected?.Invoke(clientId);
         }
 
         private void CreatePlayerData(ulong clientId)
