@@ -9,8 +9,6 @@ namespace Game
         public event Action<float> OnTimeChanged;
         public event Action OnTimeRunOut;
         [SerializeField] private float explodeDelay;
-        [SerializeField] private MeshRenderer meshRenderer;
-        [SerializeField] private Collider collider1, collider2;
         private NetworkVariable<float> _time;
 
         public float ExplosionDelay => explodeDelay;
@@ -31,11 +29,6 @@ namespace Game
                 {
                     OnTimeRunOut?.Invoke();
                 }
-                
-                //TODO: redo
-                meshRenderer.enabled = false;
-                collider1.enabled = false;
-                collider2.enabled = false;
             }
         }
 

@@ -8,6 +8,7 @@ namespace Game
     public class Bomb : NetworkBehaviour, IDamageable
     {
         public event Action<Bomb> OnExplosion;
+        [SerializeField] private NetworkObject soundPrefab;
         [SerializeField] private Collider triggerCollider, collider;
         [SerializeField] private MapPreset preset;
         [SerializeField] private LayerMask ignore;
@@ -31,7 +32,11 @@ namespace Game
 
         private void OnTimeRunOut() => Explode();
 
-        public void TakeDamage(int amount) => Explode();
+        public void TakeDamage(int amount)
+        {
+            Debug.Log("TAKEN DAMAGE", this);
+            Explode();
+        }
 
         private void Explode()
         {
@@ -44,7 +49,9 @@ namespace Game
             Raycast(position, Vector3.left, 10, 2);
             Raycast(position, Vector3.right, 10, 2);
             DoDamageInside();
+            SpawnSoundServerRpc();
             OnExplosion?.Invoke(this);
+            NetworkObject.Despawn(true);
         }
 
         private void Raycast(Vector3 pos, Vector3 dir, int dist, float rad)
@@ -82,6 +89,13 @@ namespace Game
             {
                 _spawnerOnGrid.SpawnBombVfx(transform.position + dir * i * preset.Size);
             }
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        private void SpawnSoundServerRpc()
+        {
+            var sound = Instantiate(soundPrefab, transform.position, Quaternion.identity);
+            sound.Spawn();
         }
 
         [ServerRpc(RequireOwnership = false)]

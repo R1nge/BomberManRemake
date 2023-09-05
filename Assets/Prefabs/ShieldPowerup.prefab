@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6418840206520813526}
   - component: {fileID: 9109349453134801374}
   - component: {fileID: 862958180437587194}
-  - component: {fileID: 3563662994330632757}
+  - component: {fileID: 3882955579993842782}
   m_Layer: 6
-  m_Name: SpeedPowerup
+  m_Name: ShieldPowerup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &3563662994330632757
+--- !u!114 &3882955579993842782
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -136,8 +136,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8804203987940961302}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 58bb5701d1ba4b8e9da312c1d78c0c7b, type: 3}
+  m_Script: {fileID: 11500000, guid: a6c21576d66247169b875f7639af26d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   pickupSound: {fileID: 4951760305300200346, guid: ec0a90a1e38041740a18c171fea9dda1, type: 3}
-  additionalSpeed: 2
