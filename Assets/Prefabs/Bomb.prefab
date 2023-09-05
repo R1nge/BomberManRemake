@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfb62e3964584f84b13a8f4c9b6456b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionColor: {r: 0.8113208, g: 0.15690637, b: 0.15690637, a: 1}
+  explosionColor: {r: 1, g: 0, b: 0, a: 1}
   meshRenderer: {fileID: 918210511892109401}
 --- !u!1 &6482425044408812300
 GameObject:

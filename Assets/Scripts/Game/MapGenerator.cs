@@ -6,7 +6,8 @@ namespace Game
 {
     public class MapGenerator : NetworkBehaviour
     {
-        [SerializeField] private MapPreset preset;
+        [SerializeField] private MapPreset[] presets;
+        private MapPreset _selected;
         private MapSettings _mapSettings;
         private DiContainer _diContainer;
 
@@ -25,6 +26,7 @@ namespace Game
 
         private void Generate()
         {
+            _selected = presets[Random.Range(0, presets.Length)];
             SpawnFloor();
             SpawnBorders();
             SpawnWalls();
@@ -37,7 +39,7 @@ namespace Game
             {
                 for (int z = 0; z < _mapSettings.Length; z++)
                 {
-                    Spawn(preset.Floor, x * preset.Size, z * preset.Size);
+                    Spawn(_selected.Floor, x * _selected.Size, z * _selected.Size);
                 }
             }
         }
@@ -60,7 +62,7 @@ namespace Game
         {
             if (x == _mapSettings.Width && z < _mapSettings.Length + 1)
             {
-                Spawn(preset.Border, x * preset.Size, z * preset.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
         }
 
@@ -68,7 +70,7 @@ namespace Game
         {
             if (x == -1 && z < _mapSettings.Length + 1)
             {
-                Spawn(preset.Border, x * preset.Size, z * preset.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
         }
 
@@ -76,7 +78,7 @@ namespace Game
         {
             if (x < _mapSettings.Width + 1 && z == _mapSettings.Length)
             {
-                Spawn(preset.Border, x * preset.Size, z * preset.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
         }
 
@@ -84,7 +86,7 @@ namespace Game
         {
             if (x < _mapSettings.Width + 1 && z == -1)
             {
-                Spawn(preset.Border, x * preset.Size, z * preset.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
         }
 
@@ -98,7 +100,7 @@ namespace Game
                     {
                         if (IsCenter(x, z)) continue;
 
-                        Spawn(preset.Wall, x * preset.Size, z * preset.Size);
+                        Spawn(_selected.Wall, x * _selected.Size, z * _selected.Size);
                     }
                 }
             }
@@ -126,7 +128,7 @@ namespace Game
 
                     if (IsCenter(x, z)) continue;
 
-                    Spawn(preset.Destructable, x * preset.Size, z * preset.Size);
+                    Spawn(_selected.Destructable, x * _selected.Size, z * _selected.Size);
                 }
             }
         }

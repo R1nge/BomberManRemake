@@ -12,17 +12,25 @@ namespace Player
         public event Action OnDeath;
         [SerializeField] private int startHealth;
         private NetworkVariable<int> _currentHealth;
+        private PlayerShield _playerShield;
 
         private void Awake()
         {
             _currentHealth = new NetworkVariable<int>(startHealth);
             _currentHealth.OnValueChanged += OnValueChanged;
+            _playerShield = GetComponent<PlayerShield>();
         }
 
         private void Start() => OnInit?.Invoke(_currentHealth.Value);
 
         public void TakeDamage(int amount)
         {
+            if (_playerShield.IsActive)
+            {
+                _playerShield.TurnOffServerRpc();
+                return;
+            }
+
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
         }
 

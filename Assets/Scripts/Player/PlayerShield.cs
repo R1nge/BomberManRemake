@@ -12,6 +12,8 @@ namespace Player
         private NetworkVariable<bool> _isActive;
         private NetworkVariable<float> _duration;
 
+        public bool IsActive => _isActive.Value;
+
         private void Awake()
         {
             _isActive = new NetworkVariable<bool>();
@@ -36,9 +38,10 @@ namespace Player
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void TurnOffServerRpc()
+        public void TurnOffServerRpc()
         {
             if (!_isActive.Value) return;
+            _isActive.Value = false;
             TurnOffClientRpc();
         }
 
