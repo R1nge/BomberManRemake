@@ -39,6 +39,7 @@ namespace Player
                 if (IsServer)
                 {
                     _playerSpawner.Despawn(NetworkObject.OwnerClientId, _killerId);
+                    NetworkObject.Despawn(true);
                 }
             }
         }

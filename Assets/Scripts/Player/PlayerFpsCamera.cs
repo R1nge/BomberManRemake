@@ -37,5 +37,10 @@ namespace Player
         {
             transform.rotation *= Quaternion.Euler(0, rotationX, 0);
         }
+
+        public override void OnDestroy()
+        {
+            NetworkManager.Singleton.NetworkTickSystem.Tick -= Rotate;
+        }
     }
 }
