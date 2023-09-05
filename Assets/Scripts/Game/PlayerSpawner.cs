@@ -8,8 +8,8 @@ namespace Game
 {
     public class PlayerSpawner : NetworkBehaviour
     {
-        public event Action<ulong> OnPlayerSpawn; 
-        public event Action<ulong, ulong> OnPlayerDeath; 
+        public event Action<ulong> OnPlayerSpawn;
+        public event Action<ulong, ulong> OnPlayerDeath;
         [SerializeField] private MapPreset mapPreset;
         [SerializeField] private GameObject playerPrefab;
         private NetworkVariable<bool> _leftTop, _rightTop, _rightBottom, _leftBottom;
@@ -36,8 +36,10 @@ namespace Game
         [ServerRpc(RequireOwnership = false)]
         private void SpawnServerRpc(ServerRpcParams rpcParams = default)
         {
-            var player = _diContainer.InstantiatePrefab(playerPrefab, PickPosition(), Quaternion.identity, null);
+            var position = PickPosition();
+            var player = _diContainer.InstantiatePrefab(playerPrefab, position, Quaternion.identity, null);
             player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
+            player.transform.position = position;
             OnPlayerSpawn?.Invoke(rpcParams.Receive.SenderClientId);
         }
 
@@ -50,7 +52,7 @@ namespace Game
         private Vector3 PickPosition()
         {
             var position = Random.Range(0, 4);
-            
+
             if (position == 0)
             {
                 if (!_leftBottom.Value)
@@ -82,7 +84,7 @@ namespace Game
 
             return PickPosition();
         }
-
+        
         private Vector3 LeftTopCorner()
         {
             _leftTop.Value = true;
@@ -101,7 +103,7 @@ namespace Game
         {
             _rightBottom.Value = true;
             print("Right Bottom");
-            return new Vector3(0, 0, (_mapSettings.Length - 1) * mapPreset.Size);
+            return new Vector3((_mapSettings.Width - 1) * mapPreset.Size, 0, 0);
         }
 
         private Vector3 LeftBottomCorner()

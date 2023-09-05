@@ -24,7 +24,7 @@ namespace Game
         [ServerRpc(RequireOwnership = false)]
         private void SpawnDropServerRpc()
         {
-            if (Random.value >= 1 - dropChance.Value)
+            if (Random.value <= dropChance.Value)
             {
                 _dropIndex.Value = Random.Range(0, preset.Drops.Length);
                 _spawnerOnGrid.SpawnInject(preset.Drops[_dropIndex.Value].gameObject, transform.position + dropOffset);
