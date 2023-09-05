@@ -17,11 +17,11 @@ namespace Game
             _diContainer = diContainer;
         }
 
-        public Bomb SpawnBomb(Vector3 position)
+        public Bomb SpawnBomb(Vector3 position, ulong ownerId)
         {
             position = GetNearestGridPosition(position);
             var bomb = _diContainer.InstantiatePrefabForComponent<Bomb>(bombPrefab, position, Quaternion.identity, null);
-            bomb.GetComponent<NetworkObject>().Spawn(true);
+            bomb.GetComponent<NetworkObject>().SpawnWithOwnership(ownerId, true);
             print($"SPAWN BOMB AT FLOOR: {position}");
             return bomb;
         }

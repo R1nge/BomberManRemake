@@ -8,6 +8,8 @@ namespace Game
 {
     public class PlayerSpawner : NetworkBehaviour
     {
+        public event Action<ulong> OnPlayerSpawn; 
+        public event Action<ulong, ulong> OnPlayerDeath; 
         [SerializeField] private MapPreset mapPreset;
         [SerializeField] private GameObject playerPrefab;
         private NetworkVariable<bool> _leftTop, _rightTop, _rightBottom, _leftBottom;
@@ -36,6 +38,13 @@ namespace Game
         {
             var player = _diContainer.InstantiatePrefab(playerPrefab, PickPosition(), Quaternion.identity, null);
             player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
+            OnPlayerSpawn?.Invoke(rpcParams.Receive.SenderClientId);
+        }
+
+        public void Despawn(ulong killedId, ulong killerId)
+        {
+            print($"{killedId} was killed by {killerId}");
+            OnPlayerDeath?.Invoke(killedId, killerId);
         }
 
         private Vector3 PickPosition()

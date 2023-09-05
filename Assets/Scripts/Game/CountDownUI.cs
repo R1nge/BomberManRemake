@@ -8,17 +8,17 @@ namespace Game
     public class CountDownUI : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI timerText;
-        private GameStateControllerView _gameStateControllerView;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateControllerView gameStateControllerView)
+        private void Inject(GameStateController gameStateController)
         {
-            _gameStateControllerView = gameStateControllerView;
+            _gameStateController = gameStateController;
         }
 
         private void Start()
         {
-            _gameStateControllerView.OnTimeChanged += UpdateUI;
+            _gameStateController.OnTimeChanged += UpdateUI;
         }
 
         private void UpdateUI(float time)
@@ -32,7 +32,7 @@ namespace Game
 
         private void OnDestroy()
         {
-            _gameStateControllerView.OnTimeChanged -= UpdateUI;
+            _gameStateController.OnTimeChanged -= UpdateUI;
         }
     }
 }

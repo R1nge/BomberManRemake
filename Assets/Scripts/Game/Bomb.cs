@@ -32,7 +32,7 @@ namespace Game
 
         private void OnTimeRunOut() => Explode();
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(int amount, ulong killerId)
         {
             Debug.Log("TAKEN DAMAGE", this);
             Explode();
@@ -74,7 +74,6 @@ namespace Game
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {
                         amount += 1;
-                        print($"DAMAGED {net.gameObject.name}");
                         DoDamageServerRpc(net, DAMAGE);
                     }
 
@@ -106,7 +105,7 @@ namespace Game
                 if (net.transform.TryGetComponent(out IDamageable damageable))
                 {
                     print($"DAMAGE {net.gameObject.name}");
-                    damageable.TakeDamage(damage);
+                    damageable.TakeDamage(damage, NetworkObject.OwnerClientId);
                 }
             }
         }
@@ -124,7 +123,7 @@ namespace Game
                     if (coll[i].TryGetComponent(out NetworkObject obj))
                     {
                         if (obj == null || !obj.IsSpawned || obj == NetworkObject) return;
-                        damageable.TakeDamage(DAMAGE);
+                        damageable.TakeDamage(DAMAGE, NetworkObject.OwnerClientId);
                     }
                 }
             }

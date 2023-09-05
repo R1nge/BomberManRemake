@@ -64,7 +64,7 @@ namespace Player
         private void SpawnBombServerRpc()
         {
             _bombsAvailable.Value--;
-            var bomb = _spawnerOnGrid.SpawnBomb(transform.position);
+            var bomb = _spawnerOnGrid.SpawnBomb(transform.position, NetworkObject.OwnerClientId);
             bomb.OnExplosion += ReturnBomb;
         }
 

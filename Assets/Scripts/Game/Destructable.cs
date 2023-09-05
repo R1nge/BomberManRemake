@@ -25,7 +25,7 @@ namespace Game
             _dropIndex = new NetworkVariable<int>();
         }
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(int amount, ulong killerId)
         {
             SpawnDropServerRpc();
             NetworkObject.Despawn(true);

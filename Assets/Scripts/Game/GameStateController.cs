@@ -1,16 +1,18 @@
 ﻿using System;
 using Unity.Netcode;
 using UnityEngine;
+using Zenject;
 
 namespace Game
 {
-    public class GameStateControllerView : NetworkBehaviour
+    public class GameStateController : NetworkBehaviour
     {
         public event Action OnGameStarted;
+        public event Action OnGameEnded;
         public event Action<float> OnTimeChanged;
         [SerializeField] private int countdownTime;
         private NetworkVariable<float> _time;
-        private NetworkVariable<bool> _gameStarted;
+        private NetworkVariable<bool> _gameStarted, _gameEnded;
 
         private void Awake()
         {
@@ -18,6 +20,7 @@ namespace Game
             _time = new NetworkVariable<float>(countdownTime);
             _time.OnValueChanged += OnValueChanged;
             _gameStarted = new NetworkVariable<bool>();
+            _gameEnded = new NetworkVariable<bool>();
         }
 
         private void OnValueChanged(float _, float time)
@@ -48,6 +51,26 @@ namespace Game
         {
             OnGameStarted?.Invoke();
             Debug.Log("GAME STARTED");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void EndGameServerRpc()
+        {
+            if (!_gameStarted.Value || _gameEnded.Value)
+            {
+                Debug.LogError("Can't end game, because it didn't start yet or already ended");
+                return;
+            }
+
+            _gameEnded.Value = true;
+            EndGameClientRpc();
+        }
+
+        [ClientRpc]
+        private void EndGameClientRpc()
+        {
+            print("GAMEOVER");
+            OnGameEnded?.Invoke();
         }
     }
 }

@@ -7,8 +7,9 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<GameStateControllerView>().FromComponentsInHierarchy().AsSingle();
+            Container.Bind<GameStateController>().FromComponentsInHierarchy().AsSingle();
             Container.Bind<SpawnerOnGrid>().FromComponentsInHierarchy().AsSingle();
+            Container.Bind<PlayerSpawner>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

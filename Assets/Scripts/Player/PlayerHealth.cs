@@ -2,6 +2,7 @@
 using Game;
 using Unity.Netcode;
 using UnityEngine;
+using Zenject;
 
 namespace Player
 {
@@ -13,6 +14,14 @@ namespace Player
         [SerializeField] private int startHealth;
         private NetworkVariable<int> _currentHealth;
         private PlayerShield _playerShield;
+        private PlayerSpawner _playerSpawner;
+        private ulong _killerId;
+
+        [Inject]
+        private void Inject(PlayerSpawner playerSpawner)
+        {
+            _playerSpawner = playerSpawner;
+        }
 
         private void Awake()
         {
@@ -21,9 +30,22 @@ namespace Player
             _playerShield = GetComponent<PlayerShield>();
         }
 
+        private void OnValueChanged(int _, int health)
+        {
+            OnDamageTaken?.Invoke(_currentHealth.Value);
+            if (_currentHealth.Value == 0)
+            {
+                OnDeath?.Invoke();
+                if (IsServer)
+                {
+                    _playerSpawner.Despawn(NetworkObject.OwnerClientId, _killerId);
+                }
+            }
+        }
+
         private void Start() => OnInit?.Invoke(_currentHealth.Value);
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(int amount, ulong killerId)
         {
             if (_playerShield.IsActive)
             {
@@ -31,20 +53,11 @@ namespace Player
                 return;
             }
 
+            _killerId = killerId;
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
         }
 
-        private void OnValueChanged(int _, int health)
-        {
-            OnDamageTaken?.Invoke(health);
-
-            if (health == 0)
-            {
-                OnDeath?.Invoke();
-            }
-        }
-
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         public void IncreaseHealthServerRpc(int amount)
         {
             _currentHealth.Value += amount;

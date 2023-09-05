@@ -14,10 +14,10 @@ namespace Player
         private NetworkVariable<bool> _canMove;
         private NetworkVariable<float> _currentSpeed;
         private float _speedX, _speedZ;
-        private GameStateControllerView _gameStateController;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateControllerView gameStateController)
+        private void Inject(GameStateController gameStateController)
         {
             _gameStateController = gameStateController;
             print("INJECTED");
