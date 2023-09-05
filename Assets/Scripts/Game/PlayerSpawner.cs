@@ -50,6 +50,7 @@ namespace Game
         private Vector3 PickPosition()
         {
             var position = Random.Range(0, 4);
+            
             if (position == 0)
             {
                 if (!_leftBottom.Value)
@@ -77,10 +78,6 @@ namespace Game
                 {
                     return RightBottomCorner();
                 }
-            }
-            else
-            {
-                return Vector3.zero;
             }
 
             return PickPosition();

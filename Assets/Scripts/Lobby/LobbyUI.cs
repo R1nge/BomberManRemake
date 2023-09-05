@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,9 +17,12 @@ namespace Lobby
 
         private void Awake()
         {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+            
             start.onClick.AddListener(() =>
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
+                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
             });
 
             ready.onClick.AddListener(() =>
@@ -29,10 +33,19 @@ namespace Lobby
             _lobby.OnReadyStateChanged += ReadyStateChanged;
         }
 
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
+        {
+            if (sceneName == "Game")
+            {
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("Lobby"));
+            }
+            
+        }
+
         private void ReadyStateChanged(ulong clientId, bool isReady)
         {
             bool everyoneIsReady = true;
-            
+
             for (int i = 0; i < _lobby.PlayerData.Count; i++)
             {
                 if (!_lobby.PlayerData[i].IsReady)

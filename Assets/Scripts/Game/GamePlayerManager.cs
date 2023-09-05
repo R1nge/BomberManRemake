@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -7,7 +6,7 @@ namespace Game
 {
     public class GamePlayerManager : MonoBehaviour
     {
-        private List<ulong> _alivePlayers = new();
+        private readonly List<ulong> _alivePlayers = new();
         private PlayerSpawner _playerSpawner;
         private GameStateController _gameStateController;
         

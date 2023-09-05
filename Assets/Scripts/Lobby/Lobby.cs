@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Lobby
 {
@@ -13,10 +15,40 @@ namespace Lobby
 
         public NetworkList<LobbyData> PlayerData => _players;
 
+        public LobbyData? GetData(ulong clientId)
+        {
+            for (int i = 0; i < _players.Count; i++)
+            {
+                if (_players[i].ClientId == clientId)
+                {
+                    return _players[i];
+                }
+            }
+
+            Debug.LogError("Player data not found", this);
+
+            return null;
+        }
+
         private void Awake()
         {
             _players ??= new NetworkList<LobbyData>();
             NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnected;
+            
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("MainMenu"));
+        }
+
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
+        {
+            if (sceneName == "LobbyDataSingleton")
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Additive);
+            }
+            else if (sceneName == "Lobby")
+            {
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("MainMenu"));
+            }
         }
 
         public override void OnNetworkSpawn()

@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +20,8 @@ public class MainMenuUI : MonoBehaviour
         host.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+            NetworkManager.Singleton.SceneManager.LoadScene("LobbyDataSingleton", LoadSceneMode.Additive);
+            
         });
 
         join.onClick.AddListener(() => { NetworkManager.Singleton.StartClient(); });
