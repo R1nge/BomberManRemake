@@ -32,11 +32,7 @@ namespace Game
 
         private void OnTimeRunOut() => Explode();
 
-        public void TakeDamage(int amount, ulong killerId)
-        {
-            Debug.Log("TAKEN DAMAGE", this);
-            Explode();
-        }
+        public void TakeDamage(int amount, ulong killerId) => Explode();
 
         private void Explode()
         {
@@ -104,7 +100,6 @@ namespace Game
             {
                 if (net.transform.TryGetComponent(out IDamageable damageable))
                 {
-                    print($"DAMAGE {net.gameObject.name}");
                     damageable.TakeDamage(damage, NetworkObject.OwnerClientId);
                 }
             }

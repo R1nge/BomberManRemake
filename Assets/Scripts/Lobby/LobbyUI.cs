@@ -24,7 +24,6 @@ namespace Lobby
             ready.onClick.AddListener(() =>
             {
                 _lobby.ChangeReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
-                print(NetworkManager.Singleton.LocalClientId);
             });
 
             _lobby.OnReadyStateChanged += ReadyStateChanged;

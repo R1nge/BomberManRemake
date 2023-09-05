@@ -20,7 +20,6 @@ namespace Lobby
         {
             nickname.text = nickName;
             ready.text = isReady.ToString();
-            print($"UPDATE READY UI NAME {nickName}");
         }
     }
 }

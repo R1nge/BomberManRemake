@@ -22,7 +22,6 @@ namespace Game
             position = GetNearestGridPosition(position);
             var bomb = _diContainer.InstantiatePrefabForComponent<Bomb>(bombPrefab, position, Quaternion.identity, null);
             bomb.GetComponent<NetworkObject>().SpawnWithOwnership(ownerId, true);
-            print($"SPAWN BOMB AT FLOOR: {position}");
             return bomb;
         }
 
@@ -31,7 +30,6 @@ namespace Game
             position = GetNearestGridPosition(position);
             var vfx = Instantiate(preset.Destructable, position, Quaternion.identity);
             vfx.GetComponent<NetworkObject>().Spawn(true);
-            print("SPAWN DESTRUCTABLE");
         }
 
         public void SpawnInject(GameObject prefab, Vector3 position)
@@ -46,7 +44,6 @@ namespace Game
             position = GetNearestGridPosition(position);
             var vfx = Instantiate(bombVfxPrefab, position, Quaternion.identity);
             vfx.GetComponent<NetworkObject>().Spawn(true);
-            print("SPAWN BOMB VFX");
         }
 
         private Vector3 GetNearestGridPosition(Vector3 position)

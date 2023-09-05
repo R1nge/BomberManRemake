@@ -17,11 +17,7 @@ namespace Player
         private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController gameStateController)
-        {
-            _gameStateController = gameStateController;
-            print("INJECTED");
-        }
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake()
         {
@@ -49,11 +45,7 @@ namespace Player
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void EnableMovementServerRpc()
-        {
-            _canMove.Value = true;
-            print("ENABLED MOVEMENT");
-        }
+        private void EnableMovementServerRpc() => _canMove.Value = true;
 
         public void OnMove(InputValue value)
         {
