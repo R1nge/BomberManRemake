@@ -9,7 +9,7 @@ namespace Game
     {
         public event Action<Bomb> OnExplosion;
         [SerializeField] private NetworkObject soundPrefab;
-        [SerializeField] private Collider triggerCollider, collider;
+        [SerializeField] private Collider triggerCollider, secondCollider;
         [SerializeField] private MapPreset preset;
         [SerializeField] private LayerMask ignore;
         private const int DAMAGE = 1;
@@ -123,7 +123,7 @@ namespace Game
 
         private void SwitchCollider()
         {
-            collider.enabled = true;
+            secondCollider.enabled = true;
             triggerCollider.enabled = false;
         }
 

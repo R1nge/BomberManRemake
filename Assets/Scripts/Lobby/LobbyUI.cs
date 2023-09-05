@@ -17,11 +17,9 @@ namespace Lobby
 
         private void Awake()
         {
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            
             start.onClick.AddListener(() =>
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
+                NetworkManager.Singleton.SceneManager.UnloadScene(SceneManager.GetSceneByName("Lobby"));
             });
 
             ready.onClick.AddListener(() =>
@@ -30,15 +28,6 @@ namespace Lobby
             });
 
             _lobby.OnReadyStateChanged += ReadyStateChanged;
-        }
-
-        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
-        {
-            if (sceneName == "Game")
-            {
-                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("Lobby"));
-            }
-            
         }
 
         private void ReadyStateChanged(ulong clientId, bool isReady)
@@ -62,9 +51,6 @@ namespace Lobby
             start.interactable = false;
         }
 
-        public override void OnDestroy()
-        {
-            _lobby.OnReadyStateChanged -= ReadyStateChanged;
-        }
+        public override void OnDestroy() => _lobby.OnReadyStateChanged -= ReadyStateChanged;
     }
 }

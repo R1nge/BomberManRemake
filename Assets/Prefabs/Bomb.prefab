@@ -127,7 +127,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundPrefab: {fileID: 2695712053080644081, guid: 4094c8172237387458e0eb51120da03a, type: 3}
   triggerCollider: {fileID: 1309592058766482798}
-  collider: {fileID: 8291953362616960461}
+  secondCollider: {fileID: 8291953362616960461}
   preset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
   ignore:
     serializedVersion: 2
