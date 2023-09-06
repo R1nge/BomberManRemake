@@ -40,6 +40,7 @@ namespace Player
 
         public override void OnDestroy()
         {
+            if (!NetworkManager.Singleton) return;
             NetworkManager.Singleton.NetworkTickSystem.Tick -= Rotate;
         }
     }

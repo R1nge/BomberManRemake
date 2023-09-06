@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Game
@@ -62,6 +64,7 @@ namespace Game
                 return;
             }
 
+            Unload("Game");
             _gameEnded.Value = true;
             EndGameClientRpc();
         }
@@ -70,7 +73,19 @@ namespace Game
         private void EndGameClientRpc()
         {
             print("GAMEOVER");
+            //TODO: reload game scene or
+            //TODO: destroy everything and call start game
+
+
             OnGameEnded?.Invoke();
+        }
+
+        private void Unload(string sceneName)
+        {
+            if (sceneName == "Game")
+            {
+                NetworkManager.Singleton.SceneManager.UnloadScene(SceneManager.GetSceneByName("Game"));
+            }
         }
     }
 }

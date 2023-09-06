@@ -81,7 +81,7 @@ namespace Game
         private void SpawnSoundServerRpc()
         {
             var sound = Instantiate(soundPrefab, transform.position, Quaternion.identity);
-            sound.Spawn();
+            sound.Spawn(true);
         }
 
         [ServerRpc(RequireOwnership = false)]

@@ -38,7 +38,7 @@ namespace Game
         {
             var position = PickPosition();
             var player = _diContainer.InstantiatePrefab(playerPrefab, position, Quaternion.identity, null);
-            player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId);
+            player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId, true);
             player.transform.position = position;
             OnPlayerSpawn?.Invoke(rpcParams.Receive.SenderClientId);
         }

@@ -1,6 +1,10 @@
-﻿using Unity.Netcode;
+﻿using System;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
@@ -17,7 +21,7 @@ namespace Game
             _diContainer = diContainer;
             _mapSettings = mapSettings;
         }
-
+        
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
@@ -172,7 +176,7 @@ namespace Game
         private void Spawn(GameObject go, int x, int z)
         {
             var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), Quaternion.identity, null);
-            instance.GetComponent<NetworkObject>().Spawn(false);
+            instance.GetComponent<NetworkObject>().Spawn(true);
         }
     }
 }

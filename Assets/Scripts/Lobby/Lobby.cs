@@ -49,6 +49,7 @@ namespace Lobby
 
         private void PlayerDisconnected(ulong clientId)
         {
+            if (!NetworkManager.Singleton) return;
             if (!IsServer) return;
             var data = GetData(clientId);
             if (data != null)

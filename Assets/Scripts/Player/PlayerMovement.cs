@@ -62,6 +62,10 @@ namespace Player
         [ServerRpc(RequireOwnership = false)]
         public void IncreaseSpeedServerRpc(float amount) => _currentSpeed.Value += amount;
 
-        public override void OnDestroy() => NetworkManager.Singleton.NetworkTickSystem.Tick -= OnTick;
+        public override void OnDestroy()
+        {
+            if (!NetworkManager.Singleton) return;
+            NetworkManager.Singleton.NetworkTickSystem.Tick -= OnTick;
+        }
     }
 }

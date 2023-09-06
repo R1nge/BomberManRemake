@@ -5,7 +5,7 @@ namespace Player
 {
     public class FreeCameraMovement : MonoBehaviour
     {
-        [SerializeField] private Transform camera;
+        [SerializeField] private new Transform camera;
         [SerializeField] private float speed;
         private float _speedX, _speedZ;
 

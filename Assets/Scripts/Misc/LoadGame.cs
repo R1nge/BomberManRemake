@@ -8,29 +8,38 @@ namespace Misc
     {
         private void Awake()
         {
-            NetworkManager.Singleton.SceneManager.OnUnloadEventCompleted += LoadScene;
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+            NetworkManager.Singleton.SceneManager.OnUnloadEventCompleted += OnUnloadScene;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadScene;
         }
 
-        private void LoadScene(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
+        private void OnUnloadScene(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
         {
             if (!IsServer) return;
             if (sceneName == "Lobby")
             {
                 NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
             }
+            else if (sceneName == "Game")
+            {
+                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
+            }
         }
-        
-        
-        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
+
+
+        private void OnLoadScene(string sceneName, LoadSceneMode _, List<ulong> __,
+            List<ulong> ___)
         {
             if (sceneName == "LobbyDataSingleton")
             {
                 SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("MainMenu"));
                 SceneManager.sceneUnloaded += SceneUnloaded;
             }
+            else if (sceneName == "Game")
+            {
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName("Game"));
+            }
         }
-        
+
         private void SceneUnloaded(Scene scene)
         {
             if (scene.name == "MainMenu")
