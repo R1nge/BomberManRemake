@@ -31,7 +31,6 @@ namespace Game
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __,
             List<ulong> ___)
         {
-            if (!IsServer) return;
             if (sceneName == "Game")
             {
                 SpawnServerRpc();

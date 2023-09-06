@@ -31,7 +31,7 @@ namespace Game
         private void DecreasePlayers(ulong killedId, ulong killerId)
         {
             _alivePlayers.Remove(killedId);
-            if (_alivePlayers.Count == 1)
+            if (_alivePlayers.Count <= 1)
             {
                 _gameStateController.EndGameServerRpc();
             }

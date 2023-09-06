@@ -17,7 +17,6 @@ namespace Misc
             if (!IsServer) return;
             if (sceneName == "Lobby")
             {
-                SceneManager.LoadSceneAsync("RoundManagerSingleton", LoadSceneMode.Additive);
                 NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
             }
         }

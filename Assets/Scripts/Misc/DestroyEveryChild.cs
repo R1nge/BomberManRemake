@@ -22,11 +22,13 @@ namespace Misc
 
         private void DestroyChildren()
         {
+            if (!NetworkManager.Singleton.IsServer) return;
             print($"DESTROYING CHILDREN {transform.root.root.childCount}");
-            for (int i = transform.root.childCount - 1; i >= 0; i--)
+            foreach (Transform child in transform.root)
             {
-                if (transform.root.GetChild(i).TryGetComponent(out NetworkObject networkObject))
+                if (child.TryGetComponent(out NetworkObject networkObject))
                 {
+                    print($"DESPAWN {child.name}");
                     networkObject.Despawn(true);
                 }
             }

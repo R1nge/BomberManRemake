@@ -38,13 +38,14 @@ namespace Game
             if (_exploded.Value) return;
             _exploded.Value = true;
             var position = transform.position;
+            SpawnSoundServerRpc();
             _spawnerOnGrid.SpawnBombVfx(position);
             Raycast(position, Vector3.forward, CASTDISTANCE, SPHERECASTRADIUS);
             Raycast(position, Vector3.back, CASTDISTANCE, SPHERECASTRADIUS);
             Raycast(position, Vector3.left, CASTDISTANCE, SPHERECASTRADIUS);
             Raycast(position, Vector3.right, CASTDISTANCE, SPHERECASTRADIUS);
             DoDamageInside();
-            SpawnSoundServerRpc();
+            
             OnExplosion?.Invoke(this);
             NetworkObject.Despawn(true);
         }
