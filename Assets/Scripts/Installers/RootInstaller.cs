@@ -7,7 +7,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<MapSettings>().FromNew().AsSingle();
+            Container.Bind<GameSettings>().FromNew().AsSingle();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -9,8 +10,8 @@ namespace Game
 {
     public class GameStateController : NetworkBehaviour
     {
-        public event Action OnGameStarted;
-        public event Action OnGameEnded;
+        public event Action OnRoundStarted;
+        public event Action OnRoundEnded;
         public event Action<float> OnTimeChanged;
         [SerializeField] private int countdownTime;
         private NetworkVariable<float> _time;
@@ -51,7 +52,7 @@ namespace Game
         [ClientRpc]
         private void StartGameClientRpc()
         {
-            OnGameStarted?.Invoke();
+            OnRoundStarted?.Invoke();
             Debug.Log("GAME STARTED");
         }
 
@@ -64,7 +65,6 @@ namespace Game
                 return;
             }
 
-            Unload("Game");
             _gameEnded.Value = true;
             EndGameClientRpc();
         }
@@ -73,19 +73,7 @@ namespace Game
         private void EndGameClientRpc()
         {
             print("GAMEOVER");
-            //TODO: reload game scene or
-            //TODO: destroy everything and call start game
-
-
-            OnGameEnded?.Invoke();
-        }
-
-        private void Unload(string sceneName)
-        {
-            if (sceneName == "Game")
-            {
-                NetworkManager.Singleton.SceneManager.UnloadScene(SceneManager.GetSceneByName("Game"));
-            }
+            OnRoundEnded?.Invoke();
         }
     }
 }

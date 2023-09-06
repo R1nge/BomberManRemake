@@ -17,14 +17,10 @@ namespace Misc
             if (!IsServer) return;
             if (sceneName == "Lobby")
             {
-                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
-            }
-            else if (sceneName == "Game")
-            {
+                SceneManager.LoadSceneAsync("RoundManagerSingleton", LoadSceneMode.Additive);
                 NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Additive);
             }
         }
-
 
         private void OnLoadScene(string sceneName, LoadSceneMode _, List<ulong> __,
             List<ulong> ___)

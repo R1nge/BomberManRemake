@@ -41,7 +41,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _gameStateController.OnGameStarted += EnableMovementServerRpc;
+                _gameStateController.OnRoundStarted += EnableMovementServerRpc;
             }
         }
 

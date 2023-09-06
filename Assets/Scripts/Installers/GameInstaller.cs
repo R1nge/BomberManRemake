@@ -9,7 +9,8 @@ namespace Installers
         {
             Container.Bind<GameStateController>().FromComponentsInHierarchy().AsSingle();
             Container.Bind<SpawnerOnGrid>().FromComponentsInHierarchy().AsSingle();
-            Container.Bind<PlayerSpawner>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<PlayerSpawner>().FromComponentsInHierarchy().AsSingle();
+            Container.Bind<RoundManager>().FromComponentsInHierarchy().AsSingle();
         }
     }
 }

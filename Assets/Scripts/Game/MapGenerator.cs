@@ -10,22 +10,36 @@ namespace Game
 {
     public class MapGenerator : NetworkBehaviour
     {
+        [SerializeField] private Transform dynamicParent;
         [SerializeField] private MapPreset[] presets;
         private MapPreset _selected;
-        private MapSettings _mapSettings;
+        private GameSettings _gameSettings;
         private DiContainer _diContainer;
 
         [Inject]
-        private void Inject(DiContainer diContainer, MapSettings mapSettings)
+        private void Inject(DiContainer diContainer, GameSettings gameSettings)
         {
             _diContainer = diContainer;
-            _mapSettings = mapSettings;
+            _gameSettings = gameSettings;
         }
-        
-        public override void OnNetworkSpawn()
+
+        private void Awake()
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+        }
+
+        private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,
+            List<ulong> clientscompleted, List<ulong> clientstimedout)
         {
             if (!IsServer) return;
-            Generate();
+            if (scenename == "Game")
+            {
+                Generate();
+            }
+        }
+
+        public override void OnNetworkSpawn()
+        {
         }
 
         private void Generate()
@@ -39,9 +53,9 @@ namespace Game
 
         private void SpawnFloor()
         {
-            for (int x = 0; x < _mapSettings.Width; x++)
+            for (int x = 0; x < _gameSettings.MapWidth; x++)
             {
-                for (int z = 0; z < _mapSettings.Length; z++)
+                for (int z = 0; z < _gameSettings.MapLength; z++)
                 {
                     Spawn(_selected.Floor, x * _selected.Size, z * _selected.Size);
                 }
@@ -50,9 +64,9 @@ namespace Game
 
         private void SpawnBorders()
         {
-            for (int x = -1; x < _mapSettings.Width + 1; x++)
+            for (int x = -1; x < _gameSettings.MapWidth + 1; x++)
             {
-                for (int z = -1; z < _mapSettings.Length + 1; z++)
+                for (int z = -1; z < _gameSettings.MapLength + 1; z++)
                 {
                     SpawnLeftBorder(x, z);
                     SpawnRightBorder(x, z);
@@ -64,7 +78,7 @@ namespace Game
 
         private void SpawnLeftBorder(int x, int z)
         {
-            if (x == _mapSettings.Width && z < _mapSettings.Length + 1)
+            if (x == _gameSettings.MapWidth && z < _gameSettings.MapLength + 1)
             {
                 Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
@@ -72,7 +86,7 @@ namespace Game
 
         private void SpawnRightBorder(int x, int z)
         {
-            if (x == -1 && z < _mapSettings.Length + 1)
+            if (x == -1 && z < _gameSettings.MapLength + 1)
             {
                 Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
@@ -80,7 +94,7 @@ namespace Game
 
         private void SpawnTopBorder(int x, int z)
         {
-            if (x < _mapSettings.Width + 1 && z == _mapSettings.Length)
+            if (x < _gameSettings.MapWidth + 1 && z == _gameSettings.MapLength)
             {
                 Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
@@ -88,7 +102,7 @@ namespace Game
 
         private void SpawnBottomBorder(int x, int z)
         {
-            if (x < _mapSettings.Width + 1 && z == -1)
+            if (x < _gameSettings.MapWidth + 1 && z == -1)
             {
                 Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
             }
@@ -96,9 +110,9 @@ namespace Game
 
         private void SpawnWalls()
         {
-            for (int x = 0; x < _mapSettings.Width; x++)
+            for (int x = 0; x < _gameSettings.MapWidth; x++)
             {
-                for (int z = 0; z < _mapSettings.Length; z++)
+                for (int z = 0; z < _gameSettings.MapLength; z++)
                 {
                     if (x % 2 == 1 && z % 2 == 1)
                     {
@@ -112,9 +126,9 @@ namespace Game
 
         private void SpawnDestructables()
         {
-            for (int x = 0; x < _mapSettings.Width; x++)
+            for (int x = 0; x < _gameSettings.MapWidth; x++)
             {
-                for (int z = 0; z < _mapSettings.Length; z++)
+                for (int z = 0; z < _gameSettings.MapLength; z++)
                 {
                     var spawnObstacle = Mathf.FloorToInt(Random.Range(0, 2)) == 0;
 
@@ -141,9 +155,9 @@ namespace Game
 
         private bool IsLeftTopCorner(int x, int z)
         {
-            if (x == 0 && z == _mapSettings.Length - 1) return true;
-            if (x == 1 && z == _mapSettings.Length - 1) return true;
-            if (x == 0 && z == _mapSettings.Length - 2) return true;
+            if (x == 0 && z == _gameSettings.MapLength - 1) return true;
+            if (x == 1 && z == _gameSettings.MapLength - 1) return true;
+            if (x == 0 && z == _gameSettings.MapLength - 2) return true;
             return false;
         }
 
@@ -157,26 +171,28 @@ namespace Game
 
         private bool IsRightTopCorner(int x, int z)
         {
-            if (x == _mapSettings.Width - 1 && z == _mapSettings.Length - 1) return true;
-            if (x == _mapSettings.Width - 2 && z == _mapSettings.Length - 1) return true;
-            if (x == _mapSettings.Width - 1 && z == _mapSettings.Length - 2) return true;
+            if (x == _gameSettings.MapWidth - 1 && z == _gameSettings.MapLength - 1) return true;
+            if (x == _gameSettings.MapWidth - 2 && z == _gameSettings.MapLength - 1) return true;
+            if (x == _gameSettings.MapWidth - 1 && z == _gameSettings.MapLength - 2) return true;
             return false;
         }
 
         private bool IsRightBottomCorner(int x, int z)
         {
-            if (x == _mapSettings.Width - 1 && z == 0) return true;
-            if (x == _mapSettings.Width - 2 && z == 0) return true;
-            if (x == _mapSettings.Width - 1 && z == 1) return true;
+            if (x == _gameSettings.MapWidth - 1 && z == 0) return true;
+            if (x == _gameSettings.MapWidth - 2 && z == 0) return true;
+            if (x == _gameSettings.MapWidth - 1 && z == 1) return true;
             return false;
         }
 
-        private bool IsCenter(int x, int z) => x == _mapSettings.Width / 2 && z == _mapSettings.Length / 2;
+        private bool IsCenter(int x, int z) => x == _gameSettings.MapWidth / 2 && z == _gameSettings.MapLength / 2;
 
         private void Spawn(GameObject go, int x, int z)
         {
-            var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), Quaternion.identity, null);
+            var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), Quaternion.identity, dynamicParent);
+            instance.transform.parent = dynamicParent;
             instance.GetComponent<NetworkObject>().Spawn(true);
+            instance.transform.parent = dynamicParent;
         }
     }
 }
