@@ -10,12 +10,14 @@ namespace Lobby
         public NetworkString NickName;
         public ulong ClientId;
         public bool IsReady;
+        public int Points;
 
-        public LobbyData(string nickName, ulong clientId, bool isReady)
+        public LobbyData(string nickName, ulong clientId, bool isReady, int points)
         {
             NickName = nickName;
             ClientId = clientId;
             IsReady = isReady;
+            Points = points;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -23,11 +25,12 @@ namespace Lobby
             serializer.SerializeValue(ref NickName);
             serializer.SerializeValue(ref ClientId);
             serializer.SerializeValue(ref IsReady);
+            serializer.SerializeValue(ref Points);
         }
 
         public bool Equals(LobbyData other)
         {
-            return NickName == other.NickName && ClientId == other.ClientId && IsReady == other.IsReady;
+            return NickName.Equals(other.NickName) && ClientId == other.ClientId && IsReady == other.IsReady && Points == other.Points;
         }
 
         public override bool Equals(object obj)
@@ -37,7 +40,7 @@ namespace Lobby
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(NickName, ClientId, IsReady);
+            return HashCode.Combine(NickName, ClientId, IsReady, Points);
         }
     }
 }

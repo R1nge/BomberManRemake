@@ -43,6 +43,7 @@ namespace Game
                 }
                 else
                 {
+                    CleanupClientRpc();
                     print("LOAD END GAME");
                     OnLoadEndGame?.Invoke();
                 }

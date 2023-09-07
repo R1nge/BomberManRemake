@@ -1,4 +1,5 @@
 ﻿using Game;
+using Skins;
 using Zenject;
 
 namespace Installers
@@ -8,6 +9,7 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.Bind<GameSettings>().FromNew().AsSingle();
+            Container.Bind<SkinManager>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

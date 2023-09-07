@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,7 +10,10 @@ namespace Lobby
     {
         public event Action<ulong> OnPlayerConnected;
         public event Action<ulong> OnPlayerDisconnected;
+
         public event Action<ulong, bool> OnReadyStateChanged;
+
+        //TODO: use a dictionary?
         private NetworkList<LobbyData> _players;
 
         public NetworkList<LobbyData> PlayerData => _players;
@@ -41,6 +46,53 @@ namespace Lobby
             }
 
             return everyoneIsReady;
+        }
+
+        public void AddPoints(ulong clientId, int amount)
+        {
+            for (int i = 0; i < _players.Count; i++)
+            {
+                if (_players[i].ClientId == clientId)
+                {
+                    _players[i] = new LobbyData
+                    {
+                        ClientId = _players[i].ClientId,
+                        IsReady = true,
+                        NickName = _players[i].NickName,
+                        Points = _players[i].Points + amount
+                    };
+                    break;
+                }
+            }
+        }
+
+        public void SortDescending()
+        {
+            var sortedList = new List<LobbyData>();
+            
+            for (int i = 0; i < _players.Count; i++)
+            {
+                sortedList.Add(_players[i]);
+            }
+
+            sortedList = sortedList.OrderByDescending(data => data.Points).ToList();
+
+            _players = new NetworkList<LobbyData>(sortedList);
+        }
+
+        public int GetPlace(ulong clientId)
+        {
+            for (int i = 0; i < _players.Count; i++)
+            {
+                if (_players[i].ClientId == clientId)
+                {
+                    return i;
+                }
+            }
+            
+            Debug.LogError("Player not found" ,this);
+
+            return 99999;
         }
 
         private void Awake()
@@ -78,7 +130,7 @@ namespace Lobby
         private void CreatePlayerData(ulong clientId)
         {
             if (!IsServer) return;
-            var data = new LobbyData(PlayerPrefs.GetString("Nick"), clientId, false);
+            var data = new LobbyData(PlayerPrefs.GetString("Nick"), clientId, false, 0);
             _players.Add(data);
         }
 

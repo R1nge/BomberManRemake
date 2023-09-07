@@ -6,7 +6,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<Lobby.Lobby>().FromComponentsInHierarchy().AsSingle();
+            Container.Bind<Lobby.Lobby>().FromComponentInHierarchy().AsSingle();
         }
     }
 }
