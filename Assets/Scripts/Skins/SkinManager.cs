@@ -5,18 +5,12 @@ namespace Skins
 {
     public class SkinManager : MonoBehaviour
     {
-        [SerializeField] private SkinSO[] skins;
+        [SerializeField] private SkinSo[] skins;
         private int _selectedSkin;
 
-        private void Awake()
-        {
-            _selectedSkin = Random.Range(0, skins.Length);
-            print(_selectedSkin);
-        }
+        public void SelectSkin(int index) => _selectedSkin = index;
 
-        public void SelectSkin(int index)
-        {
-        }
+        public SkinSo[] Skins => skins;
 
         public int SkinIndex => _selectedSkin;
 

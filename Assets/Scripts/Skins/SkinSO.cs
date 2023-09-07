@@ -4,12 +4,14 @@ using UnityEngine;
 namespace Skins
 {
     [CreateAssetMenu(fileName = "Skin", menuName = "Skin")]
-    public class SkinSO : ScriptableObject
+    public class SkinSo : ScriptableObject
     {
-        [SerializeField] private string name;
+        [SerializeField] private string title;
+        [SerializeField] private Sprite icon;
         [SerializeField] private NetworkObject lobbyPrefab, prefabFPS, prefabTPS;
 
-        public string Name => name;
+        public string Title => title;
+        public Sprite Icon => icon;
         public NetworkObject LobbyPrefab => lobbyPrefab;
         public NetworkObject PrefabFPS => prefabFPS;
         public NetworkObject PrefabTPS => prefabTPS;
