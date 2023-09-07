@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: CapsuleSkin
   m_EditorClassIdentifier: 
   name: Capsule
-  prefab: {fileID: 9468578697798101, guid: 31b6efd73696ebf48a0675ad4f645f1f, type: 3}
+  lobbyPrefab: {fileID: 7233579225417388356, guid: d4185ad895c8a66499b2cdf52db7c0fe, type: 3}
+  prefabFPS: {fileID: 1414254978110925564, guid: a1d4237d79be59d4e8053beb04235eec, type: 3}
+  prefabTPS: {fileID: 0}

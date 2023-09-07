@@ -9,17 +9,17 @@ namespace Game
     {
         [SerializeField] private KillFeedSlot slot;
         [SerializeField] private Transform parent;
-        private PlayerSpawner _playerSpawner;
+        private PlayerSpawnerFPS _playerSpawnerFPS;
         private Lobby.Lobby _lobby;
 
         [Inject]
-        private void Inject(PlayerSpawner playerSpawner, Lobby.Lobby lobby)
+        private void Inject(PlayerSpawnerFPS playerSpawnerFPS, Lobby.Lobby lobby)
         {
-            _playerSpawner = playerSpawner;
+            _playerSpawnerFPS = playerSpawnerFPS;
             _lobby = lobby;
         }
 
-        private void Awake() => _playerSpawner.OnPlayerDeath += UpdateKillFeedServerRpc;
+        private void Awake() => _playerSpawnerFPS.OnPlayerDeath += UpdateKillFeedServerRpc;
 
         [ServerRpc(RequireOwnership = false)]
         private void UpdateKillFeedServerRpc(ulong killedId, ulong killerId)
@@ -36,6 +36,6 @@ namespace Game
             slotInstance.Init(killedName, killerName);
         }
 
-        public override void OnDestroy() => _playerSpawner.OnPlayerDeath -= UpdateKillFeedServerRpc;
+        public override void OnDestroy() => _playerSpawnerFPS.OnPlayerDeath -= UpdateKillFeedServerRpc;
     }
 }

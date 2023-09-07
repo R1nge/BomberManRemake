@@ -7,22 +7,22 @@ namespace Game
     public class ScoreManager : NetworkBehaviour
     {
         [SerializeField] private int killScore, winScore;
-        private PlayerSpawner _playerSpawner;
+        private PlayerSpawnerFPS _playerSpawnerFPS;
         private Lobby.Lobby _lobby;
         private RoundManager _roundManager;
         private ulong _lastPlayerId;
 
         [Inject]
-        private void Inject(PlayerSpawner playerSpawner, Lobby.Lobby lobby, RoundManager roundManager)
+        private void Inject(PlayerSpawnerFPS playerSpawnerFPS, Lobby.Lobby lobby, RoundManager roundManager)
         {
-            _playerSpawner = playerSpawner;
+            _playerSpawnerFPS = playerSpawnerFPS;
             _lobby = lobby;
             _roundManager = roundManager;
         }
 
         private void Awake()
         {
-            _playerSpawner.OnPlayerDeath += AddKillScoreServerRpc;
+            _playerSpawnerFPS.OnPlayerDeath += AddKillScoreServerRpc;
             _roundManager.OnCleanUpBeforeNextRound += AddWinScoreServerRpc;
         }
 
@@ -58,7 +58,7 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _playerSpawner.OnPlayerDeath -= AddKillScoreServerRpc;
+            _playerSpawnerFPS.OnPlayerDeath -= AddKillScoreServerRpc;
             _roundManager.OnCleanUpBeforeNextRound -= AddWinScoreServerRpc;
         }
     }

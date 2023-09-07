@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Skins;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
@@ -13,12 +14,14 @@ namespace Lobby
         private int _lastIndex;
         private DiContainer _diContainer;
         private Lobby _lobby;
+        private SkinManager _skinManager;
 
         [Inject]
-        private void Inject(DiContainer diContainer, Lobby lobby)
+        private void Inject(DiContainer diContainer, Lobby lobby, SkinManager skinManager)
         {
             _diContainer = diContainer;
             _lobby = lobby;
+            _skinManager = skinManager;
         }
 
         private void Awake() => _playerModels ??= new List<PlayerModel>();
@@ -29,7 +32,15 @@ namespace Lobby
             _lobby.OnPlayerConnected += UpdateUIForClients;
             _lobby.OnPlayerDisconnected += DestroyPlayer;
             _lobby.OnReadyStateChanged += ChangeReadyState;
-            SpawnPlayer(0);
+            
+            if(!IsServer) return;
+            SpawnPlayerSkinServerRpc(0, _skinManager.SkinIndex);
+        }
+
+        private void SpawnPlayer(ulong clientId)
+        {
+            if(IsServer) return;
+            SpawnPlayerSkinServerRpc(clientId, _skinManager.SkinIndex);
         }
 
         private void UpdateUIForClients(ulong clientId)
@@ -56,14 +67,14 @@ namespace Lobby
                 }
             }
         }
+        
 
-        private void SpawnPlayer(ulong clientId)
+        [ServerRpc(RequireOwnership = false)]
+        private void SpawnPlayerSkinServerRpc(ulong clientId, int skinIndex)
         {
-            if (!IsServer) return;
-
             var model = _diContainer.InstantiatePrefabForComponent<PlayerModel>
             (
-                playerModel,
+                _skinManager.GetLobby(skinIndex),
                 positions[_lastIndex].position,
                 Quaternion.identity,
                 null
@@ -78,7 +89,7 @@ namespace Lobby
         private void DestroyPlayer(ulong clientId)
         {
             if (!IsServer) return;
-            
+
             _lastIndex--;
             for (int i = 0; i < _playerModels.Count; i++)
             {
@@ -93,7 +104,7 @@ namespace Lobby
 
         public override void OnDestroy()
         {
-            _lobby.OnPlayerConnected -= SpawnPlayer;
+            //_lobby.OnPlayerConnected -= SpawnPlayer;
             _lobby.OnPlayerConnected -= UpdateUIForClients;
             _lobby.OnPlayerDisconnected -= DestroyPlayer;
             _lobby.OnReadyStateChanged -= ChangeReadyState;

@@ -8,20 +8,20 @@ namespace Game
     public class GamePlayerManager : NetworkBehaviour
     {
         private readonly List<ulong> _alivePlayers = new(4);
-        private PlayerSpawner _playerSpawner;
+        private PlayerSpawnerFPS _playerSpawnerFPS;
         private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(PlayerSpawner playerSpawner, GameStateController gameStateController)
+        private void Inject(PlayerSpawnerFPS playerSpawnerFPS, GameStateController gameStateController)
         {
-            _playerSpawner = playerSpawner;
+            _playerSpawnerFPS = playerSpawnerFPS;
             _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
-            _playerSpawner.OnPlayerSpawn += IncreasePlayersServerRpc;
-            _playerSpawner.OnPlayerDeath += DecreasePlayersServerRpc;
+            _playerSpawnerFPS.OnPlayerSpawn += IncreasePlayersServerRpc;
+            _playerSpawnerFPS.OnPlayerDeath += DecreasePlayersServerRpc;
             _gameStateController.OnRoundEnded += Reset;
         }
 
@@ -53,8 +53,8 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _playerSpawner.OnPlayerSpawn -= IncreasePlayersServerRpc;
-            _playerSpawner.OnPlayerDeath -= DecreasePlayersServerRpc;
+            _playerSpawnerFPS.OnPlayerSpawn -= IncreasePlayersServerRpc;
+            _playerSpawnerFPS.OnPlayerDeath -= DecreasePlayersServerRpc;
             _gameStateController.OnRoundEnded -= Reset;
         }
     }

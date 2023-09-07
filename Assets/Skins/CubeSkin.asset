@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: CubeSkin
   m_EditorClassIdentifier: 
   name: Cube
-  prefab: {fileID: 290608454849701253, guid: 2c2c6e376cdbaa949a5b95c5f6e1ed25, type: 3}
+  lobbyPrefab: {fileID: 7233579225417388356, guid: 61cbbec3005a4c24b89d16ef4274024c, type: 3}
+  prefabFPS: {fileID: 1414254978110925564, guid: 92616f1198f18e140999fbe9ceb63045, type: 3}
+  prefabTPS: {fileID: 0}

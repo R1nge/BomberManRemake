@@ -16,11 +16,12 @@ namespace Skins
 
         public void SelectSkin(int index)
         {
-            
         }
 
         public int SkinIndex => _selectedSkin;
 
-        public NetworkObject GetSkin(int index) => skins[index].Prefab;
+        public NetworkObject GetLobby(int index) => skins[index].LobbyPrefab;
+        public NetworkObject GetSkinFPS(int index) => skins[index].PrefabFPS;
+        public NetworkObject GetSkinTPS(int index) => skins[index].PrefabTPS;
     }
 }

@@ -40,7 +40,7 @@ namespace EndGame
         private void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
         {
             print($"SPAWN {_lobby.PlayerData.Count}");
-            var skin = _skinManager.GetSkin(skinIndex);
+            var skin = _skinManager.GetSkinFPS(skinIndex);
             
             var player = Instantiate
             (

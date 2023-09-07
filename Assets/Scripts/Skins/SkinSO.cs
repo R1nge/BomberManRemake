@@ -7,9 +7,11 @@ namespace Skins
     public class SkinSO : ScriptableObject
     {
         [SerializeField] private string name;
-        [SerializeField] private NetworkObject prefab;
+        [SerializeField] private NetworkObject lobbyPrefab, prefabFPS, prefabTPS;
 
         public string Name => name;
-        public NetworkObject Prefab => prefab;
+        public NetworkObject LobbyPrefab => lobbyPrefab;
+        public NetworkObject PrefabFPS => prefabFPS;
+        public NetworkObject PrefabTPS => prefabTPS;
     }
 }
