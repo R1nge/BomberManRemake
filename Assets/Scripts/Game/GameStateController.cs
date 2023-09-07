@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Game
@@ -60,6 +57,7 @@ namespace Game
         private void Tick()
         {
             if (!IsServer) return;
+            if (!IsSpawned) return;
             if (_gameStarted.Value) return;
             var delta = 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
             _time.Value -= delta;
@@ -69,7 +67,7 @@ namespace Game
         private void StartGameClientRpc()
         {
             OnRoundStarted?.Invoke();
-            Debug.Log("GAME STARTED");
+            Debug.Log("ROUND STARTED");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -88,7 +86,7 @@ namespace Game
         [ClientRpc]
         private void EndGameClientRpc()
         {
-            print("GAMEOVER");
+            print("ROUND ENDED");
             OnRoundEnded?.Invoke();
         }
     }

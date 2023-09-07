@@ -55,6 +55,7 @@ namespace Game
         {
             _playerSpawner.OnPlayerSpawn -= IncreasePlayersServerRpc;
             _playerSpawner.OnPlayerDeath -= DecreasePlayersServerRpc;
+            _gameStateController.OnRoundEnded -= Reset;
         }
     }
 }

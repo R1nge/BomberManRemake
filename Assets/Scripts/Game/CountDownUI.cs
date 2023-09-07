@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
@@ -39,7 +38,6 @@ namespace Game
 
         private void UpdateUI(float time)
         {
-            print("UPDATE UI");
             timerText.text = time.ToString("#");
             if (time == 0)
             {

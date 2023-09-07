@@ -1,10 +1,11 @@
 ﻿using Game;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
 namespace Player
 {
-    public class PlayerFreeCamera : MonoBehaviour
+    public class PlayerFreeCamera : NetworkBehaviour
     {
         [SerializeField] private new Camera camera;
         [SerializeField] private float sensitivity;
@@ -12,12 +13,24 @@ namespace Player
         private float _rotationX;
         private RoundManager _roundManager;
 
+        public void Disable()
+        {
+            camera.enabled = false;
+            enabled = false;
+        }
+
         [Inject]
         private void Inject(RoundManager roundManager) => _roundManager = roundManager;
 
-        private void Awake() => _roundManager.OnCleanUpBeforeNextRound += Destroy;
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+            {
+                _roundManager.OnCleanUpBeforeNextRound += Destroy;
+            }
+        }
 
-        private void Destroy() => Destroy(gameObject);
+        private void Destroy() => NetworkObject.Despawn(true);
 
         private void Update()
         {
@@ -27,6 +40,12 @@ namespace Player
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * sensitivity, 0);
         }
 
-        private void OnDestroy() => _roundManager.OnCleanUpBeforeNextRound -= Destroy;
+        public override void OnDestroy()
+        {
+            if (IsServer)
+            {
+                _roundManager.OnCleanUpBeforeNextRound -= Destroy;
+            }
+        }
     }
 }

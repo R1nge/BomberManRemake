@@ -190,7 +190,6 @@ namespace Game
         private void Spawn(GameObject go, int x, int z)
         {
             var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), Quaternion.identity, dynamicParent);
-            instance.transform.parent = dynamicParent;
             instance.GetComponent<NetworkObject>().Spawn(true);
             instance.transform.parent = dynamicParent;
         }

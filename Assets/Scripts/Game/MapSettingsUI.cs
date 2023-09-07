@@ -53,6 +53,7 @@ namespace Game
         {
             sizeX.gameObject.SetActive(IsOwner);
             sizeZ.gameObject.SetActive(IsOwner);
+            rounds.gameObject.SetActive(IsOwner);
         }
     }
 }

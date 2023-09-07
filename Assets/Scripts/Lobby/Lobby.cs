@@ -28,6 +28,21 @@ namespace Lobby
             return null;
         }
 
+        public bool CanStartGame()
+        {
+            bool everyoneIsReady = true;
+
+            for (int i = 0; i < _players.Count; i++)
+            {
+                if (!_players[i].IsReady)
+                {
+                    everyoneIsReady = false;
+                }
+            }
+
+            return everyoneIsReady;
+        }
+
         private void Awake()
         {
             _players ??= new NetworkList<LobbyData>();

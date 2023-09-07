@@ -9,6 +9,11 @@ namespace Player
         [SerializeField] private float speed;
         private float _speedX, _speedZ;
 
+        public void Disable()
+        {
+            enabled = false;
+        }
+
         private void Update()
         {
             var direction = new Vector3(_speedX, 0, _speedZ);

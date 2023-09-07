@@ -67,5 +67,10 @@ namespace Game
         {
             OnCleanUpBeforeNextRound?.Invoke();
         }
+
+        public override void OnDestroy()
+        {
+            _gameStateController.OnRoundEnded -= OnRoundEnded;
+        }
     }
 }

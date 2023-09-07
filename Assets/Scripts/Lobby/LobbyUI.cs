@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -33,20 +32,7 @@ namespace Lobby
 
         private void ClientConnected(ulong clientId) => ReadyStateChanged(clientId, false);
 
-        private void ReadyStateChanged(ulong clientId, bool isReady)
-        {
-            bool everyoneIsReady = true;
-
-            for (int i = 0; i < _lobby.PlayerData.Count; i++)
-            {
-                if (!_lobby.PlayerData[i].IsReady)
-                {
-                    everyoneIsReady = false;
-                }
-            }
-
-            start.interactable = everyoneIsReady;
-        }
+        private void ReadyStateChanged(ulong clientId, bool isReady) => start.interactable = _lobby.CanStartGame();
 
         private void Start()
         {

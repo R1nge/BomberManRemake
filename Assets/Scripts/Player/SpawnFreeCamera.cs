@@ -22,33 +22,34 @@ namespace Player
             _playerHealth.OnDeath += Spawn;
         }
 
-        private void Spawn()
-        {
-            if (!IsOwner) return;
-            SpawnServerRpc();
-        }
+        private void Spawn() => SpawnServerRpc();
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void SpawnServerRpc(ServerRpcParams rpcParams = default)
         {
-            var targetId = new ClientRpcParams()
-            {
-                Send = new ClientRpcSendParams()
-                {
-                    TargetClientIds = new[] { rpcParams.Receive.SenderClientId }
-                }
-            };
-
-            SpawnClientRpc(targetId);
+            print("SPAWN");
+            var spectator = _diContainer.InstantiatePrefabForComponent<PlayerFreeCamera>(freeCamera, transform.position,
+                Quaternion.identity, null);
+            var netSpectator = spectator.GetComponent<NetworkObject>();
+            netSpectator.SpawnWithOwnership(rpcParams.Receive.SenderClientId, true);
+            DisableOnNonOwnersClientRpc(netSpectator);
         }
 
         [ClientRpc]
-        private void SpawnClientRpc(ClientRpcParams rpcParams)
+        private void DisableOnNonOwnersClientRpc(NetworkObjectReference spectator)
         {
-            if (IsOwner)
+            if (IsOwner) return;
+            if (spectator.TryGet(out NetworkObject networkObject))
             {
-                _diContainer.InstantiatePrefabForComponent<PlayerFreeCamera>(freeCamera, transform.position,
-                    Quaternion.identity, null);
+                if (networkObject.TryGetComponent(out PlayerFreeCamera freeCamera))
+                {
+                    freeCamera.Disable();
+                }
+
+                if (networkObject.TryGetComponent(out FreeCameraMovement freeCameraMovement))
+                {
+                    freeCameraMovement.Disable();
+                }
             }
         }
 
