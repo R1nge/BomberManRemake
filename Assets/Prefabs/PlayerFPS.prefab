@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: -4909574736080833528}
   - component: {fileID: -8055174569772649049}
   - component: {fileID: 7400320167977990830}
+  - component: {fileID: 1274966932085776512}
   m_Layer: 0
   m_Name: PlayerFPS
   m_TagString: Untagged
@@ -315,6 +316,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05d32aa8d9854cd5991004ea31615f6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1274966932085776512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746142922312464863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61cc107ef33340df86352b1c2c539a26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 2578080991707547459}
 --- !u!1 &2190917478672296892
 GameObject:
   m_ObjectHideFlags: 0
