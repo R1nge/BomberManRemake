@@ -16,6 +16,13 @@ namespace Game
         [SerializeField] private int countdownTime;
         private NetworkVariable<float> _time;
         private NetworkVariable<bool> _gameStarted, _gameEnded;
+        private RoundManager _roundManager;
+
+        [Inject]
+        private void Inject(RoundManager roundManager)
+        {
+            _roundManager = roundManager;
+        }
 
         private void Awake()
         {
@@ -24,20 +31,29 @@ namespace Game
             _time.OnValueChanged += OnValueChanged;
             _gameStarted = new NetworkVariable<bool>();
             _gameEnded = new NetworkVariable<bool>();
+            _roundManager.OnCleanUpBeforeNextRound += ResetTimer;
+        }
+
+        private void ResetTimer()
+        {
+            if (IsServer)
+            {
+                _time.Value = countdownTime;
+                _gameStarted.Value = false;
+                _gameEnded.Value = false;
+            }
         }
 
         private void OnValueChanged(float _, float time)
         {
             OnTimeChanged?.Invoke(time);
-            if (time == 0)
+            if (time <= 0)
             {
                 if (IsServer)
                 {
                     _gameStarted.Value = true;
                     StartGameClientRpc();
                 }
-
-                NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
             }
         }
 

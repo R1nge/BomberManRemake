@@ -15,35 +15,35 @@ namespace Game
         private MapPreset _selected;
         private GameSettings _gameSettings;
         private DiContainer _diContainer;
+        private RoundManager _roundManager;
 
         [Inject]
-        private void Inject(DiContainer diContainer, GameSettings gameSettings)
+        private void Inject(DiContainer diContainer, GameSettings gameSettings, RoundManager roundManager)
         {
             _diContainer = diContainer;
             _gameSettings = gameSettings;
+            _roundManager = roundManager;
         }
 
         private void Awake()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+            _roundManager.OnLoadNextRound += Generate;
         }
 
         private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,
             List<ulong> clientscompleted, List<ulong> clientstimedout)
         {
-            if (!IsServer) return;
             if (scenename == "Game")
             {
                 Generate();
             }
         }
 
-        public override void OnNetworkSpawn()
-        {
-        }
-
         private void Generate()
         {
+            if (!IsServer) return;
+            print("GENERATE");
             _selected = presets[Random.Range(0, presets.Length)];
             SpawnFloor();
             SpawnBorders();

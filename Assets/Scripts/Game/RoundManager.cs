@@ -8,10 +8,11 @@ using Zenject;
 
 namespace Game
 {
-    public class RoundManager : MonoBehaviour
+    public class RoundManager : NetworkBehaviour
     {
-        public event Action LoadNextRound;
-        public event Action LoadEndGame;
+        public event Action OnCleanUpBeforeNextRound;
+        public event Action OnLoadNextRound;
+        public event Action OnLoadEndGame;
         private int _roundsElapsed;
         private GameStateController _gameStateController;
         private GameSettings _gameSettings;
@@ -30,14 +31,41 @@ namespace Game
 
         private void OnRoundEnded()
         {
-            if (_roundsElapsed < _gameSettings.RoundsAmount)
+            if (IsServer)
             {
-                LoadNextRound?.Invoke();
+                _roundsElapsed++;
+                print($"Elapsed: {_roundsElapsed}, Total: {_gameSettings.RoundsAmount}");
+
+                if (_roundsElapsed < _gameSettings.RoundsAmount)
+                {
+                    CleanupClientRpc();
+                    StartCoroutine(LoadNextRound_C());
+                }
+                else
+                {
+                    print("LOAD END GAME");
+                    OnLoadEndGame?.Invoke();
+                }
             }
-            else
-            {
-                LoadEndGame?.Invoke();
-            }
+        }
+
+        private IEnumerator LoadNextRound_C()
+        {
+            yield return new WaitForSeconds(2f);
+            LoadNextRoundClientRpc();
+        }
+
+        [ClientRpc]
+        private void LoadNextRoundClientRpc()
+        {
+            OnLoadNextRound?.Invoke();
+            print("LOAD NEXT ROUND");
+        }
+
+        [ClientRpc]
+        private void CleanupClientRpc()
+        {
+            OnCleanUpBeforeNextRound?.Invoke();
         }
     }
 }

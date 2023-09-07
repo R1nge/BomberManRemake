@@ -1,5 +1,7 @@
-﻿using Game;
+﻿using System;
+using Game;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
@@ -17,21 +19,31 @@ namespace Misc
 
         private void Awake()
         {
-            _roundManager.LoadNextRound += DestroyChildren;
+            _roundManager.OnCleanUpBeforeNextRound += DestroyChildren;
         }
 
         private void DestroyChildren()
         {
             if (!NetworkManager.Singleton.IsServer) return;
             print($"DESTROYING CHILDREN {transform.root.root.childCount}");
-            foreach (Transform child in transform.root)
+
+            for (int i = transform.childCount - 1; i >= 0; i--)
             {
-                if (child.TryGetComponent(out NetworkObject networkObject))
+                if (transform.GetChild(i).TryGetComponent(out NetworkObject networkObject))
                 {
-                    print($"DESPAWN {child.name}");
+                    if (!networkObject.IsSpawned)
+                    {
+                        Debug.LogError($"Skipped {networkObject.name} during children destruction");
+                        continue;
+                    }
                     networkObject.Despawn(true);
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            _roundManager.OnCleanUpBeforeNextRound -= DestroyChildren;
         }
     }
 }

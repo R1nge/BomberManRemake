@@ -18,14 +18,36 @@ namespace Game
         private NetworkVariable<bool> _leftTop, _rightTop, _rightBottom, _leftBottom;
         private DiContainer _diContainer;
         private GameSettings _gameSettings;
+        private RoundManager _roundManager;
+
+        [Inject]
+        private void Inject(DiContainer diContainer, GameSettings gameSettings, RoundManager roundManager)
+        {
+            _diContainer = diContainer;
+            _gameSettings = gameSettings;
+            _roundManager = roundManager;
+        }
 
         private void Awake()
         {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
             _leftTop = new NetworkVariable<bool>();
             _rightTop = new NetworkVariable<bool>();
             _rightBottom = new NetworkVariable<bool>();
             _leftBottom = new NetworkVariable<bool>();
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+            _roundManager.OnLoadNextRound += OnNextRound;
+        }
+
+        private void OnNextRound()
+        {
+            if (IsServer)
+            {
+                _leftTop.Value = false;
+                _rightTop.Value = false;
+                _rightBottom.Value = false;
+                _leftBottom.Value = false;
+            }
+            SpawnServerRpc();
         }
 
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __,
@@ -35,13 +57,6 @@ namespace Game
             {
                 SpawnServerRpc();
             }
-        }
-
-        [Inject]
-        private void Inject(DiContainer diContainer, GameSettings gameSettings)
-        {
-            _diContainer = diContainer;
-            _gameSettings = gameSettings;
         }
 
 
@@ -127,5 +142,7 @@ namespace Game
             print("Left Bottom");
             return new Vector3(0, 0, 0);
         }
+
+        public override void OnDestroy() => _roundManager.OnLoadNextRound -= OnNextRound;
     }
 }

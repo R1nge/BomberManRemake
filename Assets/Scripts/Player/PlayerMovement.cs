@@ -64,6 +64,11 @@ namespace Player
 
         public override void OnDestroy()
         {
+            if (IsServer)
+            {
+                _gameStateController.OnRoundStarted -= EnableMovementServerRpc;
+            }
+            
             if (!NetworkManager.Singleton) return;
             NetworkManager.Singleton.NetworkTickSystem.Tick -= OnTick;
         }

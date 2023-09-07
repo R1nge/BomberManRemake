@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
 namespace Game
 {
-    public class GamePlayerManager : MonoBehaviour
+    public class GamePlayerManager : NetworkBehaviour
     {
-        private readonly List<ulong> _alivePlayers = new();
+        private readonly List<ulong> _alivePlayers = new(4);
         private PlayerSpawner _playerSpawner;
         private GameStateController _gameStateController;
-        
+
         [Inject]
         private void Inject(PlayerSpawner playerSpawner, GameStateController gameStateController)
         {
@@ -19,28 +20,41 @@ namespace Game
 
         private void Awake()
         {
-            _playerSpawner.OnPlayerSpawn += IncreasePlayers;
-            _playerSpawner.OnPlayerDeath += DecreasePlayers;
+            _playerSpawner.OnPlayerSpawn += IncreasePlayersServerRpc;
+            _playerSpawner.OnPlayerDeath += DecreasePlayersServerRpc;
+            _gameStateController.OnRoundEnded += Reset;
         }
 
-        private void IncreasePlayers(ulong clientId)
+        private void Reset()
+        {
+            if (IsServer)
+            {
+                _alivePlayers.Clear();
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void IncreasePlayersServerRpc(ulong clientId)
         {
             _alivePlayers.Add(clientId);
+            print($"Players alive: {_alivePlayers.Count}");
         }
 
-        private void DecreasePlayers(ulong killedId, ulong killerId)
+        [ServerRpc(RequireOwnership = false)]
+        private void DecreasePlayersServerRpc(ulong killedId, ulong killerId)
         {
             _alivePlayers.Remove(killedId);
+            print($"Players alive: {_alivePlayers.Count}");
             if (_alivePlayers.Count <= 1)
             {
                 _gameStateController.EndGameServerRpc();
             }
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
-            _playerSpawner.OnPlayerSpawn -= IncreasePlayers;
-            _playerSpawner.OnPlayerDeath -= DecreasePlayers;
+            _playerSpawner.OnPlayerSpawn -= IncreasePlayersServerRpc;
+            _playerSpawner.OnPlayerDeath -= DecreasePlayersServerRpc;
         }
     }
 }

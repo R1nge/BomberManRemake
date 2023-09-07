@@ -1,11 +1,12 @@
 ﻿using System;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
 namespace Game
 {
-    public class CountDownUI : MonoBehaviour
+    public class CountDownUI : NetworkBehaviour
     {
         [SerializeField] private TextMeshProUGUI timerText;
         private GameStateController _gameStateController;
@@ -16,13 +17,29 @@ namespace Game
             _gameStateController = gameStateController;
         }
 
-        private void Start()
+        private void Awake()
         {
             _gameStateController.OnTimeChanged += UpdateUI;
+            _gameStateController.OnRoundEnded += ShowTimerUI;
+        }
+
+        private void ShowTimerUI()
+        {
+            if (IsServer)
+            {
+                ShowTimerClientRpc();
+            }
+        }
+
+        [ClientRpc]
+        private void ShowTimerClientRpc()
+        {
+            timerText.gameObject.SetActive(true);
         }
 
         private void UpdateUI(float time)
         {
+            print("UPDATE UI");
             timerText.text = time.ToString("#");
             if (time == 0)
             {
@@ -30,9 +47,10 @@ namespace Game
             }
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             _gameStateController.OnTimeChanged -= UpdateUI;
+            _gameStateController.OnRoundEnded -= ShowTimerUI;
         }
     }
 }

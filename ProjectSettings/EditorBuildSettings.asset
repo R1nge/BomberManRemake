@@ -15,9 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/LobbyDataSingleton.unity
     guid: cde1a7dfc1cc9a04495f1628c89ea4ec
   - enabled: 1
-    path: Assets/Scenes/RoundManagerSingleton.unity
-    guid: b790f7f77d9136140bd1d0ca331489aa
-  - enabled: 1
     path: Assets/Scenes/Lobby.unity
     guid: e21b407d7e79c6c4abfad71f263e6670
   - enabled: 1
