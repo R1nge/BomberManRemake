@@ -15,7 +15,7 @@ namespace Game
         [SerializeField] private Transform dynamicParent;
         [SerializeField] private MapPreset mapPreset;
         [SerializeField] private GameObject playerPrefab;
-        private NetworkVariable<bool> _leftTop, _rightTop, _rightBottom, _leftBottom;
+        private bool _leftTop, _rightTop, _rightBottom, _leftBottom;
         private DiContainer _diContainer;
         private GameSettings _gameSettings;
         private RoundManager _roundManager;
@@ -31,10 +31,6 @@ namespace Game
         private void Awake()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _leftTop = new NetworkVariable<bool>();
-            _rightTop = new NetworkVariable<bool>();
-            _rightBottom = new NetworkVariable<bool>();
-            _leftBottom = new NetworkVariable<bool>();
             _roundManager.OnLoadNextRound += OnNextRound;
         }
 
@@ -42,11 +38,12 @@ namespace Game
         {
             if (IsServer)
             {
-                _leftTop.Value = false;
-                _rightTop.Value = false;
-                _rightBottom.Value = false;
-                _leftBottom.Value = false;
+                _leftTop = false;
+                _rightTop = false;
+                _rightBottom = false;
+                _leftBottom = false;
             }
+
             SpawnServerRpc();
         }
 
@@ -84,31 +81,22 @@ namespace Game
 
             if (position == 0)
             {
-                if (!_leftBottom.Value)
-                {
-                    return LeftBottomCorner();
-                }
+                return LeftBottomCorner();
             }
-            else if (position == 1)
+
+            if (position == 1)
             {
-                if (!_leftTop.Value)
-                {
-                    return LeftTopCorner();
-                }
+                return LeftTopCorner();
             }
-            else if (position == 2)
+
+            if (position == 2)
             {
-                if (!_rightTop.Value)
-                {
-                    return RightTopCorner();
-                }
+                return RightTopCorner();
             }
-            else if (position == 3)
+
+            if (position == 3)
             {
-                if (!_rightBottom.Value)
-                {
-                    return RightBottomCorner();
-                }
+                return RightBottomCorner();
             }
 
             return PickPosition();
@@ -116,31 +104,51 @@ namespace Game
 
         private Vector3 LeftTopCorner()
         {
-            _leftTop.Value = true;
-            print("Left Top");
-            return new Vector3(0, 0, (_gameSettings.MapLength - 1) * mapPreset.Size);
+            if (!_leftTop)
+            {
+                _leftTop = true;
+                print("Left Top");
+                return new Vector3(0, 0, (_gameSettings.MapLength - 1) * mapPreset.Size);
+            }
+
+            return PickPosition();
         }
 
         private Vector3 RightTopCorner()
         {
-            _rightTop.Value = true;
-            print("Right Top");
-            return new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0,
-                (_gameSettings.MapLength - 1) * mapPreset.Size);
+            if (!_rightTop)
+            {
+                _rightTop = true;
+                print("Right Top");
+                return new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0,
+                    (_gameSettings.MapLength - 1) * mapPreset.Size);
+            }
+
+            return PickPosition();
         }
 
         private Vector3 RightBottomCorner()
         {
-            _rightBottom.Value = true;
-            print("Right Bottom");
-            return new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0, 0);
+            if (!_rightBottom)
+            {
+                _rightBottom = true;
+                print("Right Bottom");
+                return new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0, 0);
+            }
+
+            return PickPosition();
         }
 
         private Vector3 LeftBottomCorner()
         {
-            _leftBottom.Value = true;
-            print("Left Bottom");
-            return new Vector3(0, 0, 0);
+            if (!_leftBottom)
+            {
+                _leftBottom = true;
+                print("Left Bottom");
+                return new Vector3(0, 0, 0);
+            }
+
+            return PickPosition();
         }
 
         public override void OnDestroy() => _roundManager.OnLoadNextRound -= OnNextRound;
