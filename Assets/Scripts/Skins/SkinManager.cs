@@ -17,5 +17,6 @@ namespace Skins
         public NetworkObject GetLobby(int index) => skins[index].LobbyPrefab;
         public NetworkObject GetSkinFPS(int index) => skins[index].PrefabFPS;
         public NetworkObject GetSkinTPS(int index) => skins[index].PrefabTPS;
+        public NetworkObject GetEndGame(int index) => skins[index].EndGamePrefab;
     }
 }

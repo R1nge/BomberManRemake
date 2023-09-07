@@ -11,22 +11,19 @@ namespace EndGame
     public class EndGameSpawner : NetworkBehaviour
     {
         [SerializeField] private Transform[] spawnPoints;
+        private DiContainer _diContainer;
         private Lobby.Lobby _lobby;
         private SkinManager _skinManager;
 
         [Inject]
-        private void Inject(Lobby.Lobby lobby, SkinManager skinManager)
+        private void Inject(DiContainer diContainer, Lobby.Lobby lobby, SkinManager skinManager)
         {
+            _diContainer = diContainer;
             _lobby = lobby;
             _skinManager = skinManager;
         }
 
-        private void Awake()
-        {
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += Spawn;
-        }
-
-        private void Spawn(string sceneName, LoadSceneMode _, List<ulong> __, List<ulong> ___)
+        public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
@@ -39,17 +36,19 @@ namespace EndGame
         [ServerRpc(RequireOwnership = false)]
         private void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
         {
-            print($"SPAWN {_lobby.PlayerData.Count}");
-            var skin = _skinManager.GetSkinFPS(skinIndex);
-            
-            var player = Instantiate
+            var skin = _skinManager.GetEndGame(skinIndex);
+            var clientId = rpcParams.Receive.SenderClientId;
+
+            var player = _diContainer.InstantiatePrefabForComponent<NetworkObject>
             (
                 skin,
-                spawnPoints[_lobby.GetPlace(rpcParams.Receive.SenderClientId)].position,
-                Quaternion.identity
+                spawnPoints[_lobby.GetPlace(clientId)].position,
+                Quaternion.identity,
+                null
             );
-            
+
             player.Spawn(true);
+            player.GetComponent<EndGamePlayer>().UpdateNick(clientId);
         }
     }
 }

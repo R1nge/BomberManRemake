@@ -8,12 +8,13 @@ namespace Skins
     {
         [SerializeField] private string title;
         [SerializeField] private Sprite icon;
-        [SerializeField] private NetworkObject lobbyPrefab, prefabFPS, prefabTPS;
+        [SerializeField] private NetworkObject lobbyPrefab, prefabFPS, prefabTPS, endGamePrefab;
 
         public string Title => title;
         public Sprite Icon => icon;
         public NetworkObject LobbyPrefab => lobbyPrefab;
         public NetworkObject PrefabFPS => prefabFPS;
         public NetworkObject PrefabTPS => prefabTPS;
+        public NetworkObject EndGamePrefab => endGamePrefab;
     }
 }
