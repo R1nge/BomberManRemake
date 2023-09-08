@@ -24,7 +24,10 @@ namespace Game
         [ClientRpc]
         private void UpdateColorClientRpc(Color color, float lerp)
         {
-            meshRenderer.material.color = Color.Lerp(meshRenderer.materials[0].color, color, lerp);
+            for (int i = 0; i < meshRenderer.materials.Length; i++)
+            {
+                meshRenderer.materials[i].color = Color.Lerp(meshRenderer.materials[i].color, color, lerp);
+            }
         }
 
         public override void OnDestroy()
