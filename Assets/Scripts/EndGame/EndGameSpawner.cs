@@ -48,7 +48,9 @@ namespace EndGame
             );
 
             player.Spawn(true);
-            player.GetComponent<EndGamePlayer>().UpdateNick(clientId);
+            var endGamePlayer = player.GetComponent<EndGamePlayer>();
+            endGamePlayer.UpdateNick(clientId);
+            endGamePlayer.UpdateScore(clientId);
         }
     }
 }
