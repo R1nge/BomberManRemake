@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Game
@@ -14,6 +16,7 @@ namespace Game
         private NetworkVariable<float> _time;
         private NetworkVariable<bool> _gameStarted, _gameEnded;
         private RoundManager _roundManager;
+        private bool _mapLoaded;
 
         [Inject]
         private void Inject(RoundManager roundManager)
@@ -29,6 +32,15 @@ namespace Game
             _gameStarted = new NetworkVariable<bool>();
             _gameEnded = new NetworkVariable<bool>();
             _roundManager.OnCleanUpBeforeEnd += ResetTimer;
+            _roundManager.OnPreStartRound += OnMapLoaded;
+        }
+
+        private void OnMapLoaded()
+        {
+            if (IsServer)
+            {
+                _mapLoaded = true;
+            }
         }
 
         private void ResetTimer()
@@ -38,6 +50,7 @@ namespace Game
                 _time.Value = countdownTime;
                 _gameStarted.Value = false;
                 _gameEnded.Value = false;
+                _mapLoaded = false;
             }
         }
 
@@ -59,6 +72,7 @@ namespace Game
             if (!IsServer) return;
             if (!IsSpawned) return;
             if (_gameStarted.Value) return;
+            if (!_mapLoaded) return;
             var delta = 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
             _time.Value -= delta;
         }
@@ -88,6 +102,14 @@ namespace Game
         {
             print("ROUND ENDED");
             OnRoundEnded?.Invoke();
+        }
+
+        public override void OnDestroy()
+        {
+            _roundManager.OnCleanUpBeforeEnd -= ResetTimer;
+            _roundManager.OnPreStartRound -= OnMapLoaded;
+            if (!NetworkManager.Singleton) return;
+            NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
         }
     }
 }
