@@ -69,7 +69,7 @@ namespace Lobby
         public void SortDescending()
         {
             var sortedList = new List<LobbyData>();
-            
+
             for (int i = 0; i < _players.Count; i++)
             {
                 sortedList.Add(_players[i]);
@@ -89,8 +89,8 @@ namespace Lobby
                     return i;
                 }
             }
-            
-            Debug.LogError("Player not found" ,this);
+
+            Debug.LogError("Player not found", this);
 
             return 99999;
         }
@@ -160,6 +160,15 @@ namespace Lobby
         private void ChangeReadyStateClientRpc(ulong clientId, bool ready)
         {
             OnReadyStateChanged?.Invoke(clientId, ready);
+        }
+
+        public override void OnDestroy()
+        {
+            if (NetworkManager.Singleton)
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback -= PlayerConnected;
+                NetworkManager.Singleton.OnClientDisconnectCallback -= PlayerDisconnected;
+            }
         }
     }
 }

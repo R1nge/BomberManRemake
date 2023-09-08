@@ -26,7 +26,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _roundManager.OnCleanUpBeforeNextRound += Destroy;
+                _roundManager.OnCleanUpBeforeEnd += Destroy;
             }
         }
 
@@ -44,7 +44,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _roundManager.OnCleanUpBeforeNextRound -= Destroy;
+                _roundManager.OnCleanUpBeforeEnd -= Destroy;
             }
         }
     }

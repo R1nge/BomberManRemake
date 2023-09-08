@@ -19,7 +19,7 @@ namespace Misc
 
         private void Awake()
         {
-            _roundManager.OnCleanUpBeforeNextRound += DestroyChildren;
+            _roundManager.OnCleanUpBeforeEnd += DestroyChildren;
         }
 
         private void DestroyChildren()
@@ -43,7 +43,7 @@ namespace Misc
 
         private void OnDestroy()
         {
-            _roundManager.OnCleanUpBeforeNextRound -= DestroyChildren;
+            _roundManager.OnCleanUpBeforeEnd -= DestroyChildren;
         }
     }
 }

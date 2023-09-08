@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Game
 {
     public class RoundManager : NetworkBehaviour
     {
-        public event Action OnCleanUpBeforeNextRound;
+        public event Action OnCleanUpBeforeEnd;
         public event Action OnLoadNextRound;
         public event Action OnLoadEndGame;
         private int _roundsElapsed;
@@ -36,24 +34,26 @@ namespace Game
                 _roundsElapsed++;
                 print($"Elapsed: {_roundsElapsed}, Total: {_gameSettings.RoundsAmount}");
 
-                if (_roundsElapsed < _gameSettings.RoundsAmount)
-                {
-                    CleanupClientRpc();
-                    StartCoroutine(LoadNextRound_C());
-                }
-                else
-                {
-                    CleanupClientRpc();
-                    print("LOAD END GAME");
-                    OnLoadEndGame?.Invoke();
-                }
+                StartCoroutine(OnRoundEnded_C());
             }
         }
 
-        private IEnumerator LoadNextRound_C()
+        private IEnumerator OnRoundEnded_C()
         {
+            CleanupClientRpc();
+
             yield return new WaitForSeconds(2f);
-            LoadNextRoundClientRpc();
+
+            if (_roundsElapsed < _gameSettings.RoundsAmount)
+            {
+                yield return new WaitForSeconds(2f);
+                LoadNextRoundClientRpc();
+            }
+            else
+            {
+                print("LOAD END GAME");
+                OnLoadEndGame?.Invoke();
+            }
         }
 
         [ClientRpc]
@@ -66,7 +66,7 @@ namespace Game
         [ClientRpc]
         private void CleanupClientRpc()
         {
-            OnCleanUpBeforeNextRound?.Invoke();
+            OnCleanUpBeforeEnd?.Invoke();
         }
 
         public override void OnDestroy()

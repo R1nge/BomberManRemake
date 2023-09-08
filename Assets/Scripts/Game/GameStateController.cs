@@ -28,7 +28,7 @@ namespace Game
             _time.OnValueChanged += OnValueChanged;
             _gameStarted = new NetworkVariable<bool>();
             _gameEnded = new NetworkVariable<bool>();
-            _roundManager.OnCleanUpBeforeNextRound += ResetTimer;
+            _roundManager.OnCleanUpBeforeEnd += ResetTimer;
         }
 
         private void ResetTimer()

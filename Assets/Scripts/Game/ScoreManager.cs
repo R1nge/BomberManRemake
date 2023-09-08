@@ -23,7 +23,7 @@ namespace Game
         private void Awake()
         {
             _playerSpawnerFPS.OnPlayerDeath += AddKillScoreServerRpc;
-            _roundManager.OnCleanUpBeforeNextRound += AddWinScoreServerRpc;
+            _roundManager.OnCleanUpBeforeEnd += AddWinScoreServerRpc;
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -59,7 +59,7 @@ namespace Game
         public override void OnDestroy()
         {
             _playerSpawnerFPS.OnPlayerDeath -= AddKillScoreServerRpc;
-            _roundManager.OnCleanUpBeforeNextRound -= AddWinScoreServerRpc;
+            _roundManager.OnCleanUpBeforeEnd -= AddWinScoreServerRpc;
         }
     }
 }

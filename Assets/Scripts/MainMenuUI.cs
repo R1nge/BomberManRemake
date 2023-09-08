@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -21,9 +22,15 @@ public class MainMenuUI : MonoBehaviour
         {
             NetworkManager.Singleton.StartHost();
             NetworkManager.Singleton.SceneManager.LoadScene("LobbyDataSingleton", LoadSceneMode.Additive);
-            
         });
 
         join.onClick.AddListener(() => { NetworkManager.Singleton.StartClient(); });
+    }
+
+    private void OnDestroy()
+    {
+        nick.onEndEdit.RemoveAllListeners();
+        host.onClick.RemoveAllListeners();
+        join.onClick.RemoveAllListeners();
     }
 }

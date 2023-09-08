@@ -40,6 +40,17 @@ namespace Lobby
             start.interactable = false;
         }
 
-        public override void OnDestroy() => _lobby.OnReadyStateChanged -= ReadyStateChanged;
+        public override void OnDestroy()
+        {
+            start.onClick.RemoveAllListeners();
+            ready.onClick.RemoveAllListeners();
+
+            if (NetworkManager.Singleton)
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback -= ClientConnected;
+            }
+
+            _lobby.OnReadyStateChanged -= ReadyStateChanged;
+        }
     }
 }
