@@ -1,6 +1,7 @@
 ﻿using Game;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Zenject;
 
 namespace Player
@@ -10,7 +11,7 @@ namespace Player
         [SerializeField] private new Camera camera;
         [SerializeField] private float sensitivity;
         [SerializeField] private float limitX;
-        private float _rotationX;
+        private float _rotationX, _rotationY;
         private RoundManager _roundManager;
 
         public void Disable()
@@ -32,12 +33,20 @@ namespace Player
 
         private void Destroy() => NetworkObject.Despawn(true);
 
-        private void Update()
+        public void OnLook(InputValue value)
         {
-            _rotationX += -Input.GetAxis("Mouse Y") * sensitivity;
+            if (!IsOwner) return;
+            _rotationX += -value.Get<Vector2>().y * sensitivity;
             _rotationX = Mathf.Clamp(_rotationX, -limitX, limitX);
+            _rotationY = value.Get<Vector2>().x * sensitivity;
+            Rotate();
+        }
+        
+        private void Rotate()
+        {
+            if (!IsOwner) return;
+            transform.rotation *= Quaternion.Euler(0, _rotationY, 0);
             camera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * sensitivity, 0);
         }
 
         public override void OnDestroy()

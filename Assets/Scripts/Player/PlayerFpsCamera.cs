@@ -1,6 +1,8 @@
 ﻿using System;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 namespace Player
 {
@@ -9,7 +11,7 @@ namespace Player
         [SerializeField] private new Camera camera;
         [SerializeField] private float sensitivity;
         [SerializeField] private float limitX;
-        private float _rotationX;
+        private float _rotationX, _rotationY;
 
         private void Awake()
         {
@@ -22,14 +24,19 @@ namespace Player
             camera.GetComponent<AudioListener>().enabled = IsOwner;
         }
 
+        public void OnLook(InputValue value)
+        {
+            if (!IsOwner) return;
+            _rotationX += -value.Get<Vector2>().y * sensitivity;
+            _rotationX = Mathf.Clamp(_rotationX, -limitX, limitX);
+            _rotationY = value.Get<Vector2>().x * sensitivity;
+        }
+
         private void Rotate()
         {
             if (!IsOwner) return;
-            _rotationX += -Input.GetAxis("Mouse Y") * sensitivity;
-            _rotationX = Mathf.Clamp(_rotationX, -limitX, limitX);
+            transform.rotation *= Quaternion.Euler(0, _rotationY, 0);
             camera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * sensitivity, 0);
-            //RotateServerRpc(Input.GetAxis("Mouse X") * sensitivity);
         }
 
         [ServerRpc]
