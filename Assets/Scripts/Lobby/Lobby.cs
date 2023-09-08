@@ -76,8 +76,13 @@ namespace Lobby
             }
 
             sortedList = sortedList.OrderByDescending(data => data.Points).ToList();
-
-            _players = new NetworkList<LobbyData>(sortedList);
+            
+            _players.Clear();
+            
+            for (int i = 0; i < sortedList.Count; i++)
+            {
+                _players.Add(sortedList[i]);
+            }
         }
 
         public int GetPlace(ulong clientId)
@@ -97,7 +102,7 @@ namespace Lobby
 
         private void Awake()
         {
-            _players ??= new NetworkList<LobbyData>();
+            _players = new NetworkList<LobbyData>();
             NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += PlayerDisconnected;
         }
@@ -159,11 +164,12 @@ namespace Lobby
         [ClientRpc]
         private void ChangeReadyStateClientRpc(ulong clientId, bool ready)
         {
-            OnReadyStateChanged?.Invoke(clientId, ready);
+           OnReadyStateChanged?.Invoke(clientId, ready);
         }
 
         public override void OnDestroy()
         {
+            base.OnDestroy();
             if (NetworkManager.Singleton)
             {
                 NetworkManager.Singleton.OnClientConnectedCallback -= PlayerConnected;

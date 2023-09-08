@@ -31,12 +31,11 @@ namespace Game
             _gameStateController.OnRoundEnded += OnRoundEnded;
         }
 
-        private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,
-            List<ulong> clientscompleted, List<ulong> clientstimedout)
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loaded, List<ulong> ___)
         {
             if (!IsServer) return;
-            if (scenename != "Game") return;
-            if (clientscompleted.Count == NetworkManager.Singleton.ConnectedClients.Count)
+            if (sceneName != "Game") return;
+            if (loaded.Count == NetworkManager.Singleton.ConnectedClients.Count)
             {
                 StartCoroutine(Wait_C());
             }
