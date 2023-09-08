@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Misc;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -76,9 +77,9 @@ namespace Lobby
             }
 
             sortedList = sortedList.OrderByDescending(data => data.Points).ToList();
-            
+
             _players.Clear();
-            
+
             for (int i = 0; i < sortedList.Count; i++)
             {
                 _players.Add(sortedList[i]);
@@ -115,7 +116,11 @@ namespace Lobby
 
         private void PlayerConnected(ulong clientId)
         {
-            CreatePlayerData(clientId);
+            if (NetworkManager.Singleton.LocalClientId == clientId)
+            {
+                CreatePlayerData(clientId);
+            }
+
             OnPlayerConnected?.Invoke(clientId);
         }
 
@@ -134,8 +139,13 @@ namespace Lobby
 
         private void CreatePlayerData(ulong clientId)
         {
-            if (!IsServer) return;
-            var data = new LobbyData(PlayerPrefs.GetString("Nick"), clientId, false, 0);
+            CreatePlayerDataServerRpc(clientId, PlayerPrefs.GetString("Nick"));
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void CreatePlayerDataServerRpc(ulong clientId, NetworkString nick)
+        {
+            var data = new LobbyData(nick, clientId, false, 0);
             _players.Add(data);
         }
 
@@ -164,7 +174,7 @@ namespace Lobby
         [ClientRpc]
         private void ChangeReadyStateClientRpc(ulong clientId, bool ready)
         {
-           OnReadyStateChanged?.Invoke(clientId, ready);
+            OnReadyStateChanged?.Invoke(clientId, ready);
         }
 
         public override void OnDestroy()
