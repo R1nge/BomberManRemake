@@ -68,8 +68,9 @@ namespace Player
             {
                 _gameStateController.OnRoundStarted -= EnableMovementServerRpc;
             }
-            
+
             if (!NetworkManager.Singleton) return;
+            if (NetworkManager.Singleton.NetworkTickSystem == null) return;
             NetworkManager.Singleton.NetworkTickSystem.Tick -= OnTick;
         }
     }

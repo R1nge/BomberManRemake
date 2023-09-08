@@ -25,13 +25,14 @@ namespace Player
         private void Spawn() => SpawnServerRpc();
 
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnServerRpc(ServerRpcParams rpcParams = default)
+        private void SpawnServerRpc()
         {
-            print("SPAWN");
+            //The spawned spectator is still owned by the server
+            print($"SPAWN {NetworkObject.OwnerClientId}");
             var spectator = _diContainer.InstantiatePrefabForComponent<PlayerFreeCamera>(freeCamera, transform.position,
                 Quaternion.identity, null);
             var netSpectator = spectator.GetComponent<NetworkObject>();
-            netSpectator.SpawnWithOwnership(rpcParams.Receive.SenderClientId, true);
+            netSpectator.SpawnWithOwnership(NetworkObject.OwnerClientId, true);
             DisableOnNonOwnersClientRpc(netSpectator);
         }
 

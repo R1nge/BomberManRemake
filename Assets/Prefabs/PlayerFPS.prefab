@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 157436137430645768}
-  sensitivity: 2
+  sensitivity: 0.2
   limitX: 90
 --- !u!114 &230647477782710622
 MonoBehaviour:
