@@ -68,9 +68,8 @@ namespace Game
 
             if (_roundsElapsed < _gameSettings.RoundsAmount)
             {
-                yield return new WaitForSeconds(2f);
                 LoadNextRoundClientRpc();
-                yield return new WaitForSeconds(2f);
+                yield return new WaitForSeconds(1f);
                 OnPreStartClientRpc();
             }
             else
