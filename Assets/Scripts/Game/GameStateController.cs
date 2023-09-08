@@ -83,9 +83,8 @@ namespace Game
             OnRoundStarted?.Invoke();
             Debug.Log("ROUND STARTED");
         }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void EndGameServerRpc()
+        
+        public void EndGame()
         {
             if (!_gameStarted.Value || _gameEnded.Value)
             {

@@ -14,13 +14,13 @@ namespace Player
         [SerializeField] private int startHealth;
         private NetworkVariable<int> _currentHealth;
         private PlayerShield _playerShield;
-        private PlayerSpawnerFPS _playerSpawnerFPS;
+        private SpawnerManager _spawnerManager;
         private ulong _killerId;
 
         [Inject]
-        private void Inject(PlayerSpawnerFPS playerSpawnerFPS)
+        private void Inject(SpawnerManager spawnerManager)
         {
-            _playerSpawnerFPS = playerSpawnerFPS;
+            _spawnerManager = spawnerManager;
         }
 
         private void Awake()
@@ -38,7 +38,7 @@ namespace Player
                 OnDeath?.Invoke();
                 if (IsServer)
                 {
-                    _playerSpawnerFPS.Despawn(NetworkObject.OwnerClientId, _killerId);
+                    _spawnerManager.Despawn(NetworkObject.OwnerClientId, _killerId);
                     NetworkObject.Despawn(true);
                 }
             }

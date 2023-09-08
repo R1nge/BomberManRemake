@@ -11,34 +11,22 @@ namespace Game
 {
     public class PlayerSpawnerFPS : NetworkBehaviour
     {
-        public event Action<ulong> OnPlayerSpawn;
-        public event Action<ulong, ulong> OnPlayerDeath;
         [SerializeField] private Transform dynamicParent;
         [SerializeField] private MapPreset mapPreset;
-        [SerializeField] private GameObject playerPrefab;
         private bool _leftTop, _rightTop, _rightBottom, _leftBottom;
         private DiContainer _diContainer;
         private GameSettings _gameSettings;
-        private RoundManager _roundManager;
         private SkinManager _skinManager;
 
         [Inject]
-        private void Inject(DiContainer diContainer, GameSettings gameSettings, RoundManager roundManager,
-            SkinManager skinManager)
+        private void Inject(DiContainer diContainer, GameSettings gameSettings, SkinManager skinManager)
         {
             _diContainer = diContainer;
             _gameSettings = gameSettings;
-            _roundManager = roundManager;
             _skinManager = skinManager;
         }
 
-        private void Awake()
-        {
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _roundManager.OnLoadNextRound += OnNextRound;
-        }
-
-        private void OnNextRound()
+        public void OnNextRound()
         {
             if (IsServer)
             {
@@ -51,18 +39,8 @@ namespace Game
             SpawnServerRpc(_skinManager.SkinIndex);
         }
 
-        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __,
-            List<ulong> ___)
-        {
-            if (sceneName == "Game")
-            {
-                SpawnServerRpc(_skinManager.SkinIndex);
-            }
-        }
-
-
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
+        public void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
         {
             var position = PickPosition();
             var player = _diContainer.InstantiatePrefab(_skinManager.GetSkinFPS(skinIndex), position,
@@ -71,13 +49,6 @@ namespace Game
             player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId, true);
             player.transform.position = position;
             player.transform.parent = dynamicParent;
-            OnPlayerSpawn?.Invoke(rpcParams.Receive.SenderClientId);
-        }
-
-        public void Despawn(ulong killedId, ulong killerId)
-        {
-            print($"{killedId} was killed by {killerId}");
-            OnPlayerDeath?.Invoke(killedId, killerId);
         }
 
         private Vector3 PickPosition()
@@ -155,7 +126,5 @@ namespace Game
 
             return PickPosition();
         }
-
-        public override void OnDestroy() => _roundManager.OnLoadNextRound -= OnNextRound;
     }
 }

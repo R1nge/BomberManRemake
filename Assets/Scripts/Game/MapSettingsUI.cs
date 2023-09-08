@@ -9,6 +9,7 @@ namespace Game
     {
         [SerializeField] private TMP_InputField sizeX, sizeZ;
         [SerializeField] private TMP_Dropdown rounds;
+        [SerializeField] private TMP_Dropdown modes;
         private GameSettings _gameSettings;
 
         [Inject]
@@ -47,6 +48,11 @@ namespace Game
             {
                 _gameSettings.SetRoundsAmount(i + 1);
             });
+            
+            modes.onValueChanged.AddListener(i =>
+            {
+                _gameSettings.SetGameMode((GameSettings.GameModes)i);
+            });
         }
 
         public override void OnNetworkSpawn()
@@ -54,6 +60,7 @@ namespace Game
             sizeX.gameObject.SetActive(IsOwner);
             sizeZ.gameObject.SetActive(IsOwner);
             rounds.gameObject.SetActive(IsOwner);
+            modes.gameObject.SetActive(IsOwner);
         }
     }
 }

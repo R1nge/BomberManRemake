@@ -7,21 +7,22 @@ namespace Game
 {
     public class GamePlayerManager : NetworkBehaviour
     {
+        private int _playersAlive;
         private readonly List<ulong> _alivePlayers = new(4);
-        private PlayerSpawnerFPS _playerSpawnerFPS;
+        private SpawnerManager _spawnerManager;
         private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(PlayerSpawnerFPS playerSpawnerFPS, GameStateController gameStateController)
+        private void Inject(SpawnerManager spawnerManager, GameStateController gameStateController)
         {
-            _playerSpawnerFPS = playerSpawnerFPS;
+            _spawnerManager = spawnerManager;
             _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
-            _playerSpawnerFPS.OnPlayerSpawn += IncreasePlayersServerRpc;
-            _playerSpawnerFPS.OnPlayerDeath += DecreasePlayersServerRpc;
+            _spawnerManager.OnPlayerSpawn += IncreaseServerRpc;
+            _spawnerManager.OnPlayerDeath += DecreaseServerRpc;
             _gameStateController.OnRoundEnded += Reset;
         }
 
@@ -34,27 +35,29 @@ namespace Game
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void IncreasePlayersServerRpc(ulong clientId)
+        private void IncreaseServerRpc(ulong clientId)
         {
             _alivePlayers.Add(clientId);
-            print($"Players alive: {_alivePlayers.Count}");
+            _playersAlive++;
+            print($"Players alive: {_playersAlive}");
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void DecreasePlayersServerRpc(ulong killedId, ulong killerId)
+        private void DecreaseServerRpc(ulong killedId, ulong killerId)
         {
+            _playersAlive--;
             _alivePlayers.Remove(killedId);
-            print($"Players alive: {_alivePlayers.Count}");
-            if (_alivePlayers.Count <= 1)
+            print($"REMOVED: Players alive: {_playersAlive}");
+            if (_playersAlive <= 1)
             {
-                _gameStateController.EndGameServerRpc();
+                _gameStateController.EndGame();
             }
         }
 
         public override void OnDestroy()
         {
-            _playerSpawnerFPS.OnPlayerSpawn -= IncreasePlayersServerRpc;
-            _playerSpawnerFPS.OnPlayerDeath -= DecreasePlayersServerRpc;
+            _spawnerManager.OnPlayerSpawn -= IncreaseServerRpc;
+            _spawnerManager.OnPlayerDeath -= DecreaseServerRpc;
             _gameStateController.OnRoundEnded -= Reset;
         }
     }
