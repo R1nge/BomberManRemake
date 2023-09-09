@@ -10,9 +10,9 @@ namespace Game.Powerups
 
         protected override void Apply(NetworkObject player)
         {
-            if (player.TryGetComponent(out PlayerBombController playerBombController))
+            if (player.TryGetComponent(out PlayerPowerupController powerupController))
             {
-                playerBombController.IncreaseBombAmountServerRpc(bombAmount);
+                powerupController.BombPowerup(bombAmount);
             }
         }
     }

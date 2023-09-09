@@ -9,9 +9,9 @@ namespace Game.Powerups
         [SerializeField] private int amount;
         protected override void Apply(NetworkObject player)
         {
-            if (player.TryGetComponent(out PlayerHealth health))
+            if (player.TryGetComponent(out PlayerPowerupController powerupController))
             {
-                health.IncreaseHealthServerRpc(amount);
+                powerupController.HealthPowerup(amount);
             }
         }
     }

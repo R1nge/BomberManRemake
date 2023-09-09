@@ -7,10 +7,10 @@ namespace Game.Powerups
     {
         protected override void Apply(NetworkObject player)
         {
-            if (player.TryGetComponent(out PlayerShield playerShield))
+            if (player.TryGetComponent(out PlayerPowerupController powerupController))
             {
-                playerShield.TurnOnServerRpc();
-            }       
+                powerupController.ShieldPowerup();
+            }
         }
     }
 }

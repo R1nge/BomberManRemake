@@ -10,9 +10,9 @@ namespace Game.Powerups
 
         protected override void Apply(NetworkObject player)
         {
-            if (player.TryGetComponent(out PlayerBlockController blockController))
+            if (player.TryGetComponent(out PlayerPowerupController powerupController))
             {
-                blockController.IncreaseDigServerRpc(amount);
+                powerupController.DigPowerup(amount);
             }
         }
     }

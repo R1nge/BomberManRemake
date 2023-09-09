@@ -12,11 +12,13 @@ namespace Player
         [SerializeField] private int distance;
         [SerializeField] private int digAmount;
         private NetworkVariable<int> _currentDigAmount;
+        private PlayerInput _playerInput;
 
         private void Awake()
         {
             _currentDigAmount = new NetworkVariable<int>(digAmount);
             _currentDigAmount.OnValueChanged += DigAmountChanged;
+            _playerInput = GetComponent<PlayerInput>();
         }
 
         private void Start() => OnDigAmountChanged?.Invoke(_currentDigAmount.Value);
@@ -26,6 +28,7 @@ namespace Player
         public void OnDestroyBlock()
         {
             if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
             Raycast();
         }
 

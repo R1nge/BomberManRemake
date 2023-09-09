@@ -10,7 +10,7 @@ namespace Game.Powerups
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out PlayerMovement player))
+            if (other.TryGetComponent(out PlayerPowerupController player))
             {
                 if (player.TryGetComponent(out NetworkObject net))
                 {

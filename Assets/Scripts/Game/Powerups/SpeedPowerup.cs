@@ -10,9 +10,9 @@ namespace Game.Powerups
 
         protected override void Apply(NetworkObject player)
         {
-            if (player.TryGetComponent(out PlayerMovement playerMovement))
+            if (player.TryGetComponent(out PlayerPowerupController powerupController))
             {
-                playerMovement.IncreaseSpeedServerRpc(additionalSpeed);
+                powerupController.SpeedPowerup(additionalSpeed);
             }
         }
     }

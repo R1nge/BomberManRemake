@@ -11,18 +11,17 @@ namespace Player
     {
         public event Action<int> OnInit, OnBombAmountChanged;
         [SerializeField] private int bombStartAmount;
-        [SerializeField] private PlayerInput playerInput;
+        [SerializeField] private UnityEngine.InputSystem.PlayerInput playerInput;
         private NetworkVariable<int> _bombsAvailable;
         private SpawnerOnGrid _spawnerOnGrid;
+        private PlayerInput _playerInput;
 
         [Inject]
-        private void Inject(SpawnerOnGrid spawnerOnGrid)
-        {
-            _spawnerOnGrid = spawnerOnGrid;
-        }
+        private void Inject(SpawnerOnGrid spawnerOnGrid) => _spawnerOnGrid = spawnerOnGrid;
 
         private void Awake()
         {
+            _playerInput = GetComponent<PlayerInput>();
             _bombsAvailable = new NetworkVariable<int>(bombStartAmount);
             _bombsAvailable.OnValueChanged += OnBombValueChanged;
             var bombInput = playerInput.actions.FindActionMap("Player").FindAction("Bomb");
@@ -51,10 +50,10 @@ namespace Player
             return true;
         }
 
-
         private void SpawnBomb(InputAction.CallbackContext callback)
         {
             if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
             if (_bombsAvailable.Value == 0) return;
             if (!CanSpawn()) return;
             SpawnBombServerRpc();
@@ -68,7 +67,6 @@ namespace Player
             bomb.OnExplosion += ReturnBomb;
         }
 
-
         private void ReturnBomb(Bomb bomb)
         {
             bomb.OnExplosion -= ReturnBomb;
@@ -76,9 +74,6 @@ namespace Player
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void IncreaseBombAmountServerRpc(int amount)
-        {
-            _bombsAvailable.Value += amount;
-        }
+        public void IncreaseBombAmountServerRpc(int amount) => _bombsAvailable.Value += amount;
     }
 }
