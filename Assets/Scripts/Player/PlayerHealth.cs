@@ -59,9 +59,6 @@ namespace Player
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void IncreaseHealthServerRpc(int amount)
-        {
-            _currentHealth.Value += amount;
-        }
+        public void IncreaseHealthServerRpc(int amount) => _currentHealth.Value += amount;
     }
 }

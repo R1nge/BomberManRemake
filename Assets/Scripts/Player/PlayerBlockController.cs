@@ -26,34 +26,37 @@ namespace Player
         public void OnDestroyBlock()
         {
             if (!IsOwner) return;
-            DestroyBlockServerRpc();
+            Raycast();
         }
 
-        [ServerRpc]
-        private void DestroyBlockServerRpc()
-        {
-            if (_currentDigAmount.Value > 0)
-            {
-                if (Raycast())
-                {
-                    _currentDigAmount.Value--;
-                }
-            }
-        }
-
-        private bool Raycast()
+        private void Raycast()
         {
             Ray ray = new Ray(camera.position, camera.forward);
             if (Physics.Raycast(ray, out var hit, distance))
             {
                 if (hit.transform.TryGetComponent(out Destructable destructable))
                 {
-                    destructable.SpawnDropServerRpc();
-                    return true;
+                    DestroyBlockServerRpc(destructable.gameObject);
                 }
             }
-
-            return false;
         }
+
+        [ServerRpc]
+        private void DestroyBlockServerRpc(NetworkObjectReference destructableRef)
+        {
+            if (_currentDigAmount.Value > 0)
+            {
+                if (destructableRef.TryGet(out NetworkObject networkObject))
+                {
+                    if (networkObject.TryGetComponent(out Destructable destructable))
+                    {
+                        destructable.SpawnDropServerRpc();
+                    }
+                }
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void IncreaseDigServerRpc(int amount) => _currentDigAmount.Value += amount;
     }
 }

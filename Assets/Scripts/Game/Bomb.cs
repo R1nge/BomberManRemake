@@ -116,11 +116,7 @@ namespace Game
             }
         }
 
-        private void OnTriggerExit(Collider other)
-        {
-            if (!IsServer) return;
-            SwitchCollider();
-        }
+        private void OnTriggerExit(Collider other) => SwitchCollider();
 
         private void SwitchCollider()
         {
