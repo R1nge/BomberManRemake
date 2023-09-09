@@ -51,6 +51,7 @@ namespace Player
                     if (networkObject.TryGetComponent(out Destructable destructable))
                     {
                         destructable.SpawnDropServerRpc();
+                        _currentDigAmount.Value--;
                     }
                 }
             }
