@@ -18,17 +18,7 @@ namespace Player
             _playerBlockController = GetComponent<PlayerBlockController>();
             _playerHealth = GetComponent<PlayerHealth>();
             _playerShield = GetComponent<PlayerShield>();
-
-            if (TryGetComponent(out PlayerMovement playerMovement))
-            {
-                _playerMovement = playerMovement;
-            }
-
-            if (TryGetComponent(out PlayerMovementTPS playerMovementTps))
-            {
-                _playerMovementTps = playerMovementTps;
-            }
-            
+            _playerMovement = GetComponent<PlayerMovement>();
         }
 
         public void BombPowerup(int amount) => _playerBombController.IncreaseBombAmountServerRpc(amount);
@@ -39,18 +29,6 @@ namespace Player
 
         public void ShieldPowerup() => _playerShield.TurnOnServerRpc();
 
-        public void SpeedPowerup(float amount)
-        {
-            //TODO: create abstract player movement class
-            if (_playerMovement != null)
-            {
-                _playerMovement.IncreaseSpeedServerRpc(amount);
-            }
-
-            if (_playerMovementTps != null)
-            {
-                _playerMovementTps.IncreaseSpeedServerRpc(amount);
-            }
-        }
+        public void SpeedPowerup(float amount) => _playerMovement.IncreaseSpeedServerRpc(amount);
     }
 }

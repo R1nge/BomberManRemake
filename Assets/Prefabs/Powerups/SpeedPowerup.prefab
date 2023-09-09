@@ -172,4 +172,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pickupSound: {fileID: 4951760305300200346, guid: ec0a90a1e38041740a18c171fea9dda1, type: 3}
-  additionalSpeed: 2
+  additionalSpeed: 0.1
