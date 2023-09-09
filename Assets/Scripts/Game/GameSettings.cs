@@ -6,7 +6,7 @@ namespace Game
     public class GameSettings
     {
         private int _mapWidth = 15, _mapLength = 15;
-        private float _dropChance;
+        private float _dropChance = .5f;
         private int _roundsAmount = 1;
         private GameModes _gameMode;
 

@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1746142922312464863, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
       propertyPath: m_Name
-      value: PlayerTPS
+      value: CapsuleTPS
       objectReference: {fileID: 0}
     - target: {fileID: 3461194660873060076, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
       propertyPath: m_LocalPosition.x
@@ -52,7 +52,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 3623585524970256566, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4668021876086161458, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
+    - {fileID: -9005592659518683103, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

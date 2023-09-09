@@ -386,7 +386,7 @@ GameObject:
   - component: {fileID: 3908877081365260942}
   - component: {fileID: 7209314534491103879}
   m_Layer: 0
-  m_Name: Text (TMP) (1)
+  m_Name: Bombs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -895,7 +895,7 @@ GameObject:
   - component: {fileID: 4207445762491436020}
   - component: {fileID: 7471023892675603784}
   m_Layer: 0
-  m_Name: Text (TMP)
+  m_Name: Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

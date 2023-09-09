@@ -26,7 +26,7 @@ namespace Game
             _skinManager = skinManager;
         }
 
-        public void OnNextRound()
+        public void OnNextRound(ulong clientId)
         {
             if (IsServer)
             {
@@ -36,17 +36,17 @@ namespace Game
                 _leftBottom = false;
             }
 
-            SpawnServerRpc(_skinManager.SkinIndex);
+            SpawnServerRpc(clientId, _skinManager.SkinIndex);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
+        public void SpawnServerRpc(ulong clientId, int skinIndex)
         {
             var position = PickPosition();
             var player = _diContainer.InstantiatePrefab(_skinManager.GetSkinFPS(skinIndex), position,
                 Quaternion.identity, null);
             player.transform.parent = dynamicParent;
-            player.GetComponent<NetworkObject>().SpawnWithOwnership(rpcParams.Receive.SenderClientId, true);
+            player.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
             player.transform.position = position;
             player.transform.parent = dynamicParent;
         }

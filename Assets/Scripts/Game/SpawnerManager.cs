@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Game
 {
-    public class SpawnerManager : MonoBehaviour
+    public class SpawnerManager : NetworkBehaviour
     {
         public event Action<ulong> OnPlayerSpawn;
         public event Action<ulong, ulong> OnPlayerDeath;
@@ -37,7 +37,12 @@ namespace Game
         private void Awake()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _roundManager.OnLoadNextRound += OnNextRound;
+            _roundManager.OnLoadNextRound += RoundManagerOnOnLoadNextRound;
+        }
+
+        private void RoundManagerOnOnLoadNextRound()
+        {
+            OnNextRoundServerRpc();
         }
 
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __,
@@ -52,28 +57,32 @@ namespace Game
         [ServerRpc(RequireOwnership = false)]
         private void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
         {
+            var clientId = rpcParams.Receive.SenderClientId;
+            print(_gameSettings.GameMode);
+            print($"SPAWN ID: {clientId}");
             switch (_gameSettings.GameMode)
             {
                 case GameSettings.GameModes.Fps:
-                    FpsMode(skinIndex);
+                    FpsMode(clientId, skinIndex);
                     break;
                 case GameSettings.GameModes.Tps:
-                    TpsMode(skinIndex);
+                    TpsMode(clientId, skinIndex);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
-            OnPlayerSpawn?.Invoke(rpcParams.Receive.SenderClientId);
+            
+            OnPlayerSpawn?.Invoke(clientId);
         }
 
-        private void FpsMode(int skinIndex)
+        private void FpsMode(ulong clientId, int skinIndex)
         {
-            _playerSpawnerFPS.SpawnServerRpc(skinIndex);
+            _playerSpawnerFPS.SpawnServerRpc(clientId, skinIndex);
         }
 
-        private void TpsMode(int skinIndex)
+        private void TpsMode(ulong clientId, int skinIndex)
         {
+            _playerSpawnerTPS.SpawnServerRpc(clientId, skinIndex);
         }
 
         public void Despawn(ulong killedId, ulong killerId)
@@ -82,10 +91,27 @@ namespace Game
             OnPlayerDeath?.Invoke(killedId, killerId);
         }
 
-        private void OnNextRound()
+        [ServerRpc(RequireOwnership = false)]
+        private void OnNextRoundServerRpc(ServerRpcParams rpcParams = default)
         {
             print("NEXT ROUND");
-            _playerSpawnerFPS.OnNextRound();
+            switch (_gameSettings.GameMode)
+            {
+                case GameSettings.GameModes.Fps:
+                    _playerSpawnerFPS.OnNextRound(rpcParams.Receive.SenderClientId);
+                    break;
+                case GameSettings.GameModes.Tps:
+                    _playerSpawnerTPS.OnNextRound(rpcParams.Receive.SenderClientId);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            _roundManager.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
+            base.OnDestroy();
         }
     }
 }

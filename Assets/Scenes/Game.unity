@@ -902,6 +902,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 430c45f26b8a41d894c93ef7771a9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dynamicParent: {fileID: 1380124789}
+  mapPreset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
 --- !u!1 &1759630176
 GameObject:
   m_ObjectHideFlags: 0
