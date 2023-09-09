@@ -5,62 +5,56 @@ using UnityEngine;
 
 namespace Player
 {
-    public class PlayerBlockController : NetworkBehaviour
+    public abstract class PlayerBlockController : NetworkBehaviour
     {
         public event Action<int> OnDigAmountChanged;
-        [SerializeField] private new Transform camera;
-        [SerializeField] private int distance;
+        [SerializeField] protected int distance;
         [SerializeField] private int digAmount;
         private NetworkVariable<int> _currentDigAmount;
         private PlayerInput _playerInput;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             _currentDigAmount = new NetworkVariable<int>(digAmount);
             _currentDigAmount.OnValueChanged += DigAmountChanged;
             _playerInput = GetComponent<PlayerInput>();
         }
 
-        private void Start() => OnDigAmountChanged?.Invoke(_currentDigAmount.Value);
-
-        private void DigAmountChanged(int _, int amount) => OnDigAmountChanged?.Invoke(amount);
-
+        protected virtual void Start() => OnDigAmountChanged?.Invoke(CurrentDigAmount);
+        
         public void OnDestroyBlock()
         {
             if (!IsOwner) return;
             if (!_playerInput.InputEnabled) return;
             Raycast();
         }
-
-        private void Raycast()
-        {
-            Ray ray = new Ray(camera.position, camera.forward);
-            if (Physics.Raycast(ray, out var hit, distance))
-            {
-                if (hit.transform.TryGetComponent(out Destructable destructable))
-                {
-                    DestroyBlockServerRpc(destructable.gameObject);
-                }
-            }
-        }
-
         [ServerRpc]
-        private void DestroyBlockServerRpc(NetworkObjectReference destructableRef)
+        protected void DestroyBlockServerRpc(NetworkObjectReference destructableRef)
         {
-            if (_currentDigAmount.Value > 0)
+            if (CurrentDigAmount > 0)
             {
                 if (destructableRef.TryGet(out NetworkObject networkObject))
                 {
                     if (networkObject.TryGetComponent(out Destructable destructable))
                     {
                         destructable.SpawnDropServerRpc();
-                        _currentDigAmount.Value--;
+                        DecreaseDigAmountServerRpc(1);
                     }
                 }
             }
         }
+        
+
+        protected abstract void Raycast();
+
+        private void DigAmountChanged(int _, int amount) => OnDigAmountChanged?.Invoke(amount);
+
+        protected int CurrentDigAmount => _currentDigAmount.Value;
 
         [ServerRpc(RequireOwnership = false)]
-        public void IncreaseDigServerRpc(int amount) => _currentDigAmount.Value += amount;
+        public void IncreaseDigAmountServerRpc(int amount) => _currentDigAmount.Value += amount;
+
+        [ServerRpc(RequireOwnership = false)]
+        protected void DecreaseDigAmountServerRpc(int amount) => _currentDigAmount.Value -= amount;
     }
 }

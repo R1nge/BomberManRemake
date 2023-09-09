@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 
 namespace Player
 {
@@ -23,7 +22,7 @@ namespace Player
 
         public void BombPowerup(int amount) => _playerBombController.IncreaseBombAmountServerRpc(amount);
 
-        public void DigPowerup(int amount) => _playerBlockController.IncreaseDigServerRpc(amount);
+        public void DigPowerup(int amount) => _playerBlockController.IncreaseDigAmountServerRpc(amount);
 
         public void HealthPowerup(int amount) => _playerHealth.IncreaseHealthServerRpc(amount);
 
