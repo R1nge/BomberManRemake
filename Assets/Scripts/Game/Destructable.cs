@@ -22,7 +22,7 @@ namespace Game
         public void TakeDamage(int amount, ulong killerId) => SpawnDropServerRpc();
 
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnDropServerRpc()
+        public void SpawnDropServerRpc()
         {
             if (Random.value <= dropChance.Value)
             {
