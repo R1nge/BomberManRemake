@@ -324,6 +324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.25
+  maxSpeed: 0.5
   model: {fileID: 5703061949337133270}
   rotationSpeed: 360
 --- !u!114 &1341273683436794171

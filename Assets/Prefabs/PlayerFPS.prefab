@@ -226,6 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0.25
+  maxSpeed: 0.5
 --- !u!114 &7696640981703383369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,9 +373,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58e7e73c1a11406b9451cc92042ea897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camera: {fileID: 3036430308372400439}
   distance: 5
   digAmount: 1
+  camera: {fileID: 3036430308372400439}
 --- !u!114 &9168161277984895964
 MonoBehaviour:
   m_ObjectHideFlags: 0

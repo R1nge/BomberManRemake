@@ -46,7 +46,6 @@ namespace Game
         public void SpawnServerRpc(ulong clientId)
         {
             var skinIndex = _lobby.GetData(clientId).Value.SkinIndex;
-            print($"CLIENT ID {clientId} SKIN INDEX {_lobby.GetData(clientId).Value.SkinIndex} BOMB SKIN INDEX {_lobby.GetData(clientId).Value.BombSkinIndex}");
             var position = PickPosition();
             var player = _diContainer.InstantiatePrefab(_skinManager.Skins[skinIndex].PrefabFPS, position,
                 Quaternion.identity, null);

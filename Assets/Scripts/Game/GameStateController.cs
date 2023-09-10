@@ -71,8 +71,8 @@ namespace Game
         {
             if (!IsServer) return;
             if (!IsSpawned) return;
-            if (_gameStarted.Value) return;
             if (!_mapLoaded) return;
+            if (_gameStarted.Value) return;
             var delta = 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
             _time.Value -= delta;
         }

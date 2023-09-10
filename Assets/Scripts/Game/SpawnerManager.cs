@@ -93,18 +93,21 @@ namespace Game
         [ServerRpc(RequireOwnership = false)]
         private void OnNextRoundServerRpc(ServerRpcParams rpcParams = default)
         {
+            var clientId = rpcParams.Receive.SenderClientId;
             print("NEXT ROUND");
             switch (_gameSettings.GameMode)
             {
                 case GameSettings.GameModes.Fps:
-                    _playerSpawnerFPS.OnNextRound(rpcParams.Receive.SenderClientId);
+                    _playerSpawnerFPS.OnNextRound(clientId);
                     break;
                 case GameSettings.GameModes.Tps:
-                    _playerSpawnerTPS.OnNextRound(rpcParams.Receive.SenderClientId);
+                    _playerSpawnerTPS.OnNextRound(clientId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            
+            OnPlayerSpawn?.Invoke(clientId);
         }
 
         public override void OnDestroy()
