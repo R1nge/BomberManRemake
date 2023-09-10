@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Skins.Bombs;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
@@ -8,20 +9,26 @@ namespace Game
     {
         [SerializeField] private Transform dynamicParent;
         [SerializeField] private MapPreset preset;
-        [SerializeField] private GameObject bombPrefab;
         [SerializeField] private GameObject bombVfxPrefab;
         private DiContainer _diContainer;
+        private BombSkinManager _bombSkinManager;
+        private Lobby.Lobby _lobby;
 
         [Inject]
-        private void Inject(DiContainer diContainer)
+        private void Inject(DiContainer diContainer, BombSkinManager bombSkinManager, Lobby.Lobby lobby)
         {
             _diContainer = diContainer;
+            _bombSkinManager = bombSkinManager;
+            _lobby = lobby;
         }
 
         public Bomb SpawnBomb(Vector3 position, ulong ownerId)
         {
             position = GetNearestGridPosition(position);
-            var bomb = _diContainer.InstantiatePrefabForComponent<Bomb>(bombPrefab, position, Quaternion.identity, dynamicParent);
+            var prefabIndex = _lobby.GetData(ownerId).Value.BombSkinIndex;
+            var prefab = _bombSkinManager.Skins[prefabIndex].BombPrefab;
+            var bomb = _diContainer.InstantiatePrefabForComponent<Bomb>(prefab, position, Quaternion.identity,
+                dynamicParent);
             bomb.transform.parent = dynamicParent;
             bomb.GetComponent<NetworkObject>().SpawnWithOwnership(ownerId, true);
             bomb.transform.parent = dynamicParent;

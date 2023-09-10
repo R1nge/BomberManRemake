@@ -14,10 +14,7 @@ namespace Game
         private GameSettings _gameSettings;
 
         [Inject]
-        private void Inject(GameSettings gameSettings)
-        {
-            _gameSettings = gameSettings;
-        }
+        private void Inject(GameSettings gameSettings) => _gameSettings = gameSettings;
 
         private void Awake()
         {

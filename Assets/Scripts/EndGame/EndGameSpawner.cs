@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Skins;
+using Skins.Players;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;

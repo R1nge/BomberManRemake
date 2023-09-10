@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using Zenject;
 
-namespace Skins
+namespace Skins.Players
 {
     public class SkinsUI : MonoBehaviour
     {

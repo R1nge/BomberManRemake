@@ -91,6 +91,52 @@ MonoBehaviour:
   skins:
   - {fileID: 11400000, guid: 0f063bee6013dae42afe1704540742fd, type: 2}
   - {fileID: 11400000, guid: 7b1c2497c369b6342aeaca7ffe5fb21f, type: 2}
+--- !u!1 &5763661376050263919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4811089550485107981}
+  - component: {fileID: 424380315933563391}
+  m_Layer: 0
+  m_Name: BombSkinManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4811089550485107981
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763661376050263919}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3402186422404215337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &424380315933563391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763661376050263919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 546d0d976af54899a9e9daf34da75020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skins:
+  - {fileID: 11400000, guid: fcac627ce96d066449ea162de563e16f, type: 2}
 --- !u!1 &6407641279134021024
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,6 +169,7 @@ Transform:
   m_Children:
   - {fileID: 22948621047327803}
   - {fileID: 7944764809774821263}
+  - {fileID: 4811089550485107981}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3729344260908690869

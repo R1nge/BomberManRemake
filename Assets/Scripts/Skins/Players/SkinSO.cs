@@ -1,7 +1,7 @@
 ﻿using Unity.Netcode;
 using UnityEngine;
 
-namespace Skins
+namespace Skins.Players
 {
     [CreateAssetMenu(fileName = "Skin", menuName = "Skin")]
     public class SkinSo : ScriptableObject

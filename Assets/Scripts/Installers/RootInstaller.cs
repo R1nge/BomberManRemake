@@ -1,5 +1,7 @@
 ﻿using Game;
 using Skins;
+using Skins.Bombs;
+using Skins.Players;
 using Zenject;
 
 namespace Installers
@@ -10,6 +12,7 @@ namespace Installers
         {
             Container.Bind<GameSettings>().FromNew().AsSingle();
             Container.Bind<SkinManager>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<BombSkinManager>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

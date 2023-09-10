@@ -1,10 +1,9 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace Skins
+namespace Skins.Players
 {
     public class SkinSlot : MonoBehaviour
     {

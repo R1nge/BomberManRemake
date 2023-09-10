@@ -48,7 +48,7 @@
                     "id": "f67efb07-b78a-4924-8849-5d1ea0e40871",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "StickDeadzone",
                     "groups": "",
                     "action": "Move",
                     "isComposite": false,
@@ -122,6 +122,17 @@
                 },
                 {
                     "name": "",
+                    "id": "69c0732c-7e00-4eee-bc36-a857402a4e6b",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Bomb",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f4f2df13-d9eb-45d0-9b61-1933d16a08e6",
                     "path": "<Mouse>/delta",
                     "interactions": "",
@@ -134,7 +145,7 @@
                 {
                     "name": "",
                     "id": "5e90d3e5-e12e-4b63-978b-2d56a74858ae",
-                    "path": "<Gamepad>/leftStick",
+                    "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -146,6 +157,17 @@
                     "name": "",
                     "id": "b189aae1-3486-4074-bc94-bb0abf81d6ac",
                     "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DestroyBlock",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76a9a9d6-79c7-4add-87ef-04a6d4a6c1f8",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

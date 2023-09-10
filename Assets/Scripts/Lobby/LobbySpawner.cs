@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Skins;
+using Skins.Players;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
@@ -8,7 +9,6 @@ namespace Lobby
 {
     public class LobbySpawner : NetworkBehaviour
     {
-        [SerializeField] private PlayerModel playerModel;
         [SerializeField] private Transform[] positions;
         private List<PlayerModel> _playerModels;
         private int _lastIndex;
@@ -34,13 +34,13 @@ namespace Lobby
             _lobby.OnReadyStateChanged += ChangeReadyState;
             
             if(!IsServer) return;
-            SpawnPlayerSkinServerRpc(0, _skinManager.SkinIndex);
+            SpawnPlayerSkinServerRpc(0);
         }
 
         private void SpawnPlayer(ulong clientId)
         {
             if(IsServer) return;
-            SpawnPlayerSkinServerRpc(clientId, _skinManager.SkinIndex);
+            SpawnPlayerSkinServerRpc(clientId);
         }
 
         private void UpdateUIForClients(ulong clientId)
@@ -70,11 +70,12 @@ namespace Lobby
         
 
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnPlayerSkinServerRpc(ulong clientId, int skinIndex)
+        private void SpawnPlayerSkinServerRpc(ulong clientId)
         {
+            var data = _lobby.GetData(clientId);
             var model = _diContainer.InstantiatePrefabForComponent<PlayerModel>
             (
-                _skinManager.GetLobby(skinIndex),
+                _skinManager.GetLobby(data.Value.SkinIndex),
                 positions[_lastIndex].position,
                 Quaternion.identity,
                 null

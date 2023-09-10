@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Skins;
+using Skins.Players;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,20 +16,18 @@ namespace Game
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
         private RoundManager _roundManager;
-        private SkinManager _skinManager;
         private GameSettings _gameSettings;
 
         [Inject]
         private void Inject(
             RoundManager roundManager,
-            SkinManager skinManager,
+            Lobby.Lobby lobby,
             GameSettings gameSettings,
             PlayerSpawnerFPS playerSpawnerFPS,
             PlayerSpawnerTPS playerSpawnerTPS
         )
         {
             _roundManager = roundManager;
-            _skinManager = skinManager;
             _gameSettings = gameSettings;
             _playerSpawnerFPS = playerSpawnerFPS;
             _playerSpawnerTPS = playerSpawnerTPS;
@@ -50,12 +49,12 @@ namespace Game
         {
             if (sceneName == "Game")
             {
-                SpawnServerRpc(_skinManager.SkinIndex);
+                SpawnServerRpc();
             }
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
+        private void SpawnServerRpc(ServerRpcParams rpcParams = default)
         {
             var clientId = rpcParams.Receive.SenderClientId;
             print(_gameSettings.GameMode);
@@ -63,10 +62,10 @@ namespace Game
             switch (_gameSettings.GameMode)
             {
                 case GameSettings.GameModes.Fps:
-                    FpsMode(clientId, skinIndex);
+                    FpsMode(clientId);
                     break;
                 case GameSettings.GameModes.Tps:
-                    TpsMode(clientId, skinIndex);
+                    TpsMode(clientId);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -75,14 +74,14 @@ namespace Game
             OnPlayerSpawn?.Invoke(clientId);
         }
 
-        private void FpsMode(ulong clientId, int skinIndex)
+        private void FpsMode(ulong clientId)
         {
-            _playerSpawnerFPS.SpawnServerRpc(clientId, skinIndex);
+            _playerSpawnerFPS.SpawnServerRpc(clientId);
         }
 
-        private void TpsMode(ulong clientId, int skinIndex)
+        private void TpsMode(ulong clientId)
         {
-            _playerSpawnerTPS.SpawnServerRpc(clientId, skinIndex);
+            _playerSpawnerTPS.SpawnServerRpc(clientId);
         }
 
         public void Despawn(ulong killedId, ulong killerId)

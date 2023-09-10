@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Misc;
+using Skins.Bombs;
+using Skins.Players;
 using Unity.Netcode;
 using UnityEngine;
+using Zenject;
 
 namespace Lobby
 {
@@ -11,12 +14,12 @@ namespace Lobby
     {
         public event Action<ulong> OnPlayerConnected;
         public event Action<ulong> OnPlayerDisconnected;
-
         public event Action<ulong, bool> OnReadyStateChanged;
 
         //TODO: use a dictionary?
         private NetworkList<LobbyData> _players;
-
+        private BombSkinManager _bombSkinManager;
+        private SkinManager _skinManager;
         public NetworkList<LobbyData> PlayerData => _players;
 
         public LobbyData? GetData(ulong clientId)
@@ -60,7 +63,9 @@ namespace Lobby
                         ClientId = _players[i].ClientId,
                         IsReady = true,
                         NickName = _players[i].NickName,
-                        Points = _players[i].Points + amount
+                        Points = _players[i].Points + amount,
+                        SkinIndex = _players[i].SkinIndex,
+                        BombSkinIndex = _players[i].BombSkinIndex
                     };
                     break;
                 }
@@ -101,6 +106,13 @@ namespace Lobby
             return 99999;
         }
 
+        [Inject]
+        private void Inject(SkinManager skinManager, BombSkinManager bombSkinManager)
+        {
+            _skinManager = skinManager;
+            _bombSkinManager = bombSkinManager;
+        }
+
         private void Awake()
         {
             _players = new NetworkList<LobbyData>();
@@ -139,14 +151,17 @@ namespace Lobby
 
         private void CreatePlayerData(ulong clientId)
         {
-            CreatePlayerDataServerRpc(clientId, PlayerPrefs.GetString("Nick"));
+            CreatePlayerDataServerRpc(clientId, PlayerPrefs.GetString("Nick"), _skinManager.SkinIndex,
+                _bombSkinManager.SkinIndex);
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void CreatePlayerDataServerRpc(ulong clientId, NetworkString nick)
+        private void CreatePlayerDataServerRpc(ulong clientId, NetworkString nick, int skinIndex, int bombSkinIndex)
         {
-            var data = new LobbyData(nick, clientId, false, 0);
+            var data = new LobbyData(nick, clientId, false, 0, skinIndex, bombSkinIndex);
             _players.Add(data);
+            print($"Skin index: {data.SkinIndex}");
+            print($"Bomb skin index: {data.BombSkinIndex}");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -160,7 +175,10 @@ namespace Lobby
                     {
                         NickName = _players[i].NickName,
                         ClientId = clientId,
-                        IsReady = !_players[i].IsReady
+                        IsReady = !_players[i].IsReady,
+                        BombSkinIndex = _players[i].BombSkinIndex,
+                        Points = _players[i].Points,
+                        SkinIndex = _players[i].SkinIndex
                     };
 
                     var isReady = _players[i].IsReady;

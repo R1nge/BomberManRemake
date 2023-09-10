@@ -9,7 +9,6 @@ namespace Player
         private PlayerHealth _playerHealth;
         private PlayerShield _playerShield;
         private PlayerMovement _playerMovement;
-        private PlayerMovementTPS _playerMovementTps;
 
         private void Awake()
         {
