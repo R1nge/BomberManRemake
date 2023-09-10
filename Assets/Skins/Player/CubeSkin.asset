@@ -16,5 +16,5 @@ MonoBehaviour:
   icon: {fileID: 0}
   lobbyPrefab: {fileID: 7233579225417388356, guid: 61cbbec3005a4c24b89d16ef4274024c, type: 3}
   prefabFPS: {fileID: 1414254978110925564, guid: 92616f1198f18e140999fbe9ceb63045, type: 3}
-  prefabTPS: {fileID: 0}
+  prefabTPS: {fileID: 3395053404095204142, guid: 323eac217803e3741ad2ddaba85ed1ae, type: 3}
   endGamePrefab: {fileID: 9203899959888104501, guid: 0803f15d90b62c84ea27188842ef7d17, type: 3}
