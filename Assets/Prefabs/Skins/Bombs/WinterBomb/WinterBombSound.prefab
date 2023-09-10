@@ -10,8 +10,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2288232626224301694, guid: 4094c8172237387458e0eb51120da03a, type: 3}
       propertyPath: m_Name
-      value: BombSound
+      value: WinterBombSound
       objectReference: {fileID: 0}
+    - target: {fileID: 2695712053080644081, guid: 4094c8172237387458e0eb51120da03a, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7409069834433853932, guid: 4094c8172237387458e0eb51120da03a, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 7de5c0e109a649245b1d7cee8334a53e, type: 3}
     - target: {fileID: 8317925850738019448, guid: 4094c8172237387458e0eb51120da03a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

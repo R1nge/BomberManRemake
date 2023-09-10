@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 951099334
       objectReference: {fileID: 0}
+    - target: {fileID: 5858353450751173510, guid: 3ab228f41c1ec7c40b7b053d261f4019, type: 3}
+      propertyPath: soundPrefab
+      value: 
+      objectReference: {fileID: 1968784159638087779, guid: 499bf1cbdcff9f042979d8d1a64074e5, type: 3}
     - target: {fileID: 9137484594531491362, guid: 3ab228f41c1ec7c40b7b053d261f4019, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

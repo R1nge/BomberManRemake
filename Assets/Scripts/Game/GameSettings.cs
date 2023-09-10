@@ -26,6 +26,15 @@ namespace Game
 
         public void SetGameMode(GameModes gameMode) => _gameMode = gameMode;
 
+        public void ResetSettings()
+        {
+            _mapWidth = 15;
+            _mapLength = 15;
+            _dropChance = .5f;
+            _roundsAmount = 1;
+            _gameMode = 0;
+        }
+
         public enum GameModes
         {
             Fps,
