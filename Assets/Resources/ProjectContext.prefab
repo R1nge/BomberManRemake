@@ -137,6 +137,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skins:
   - {fileID: 11400000, guid: fcac627ce96d066449ea162de563e16f, type: 2}
+  - {fileID: 11400000, guid: 6e4d9966426ddcc4ea0960a6f9542033, type: 2}
 --- !u!1 &6407641279134021024
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5f7c4d5f805476aaefdb8524973ee61, type: 3}
-  m_Name: DefaultBomb
+  m_Name: WinterBomb
   m_EditorClassIdentifier: 
-  title: Default
+  title: Winter Bomb
   icon: {fileID: 0}
-  bombPrefab: {fileID: 4398490746681769551, guid: 3ab228f41c1ec7c40b7b053d261f4019, type: 3}
+  bombPrefab: {fileID: 5662250526904331336, guid: b7689bb41723e2f499b0b827c6510bc7, type: 3}
