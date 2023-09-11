@@ -1,15 +1,20 @@
-﻿using Skins;
+﻿using System;
+using System.Collections.Generic;
+using Skins;
 using Skins.Players;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
     public class PlayerSpawnerTPS : NetworkBehaviour
     {
+        private event Action<ulong, int> OnPositionsInit;
         [SerializeField] private Transform dynamicParent;
         [SerializeField] private MapPreset mapPreset;
+        private readonly List<Vector3> _positions = new();
         private bool _leftTop, _rightTop, _rightBottom, _leftBottom;
         private DiContainer _diContainer;
         private GameSettings _gameSettings;
@@ -24,107 +29,36 @@ namespace Game
             _lobby = lobby;
             _skinManager = skinManager;
         }
+        
+        private void Awake() => OnPositionsInit += OnOnPositionsInit;
 
-        public void OnNextRound(ulong clientId)
+        public void OnNextRound(ulong clientId, int index) => InitPositions(clientId, index);
+        
+        private void OnOnPositionsInit(ulong clientId, int index) => Spawn(clientId, index);
+
+        public void InitPositions(ulong clientId, int index)
         {
-            if (IsServer)
-            {
-                _leftTop = false;
-                _rightTop = false;
-                _rightBottom = false;
-                _leftBottom = false;
-            }
+            _positions.Clear();
+            _positions.Add(new Vector3(0, 0, 0));
+            _positions.Add(new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0, 0));
+            _positions.Add(new Vector3(0, 0, (_gameSettings.MapLength - 1) * mapPreset.Size));
+            _positions.Add(new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0,
+                (_gameSettings.MapLength - 1) * mapPreset.Size));
 
-            SpawnServerRpc(clientId);
+            OnPositionsInit?.Invoke(clientId, index);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void SpawnServerRpc(ulong clientId)
+        private void Spawn(ulong clientId, int index)
         {
             var skinIndex = _lobby.GetData(clientId).Value.SkinIndex;
-            var position = PickPosition();
-            var player = _diContainer.InstantiatePrefab(_skinManager.GetSkinTPS(skinIndex), position,
+            print($"SKIN INDEX: {skinIndex}");
+            var position = _positions[index];
+            var player = _diContainer.InstantiatePrefab(_skinManager.Skins[skinIndex].PrefabTPS, position,
                 Quaternion.identity, null);
             player.transform.parent = dynamicParent;
             player.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
             player.transform.position = position;
             player.transform.parent = dynamicParent;
-        }
-
-        private Vector3 PickPosition()
-        {
-            var position = Random.Range(0, 4);
-
-            if (position == 0)
-            {
-                return LeftBottomCorner();
-            }
-
-            if (position == 1)
-            {
-                return LeftTopCorner();
-            }
-
-            if (position == 2)
-            {
-                return RightTopCorner();
-            }
-
-            if (position == 3)
-            {
-                return RightBottomCorner();
-            }
-
-            return PickPosition();
-        }
-
-        private Vector3 LeftTopCorner()
-        {
-            if (!_leftTop)
-            {
-                _leftTop = true;
-                print("Left Top");
-                return new Vector3(0, 0, (_gameSettings.MapLength - 1) * mapPreset.Size);
-            }
-
-            return PickPosition();
-        }
-
-        private Vector3 RightTopCorner()
-        {
-            if (!_rightTop)
-            {
-                _rightTop = true;
-                print("Right Top");
-                return new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0,
-                    (_gameSettings.MapLength - 1) * mapPreset.Size);
-            }
-
-            return PickPosition();
-        }
-
-        private Vector3 RightBottomCorner()
-        {
-            if (!_rightBottom)
-            {
-                _rightBottom = true;
-                print("Right Bottom");
-                return new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0, 0);
-            }
-
-            return PickPosition();
-        }
-
-        private Vector3 LeftBottomCorner()
-        {
-            if (!_leftBottom)
-            {
-                _leftBottom = true;
-                print("Left Bottom");
-                return new Vector3(0, 0, 0);
-            }
-
-            return PickPosition();
         }
     }
 }

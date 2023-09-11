@@ -30,7 +30,8 @@ namespace Player
 
         private void OnTick()
         {
-            if (!IsOwner || !_playerInput.InputEnabled) return;
+            if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
             Rotate();
             _characterController.Move(_moveDirection);

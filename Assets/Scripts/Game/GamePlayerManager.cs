@@ -35,14 +35,12 @@ namespace Game
         private void IncreaseServerRpc(ulong clientId)
         {
             _playersAlive++;
-            print($"Players alive: {_playersAlive}");
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void DecreaseServerRpc(ulong killedId, ulong killerId)
         {
             _playersAlive--;
-            print($"REMOVED: Players alive: {_playersAlive}");
             if (_playersAlive <= 1)
             {
                 _gameStateController.EndGame();

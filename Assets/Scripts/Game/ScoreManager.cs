@@ -29,31 +29,20 @@ namespace Game
         [ServerRpc(RequireOwnership = false)]
         private void AddKillScoreServerRpc(ulong killedId, ulong killerId)
         {
+            _lastPlayerId = killerId;
+            
             if (killedId == killerId)
             {
                 return;
             }
-            
+
             _lobby.AddPoints(killerId, killScore);
-            _lastPlayerId = killerId;
-            
-            for (int i = 0; i < _lobby.PlayerData.Count; i++)
-            {
-                var player = _lobby.PlayerData[i];
-                print($"Player: {player.NickName} Points: {player.Points}");
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void AddWinScoreServerRpc()
         {
             _lobby.AddPoints(_lastPlayerId, winScore);
-
-            for (int i = 0; i < _lobby.PlayerData.Count; i++)
-            {
-                var player = _lobby.PlayerData[i];
-                print($"Player: {player.NickName} Points: {player.Points}");
-            }
         }
 
         public override void OnDestroy()

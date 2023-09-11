@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Skins;
-using Skins.Players;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -17,6 +14,7 @@ namespace Game
         private PlayerSpawnerTPS _playerSpawnerTPS;
         private RoundManager _roundManager;
         private GameSettings _gameSettings;
+        private Lobby.Lobby _lobby;
 
         [Inject]
         private void Inject(
@@ -28,6 +26,7 @@ namespace Game
         )
         {
             _roundManager = roundManager;
+            _lobby = lobby;
             _gameSettings = gameSettings;
             _playerSpawnerFPS = playerSpawnerFPS;
             _playerSpawnerTPS = playerSpawnerTPS;
@@ -41,47 +40,47 @@ namespace Game
 
         private void RoundManagerOnOnLoadNextRound()
         {
-            OnNextRoundServerRpc();
+            if (!IsServer) return;
+            OnNextRound();
         }
 
-        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> __,
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loadedClients,
             List<ulong> ___)
         {
-            if (sceneName == "Game")
+            if (!IsServer) return;
+            if (sceneName != "Game") return;
+            Spawn();
+        }
+
+        private void Spawn()
+        {
+            for (int index = 0; index < _lobby.PlayerData.Count; index++)
             {
-                SpawnServerRpc();
+                var clientId = _lobby.PlayerData[index].ClientId;
+                switch (_gameSettings.GameMode)
+                {
+                    case GameSettings.GameModes.Fps:
+                        FpsMode(clientId, index);
+                        break;
+                    case GameSettings.GameModes.Tps:
+                        TpsMode(clientId, index);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                OnPlayerSpawn?.Invoke(clientId);
             }
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void SpawnServerRpc(ServerRpcParams rpcParams = default)
+        private void FpsMode(ulong clientId, int index)
         {
-            var clientId = rpcParams.Receive.SenderClientId;
-            print(_gameSettings.GameMode);
-            print($"SPAWN ID: {clientId}");
-            switch (_gameSettings.GameMode)
-            {
-                case GameSettings.GameModes.Fps:
-                    FpsMode(clientId);
-                    break;
-                case GameSettings.GameModes.Tps:
-                    TpsMode(clientId);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            OnPlayerSpawn?.Invoke(clientId);
+            _playerSpawnerFPS.InitPositions(clientId, index);
         }
 
-        private void FpsMode(ulong clientId)
+        private void TpsMode(ulong clientId, int index)
         {
-            _playerSpawnerFPS.SpawnServerRpc(clientId);
-        }
-
-        private void TpsMode(ulong clientId)
-        {
-            _playerSpawnerTPS.SpawnServerRpc(clientId);
+            _playerSpawnerTPS.InitPositions(clientId, index);
         }
 
         public void Despawn(ulong killedId, ulong killerId)
@@ -90,24 +89,25 @@ namespace Game
             OnPlayerDeath?.Invoke(killedId, killerId);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void OnNextRoundServerRpc(ServerRpcParams rpcParams = default)
+        private void OnNextRound()
         {
-            var clientId = rpcParams.Receive.SenderClientId;
-            print("NEXT ROUND");
-            switch (_gameSettings.GameMode)
+            for (int index = 0; index < _lobby.PlayerData.Count; index++)
             {
-                case GameSettings.GameModes.Fps:
-                    _playerSpawnerFPS.OnNextRound(clientId);
-                    break;
-                case GameSettings.GameModes.Tps:
-                    _playerSpawnerTPS.OnNextRound(clientId);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                var clientId = _lobby.PlayerData[index].ClientId;
+                switch (_gameSettings.GameMode)
+                {
+                    case GameSettings.GameModes.Fps:
+                        _playerSpawnerFPS.OnNextRound(clientId, index);
+                        break;
+                    case GameSettings.GameModes.Tps:
+                        _playerSpawnerTPS.OnNextRound(clientId, index);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                OnPlayerSpawn?.Invoke(clientId);
             }
-            
-            OnPlayerSpawn?.Invoke(clientId);
         }
 
         public override void OnDestroy()

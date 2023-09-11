@@ -22,6 +22,7 @@ namespace Player
         private void OnTick()
         {
             if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
             var direction = forward * _speedX + right * _speedZ;
@@ -35,9 +36,7 @@ namespace Player
             _speedX = value.Get<Vector2>().y * CurrentSpeed;
             _speedZ = value.Get<Vector2>().x * CurrentSpeed;
         }
-
         
-
         public override void OnDestroy()
         {
             if (!NetworkManager.Singleton) return;
