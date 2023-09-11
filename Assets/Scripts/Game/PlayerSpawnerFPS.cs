@@ -56,6 +56,12 @@ namespace Game
             player.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
             player.transform.position = position;
             player.transform.parent = dynamicParent;
+            
+            if (index is 2 or 3)
+            {
+                player.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+            }
+            
             player.transform.position = position;
         }
 

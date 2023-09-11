@@ -156,6 +156,7 @@ MonoBehaviour:
   dynamicParent: {fileID: 1841619512}
   presets:
   - {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
+  - {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
 --- !u!4 &133205623
 Transform:
   m_ObjectHideFlags: 0
@@ -1111,7 +1112,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dynamicParent: {fileID: 1841619512}
   preset: {fileID: 11400000, guid: c13f3afc2d749954fb905e9b16dd6bc1, type: 2}
-  bombPrefab: {fileID: 2922624213556991965, guid: 3ab228f41c1ec7c40b7b053d261f4019, type: 3}
   bombVfxPrefab: {fileID: 541015904105868133, guid: 114376cfadcca8c449a613b588213ce7, type: 3}
 --- !u!1 &1877697433
 GameObject:

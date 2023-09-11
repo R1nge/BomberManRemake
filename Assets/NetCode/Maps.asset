@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e651dbb3fbac04af2b8f5abf007ddc23, type: 3}
-  m_Name: Other
+  m_Name: Maps
   m_EditorClassIdentifier: 
   IsDefault: 0
   List:
   - Override: 0
-    Prefab: {fileID: 8406847496772435377, guid: 661fbeb2341b9f542941ec9b0987f1ed, type: 3}
+    Prefab: {fileID: 1596841220350852719, guid: 9743c88217ca5f141a23c225b76e1af4, type: 3}
     SourcePrefabToOverride: {fileID: 0}
     SourceHashToOverride: 0
     OverridingTargetPrefab: {fileID: 0}
   - Override: 0
-    Prefab: {fileID: 4105412746467170127, guid: 4b42285e19127ea4d9263f7d151ebfed, type: 3}
+    Prefab: {fileID: 6634781913677902510, guid: 232690b6c0a9b9b47841a55d44fb08b9, type: 3}
     SourcePrefabToOverride: {fileID: 0}
     SourceHashToOverride: 0
     OverridingTargetPrefab: {fileID: 0}
   - Override: 0
-    Prefab: {fileID: 1004497812884109926, guid: a659c08fb4357b84b856407b15d29d8d, type: 3}
+    Prefab: {fileID: 8083657641590077007, guid: 0f0dd9c5da191c44883bc132053a7758, type: 3}
     SourcePrefabToOverride: {fileID: 0}
     SourceHashToOverride: 0
     OverridingTargetPrefab: {fileID: 0}
   - Override: 0
-    Prefab: {fileID: 2809040748181621932, guid: 0cb59d5e645fa9a44b3ec256f34b7140, type: 3}
+    Prefab: {fileID: 1596841220350852719, guid: a367ee82dbf543847af6fcca63d3879c, type: 3}
     SourcePrefabToOverride: {fileID: 0}
     SourceHashToOverride: 0
     OverridingTargetPrefab: {fileID: 0}

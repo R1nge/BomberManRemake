@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Player;
 using Skins;
 using Skins.Players;
 using Unity.Netcode;
@@ -58,6 +59,13 @@ namespace Game
             player.transform.parent = dynamicParent;
             player.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
             player.transform.position = position;
+
+            if (index is 2 or 3)
+            {
+                player.transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+                player.GetComponent<PlayerMovementTPS>().SetFlippedClientRpc(true);
+            }
+            
             player.transform.parent = dynamicParent;
         }
     }

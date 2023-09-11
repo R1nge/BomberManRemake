@@ -10,6 +10,7 @@ namespace Player
         [SerializeField] private float rotationSpeed;
         private Vector3 _moveDirection = Vector3.zero;
         private float _curSpeedX, _curSpeedY;
+        private bool _isFlipped;
         private CharacterController _characterController;
         private PlayerInput _playerInput;
 
@@ -21,11 +22,22 @@ namespace Player
             _playerInput = GetComponent<PlayerInput>();
         }
 
+        [ClientRpc]
+        public void SetFlippedClientRpc(bool isFlipped) => _isFlipped = isFlipped;
+
         public void OnMove(InputValue value)
         {
             if (!_playerInput.InputEnabled) return;
-            _curSpeedX = value.Get<Vector2>().y * CurrentSpeed;
-            _curSpeedY = value.Get<Vector2>().x * CurrentSpeed;
+            if (_isFlipped)
+            {
+                _curSpeedX = -value.Get<Vector2>().y * CurrentSpeed;
+                _curSpeedY = -value.Get<Vector2>().x * CurrentSpeed;
+            }
+            else
+            {
+                _curSpeedX = value.Get<Vector2>().y * CurrentSpeed;
+                _curSpeedY = value.Get<Vector2>().x * CurrentSpeed;
+            }
         }
 
         private void OnTick()
