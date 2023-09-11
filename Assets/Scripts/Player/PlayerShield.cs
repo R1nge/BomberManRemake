@@ -18,6 +18,15 @@ namespace Player
         {
             _isActive = new NetworkVariable<bool>();
             _duration = new NetworkVariable<float>(duration);
+            _duration.OnValueChanged += OnDurationChanged;
+        }
+
+        private void OnDurationChanged(float _, float durationLeft)
+        {
+            if (durationLeft <= 0)
+            {
+                TurnOffServerRpc();
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -42,6 +51,7 @@ namespace Player
         {
             if (!_isActive.Value) return;
             _isActive.Value = false;
+            _duration.Value = duration;
             TurnOffClientRpc();
         }
 
@@ -57,10 +67,6 @@ namespace Player
             {
                 yield return new WaitForSeconds(1);
                 _duration.Value -= 1;
-                if (_duration.Value <= 0)
-                {
-                    TurnOffServerRpc();
-                }
             }
         }
     }

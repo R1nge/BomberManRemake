@@ -57,7 +57,7 @@ namespace Game
             {
                 for (int z = 0; z < _gameSettings.MapLength; z++)
                 {
-                    Spawn(_selected.Floor, x * _selected.Size, z * _selected.Size);
+                    Spawn(_selected.Floor, x * _selected.Size, z * _selected.Size, Quaternion.identity);
                 }
             }
         }
@@ -68,6 +68,36 @@ namespace Game
             {
                 for (int z = -1; z < _gameSettings.MapLength + 1; z++)
                 {
+                    Quaternion cornerRotation;
+                    
+                    if (LeftBottomCorner(x, z))
+                    {
+                        cornerRotation = Quaternion.Euler(_selected.LeftBottomCornerRotation);
+                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        continue;
+                    }
+                    
+                    if (LeftTopCorner(x, z))
+                    {
+                        cornerRotation = Quaternion.Euler(_selected.LeftTopCornerRotation);
+                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        continue;
+                    }
+                    
+                    if (RightBottomCorner(x, z))
+                    {
+                        cornerRotation = Quaternion.Euler(-_selected.LeftBottomCornerRotation);
+                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        continue;
+                    }
+                    
+                    if (RightTopCorner(x, z))
+                    {
+                        cornerRotation = Quaternion.Euler(-_selected.LeftTopCornerRotation);
+                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        continue;
+                    }
+
                     SpawnLeftBorder(x, z);
                     SpawnRightBorder(x, z);
                     SpawnTopBorder(x, z);
@@ -76,11 +106,31 @@ namespace Game
             }
         }
 
+        private bool LeftBottomCorner(int x, int z)
+        {
+            return x == -1 && z == -1;
+        }
+
+        private bool LeftTopCorner(int x, int z)
+        {
+            return x == -1 && z == _gameSettings.MapLength;
+        }
+
+        private bool RightBottomCorner(int x, int z)
+        {
+            return x == _gameSettings.MapWidth && z == -1;
+        }
+
+        private bool RightTopCorner(int x, int z)
+        {
+            return x == _gameSettings.MapWidth && z == _gameSettings.MapLength;
+        }
+
         private void SpawnLeftBorder(int x, int z)
         {
             if (x == _gameSettings.MapWidth && z < _gameSettings.MapLength + 1)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(_selected.LeftBorderRotation));
             }
         }
 
@@ -88,7 +138,7 @@ namespace Game
         {
             if (x == -1 && z < _gameSettings.MapLength + 1)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(-_selected.LeftBorderRotation));
             }
         }
 
@@ -96,7 +146,7 @@ namespace Game
         {
             if (x < _gameSettings.MapWidth + 1 && z == _gameSettings.MapLength)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(_selected.TopBorderRotation));
             }
         }
 
@@ -104,7 +154,7 @@ namespace Game
         {
             if (x < _gameSettings.MapWidth + 1 && z == -1)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size);
+                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(_selected.BottomBorderRotation));
             }
         }
 
@@ -118,7 +168,7 @@ namespace Game
                     {
                         if (IsCenter(x, z)) continue;
 
-                        Spawn(_selected.Wall, x * _selected.Size, z * _selected.Size);
+                        Spawn(_selected.Wall, x * _selected.Size, z * _selected.Size, Quaternion.identity);
                     }
                 }
             }
@@ -146,7 +196,7 @@ namespace Game
 
                     if (IsCenter(x, z)) continue;
 
-                    Spawn(_selected.Destructable, x * _selected.Size, z * _selected.Size);
+                    Spawn(_selected.Destructable, x * _selected.Size, z * _selected.Size, Quaternion.identity);
                 }
             }
         }
@@ -187,9 +237,9 @@ namespace Game
 
         private bool IsCenter(int x, int z) => x == _gameSettings.MapWidth / 2 && z == _gameSettings.MapLength / 2;
 
-        private void Spawn(GameObject go, int x, int z)
+        private void Spawn(GameObject go, int x, int z, Quaternion rotation)
         {
-            var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), Quaternion.identity, dynamicParent);
+            var instance = _diContainer.InstantiatePrefab(go, new Vector3(x, 0, z), rotation, dynamicParent);
             instance.GetComponent<NetworkObject>().Spawn(true);
             instance.transform.parent = dynamicParent;
         }

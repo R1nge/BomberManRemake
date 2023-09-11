@@ -16,6 +16,7 @@ MonoBehaviour:
   floor: {fileID: 8083657641590077007, guid: 0f0dd9c5da191c44883bc132053a7758, type: 3}
   destructable: {fileID: 6634781913677902510, guid: 232690b6c0a9b9b47841a55d44fb08b9, type: 3}
   wall: {fileID: 1596841220350852719, guid: a367ee82dbf543847af6fcca63d3879c, type: 3}
+  corner: {fileID: 3177934936578468323, guid: ce815b4a7aa65d04796bb172f65f8acc, type: 3}
   drops:
   - {fileID: 2865074018043587239, guid: c8d92c1eb8372b948bf88bc1ab0457e1, type: 3}
   - {fileID: 3563662994330632757, guid: 7cf9e93be35250445916dae175c6b01c, type: 3}

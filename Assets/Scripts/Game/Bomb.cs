@@ -66,14 +66,10 @@ namespace Game
                         amount += 1;
                         DoDamageServerRpc(net, DAMAGE);
                     }
-
-                    SpawnExplosionVfx(dir, amount);
                 }
             }
-            else
-            {
-                SpawnExplosionVfx(dir, amount);
-            }
+            
+            SpawnExplosionVfx(dir, amount);
         }
 
         private void SpawnExplosionVfx(Vector3 dir, int amount)
