@@ -26,24 +26,8 @@ namespace Player
         private void Awake()
         {
             _currentHealth = new NetworkVariable<int>(startHealth);
-            _currentHealth.OnValueChanged += OnValueChanged;
             _playerShield = GetComponent<PlayerShield>();
         }
-
-        private void OnValueChanged(int _, int health)
-        {
-            OnDamageTaken?.Invoke(_currentHealth.Value);
-            if (_currentHealth.Value == 0)
-            {
-                OnDeath?.Invoke();
-                if (IsServer)
-                {
-                    _spawnerManager.Despawn(NetworkObject.OwnerClientId, _killerId);
-                    NetworkObject.Despawn(true);
-                }
-            }
-        }
-
         private void Start() => OnInit?.Invoke(_currentHealth.Value);
 
         public void TakeDamage(int amount, ulong killerId)
@@ -56,6 +40,17 @@ namespace Player
 
             _killerId = killerId;
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
+            
+            OnDamageTaken?.Invoke(_currentHealth.Value);
+            if (_currentHealth.Value == 0)
+            {
+                OnDeath?.Invoke();
+                if (IsServer)
+                {
+                    _spawnerManager.Despawn(NetworkObject.OwnerClientId, _killerId);
+                    NetworkObject.Despawn(true);
+                }
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]

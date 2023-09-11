@@ -31,7 +31,8 @@ namespace Game
             _gameStateController.OnRoundEnded += OnRoundEnded;
         }
 
-        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loaded, List<ulong> ___)
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loaded,
+            List<ulong> ___)
         {
             if (!IsServer) return;
             if (sceneName != "Game") return;

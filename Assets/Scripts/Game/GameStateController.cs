@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -92,6 +93,12 @@ namespace Game
                 return;
             }
 
+            StartCoroutine(Wait());
+        }
+
+        private IEnumerator Wait()
+        {
+            yield return new WaitForSeconds(1f);
             _gameEnded.Value = true;
             EndGameClientRpc();
         }

@@ -10,7 +10,7 @@ namespace Game
         private SpawnerManager _spawnerManager;
         private Lobby.Lobby _lobby;
         private RoundManager _roundManager;
-        private ulong _lastPlayerId;
+        private NetworkVariable<ulong> _lastPlayerId;
 
         [Inject]
         private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, RoundManager roundManager)
@@ -22,33 +22,37 @@ namespace Game
 
         private void Awake()
         {
+            _lastPlayerId = new NetworkVariable<ulong>();
             _spawnerManager.OnPlayerDeath += AddKillScoreServerRpc;
-            _roundManager.OnCleanUpBeforeEnd += AddWinScoreServerRpc;
+            _roundManager.OnCleanUpBeforeEnd += AddWinScore;
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void AddKillScoreServerRpc(ulong killedId, ulong killerId)
         {
-            _lastPlayerId = killerId;
-            
+            _lastPlayerId.Value = killerId;
+
             if (killedId == killerId)
             {
                 return;
             }
 
             _lobby.AddPoints(killerId, killScore);
+
+            Debug.LogError($"ADD KILL POINTS TO {killerId}");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void AddWinScoreServerRpc()
+        private void AddWinScore()
         {
-            _lobby.AddPoints(_lastPlayerId, winScore);
+            if (!IsServer) return;
+            _lobby.AddPoints(_lastPlayerId.Value, winScore);
+            Debug.LogError($"ADD WIN POINTS TO {_lastPlayerId.Value}");
         }
 
         public override void OnDestroy()
         {
             _spawnerManager.OnPlayerDeath -= AddKillScoreServerRpc;
-            _roundManager.OnCleanUpBeforeEnd -= AddWinScoreServerRpc;
+            _roundManager.OnCleanUpBeforeEnd -= AddWinScore;
         }
     }
 }
