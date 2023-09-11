@@ -6,6 +6,7 @@ namespace Game
     [CreateAssetMenu(fileName = "MapPreset", menuName = "Map preset")]
     public class MapPreset : ScriptableObject
     {
+        //TODO: add skyboxies
         [SerializeField] private GameObject border, floor, destructable, wall;
         [SerializeField] private Powerup[] drops;
         [SerializeField] private int size;

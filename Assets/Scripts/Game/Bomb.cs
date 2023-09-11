@@ -45,7 +45,7 @@ namespace Game
             Raycast(position, Vector3.left, CASTDISTANCE, SPHERECASTRADIUS);
             Raycast(position, Vector3.right, CASTDISTANCE, SPHERECASTRADIUS);
             DoDamageInside();
-            
+
             OnExplosion?.Invoke(this);
             NetworkObject.Despawn(true);
         }
@@ -53,11 +53,13 @@ namespace Game
         private void Raycast(Vector3 pos, Vector3 dir, int dist, float rad)
         {
             Ray ray = new Ray(pos, dir);
+
+            var amount = Mathf.FloorToInt(dist * preset.Size / preset.Size);
             if (Physics.SphereCast(ray, rad, out var hit, dist * preset.Size, ~ignore))
             {
                 if (hit.transform.TryGetComponent(out NetworkObject net))
                 {
-                    var amount = Mathf.FloorToInt((hit.distance + preset.Size) / preset.Size);
+                    amount = Mathf.FloorToInt(hit.distance * preset.Size / preset.Size);
 
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {
@@ -67,6 +69,10 @@ namespace Game
 
                     SpawnExplosionVfx(dir, amount);
                 }
+            }
+            else
+            {
+                SpawnExplosionVfx(dir, amount);
             }
         }
 

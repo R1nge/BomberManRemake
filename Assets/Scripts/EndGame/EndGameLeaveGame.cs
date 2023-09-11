@@ -21,7 +21,7 @@ namespace EndGame
 
         private IEnumerator Leave_C()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             NetworkManager.Singleton.Shutdown();
             yield return new WaitForSeconds(1f);
             SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
@@ -31,7 +31,7 @@ namespace EndGame
         {
             yield return new WaitForSeconds(3f);
             NetworkManager.Singleton.Shutdown();
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
         }
     }

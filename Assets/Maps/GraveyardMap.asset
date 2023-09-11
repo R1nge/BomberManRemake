@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c4e122c6ffe48a0aa8df32c38099573, type: 3}
+  m_Name: GraveyardMap
+  m_EditorClassIdentifier: 
+  border: {fileID: 3177934936578468323, guid: ce815b4a7aa65d04796bb172f65f8acc, type: 3}
+  floor: {fileID: 5718552521782455240, guid: 369ebb3325439774a861e545e3bf63ce, type: 3}
+  destructable: {fileID: 578910907398183821, guid: 9b3a5ca8f4aef264bab515781d324965, type: 3}
+  wall: {fileID: 3151081381774296134, guid: 0c3c6240545ea0c439a1e3cd87a67ea8, type: 3}
+  drops:
+  - {fileID: 2865074018043587239, guid: c8d92c1eb8372b948bf88bc1ab0457e1, type: 3}
+  - {fileID: 3563662994330632757, guid: 7cf9e93be35250445916dae175c6b01c, type: 3}
+  - {fileID: 8491427633619751694, guid: bf668a2ed2870cc4c9eaa34a80caba2c, type: 3}
+  - {fileID: 3882955579993842782, guid: 86544afecb20be84ea5378ad5e9cae75, type: 3}
+  - {fileID: 5756353572909614907, guid: 88b1381d0dc58e04e90b2069f091c354, type: 3}
+  size: 2
