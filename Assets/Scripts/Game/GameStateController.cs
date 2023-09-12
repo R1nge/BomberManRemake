@@ -47,7 +47,7 @@ namespace Game
                 OnMapLoaded();
             }
         }
-        
+
         private void OnMapLoaded()
         {
             if (IsServer)
@@ -98,9 +98,15 @@ namespace Game
 
         public void EndGame()
         {
-            if (!_gameStarted.Value || _gameEnded.Value)
+            if (!_gameStarted.Value)
             {
-                Debug.LogError("Can't end game, because it didn't start yet or already ended");
+                Debug.LogError("Can't end game, because it didn't start");
+                return;
+            }
+
+            if (_gameEnded.Value)
+            {
+                Debug.LogError("Can't end game, because it already ended");
                 return;
             }
 
@@ -109,16 +115,14 @@ namespace Game
 
         private IEnumerator OnRoundEnded_C()
         {
-            
+            yield return new WaitForSeconds(2f);
             CleanupClientRpc();
             _roundsElapsed++;
-            yield return new WaitForSeconds(2f);
             ResetTimer();
             if (_roundsElapsed < _gameSettings.RoundsAmount)
             {
                 print($"Elapsed: {_roundsElapsed}, Total: {_gameSettings.RoundsAmount}");
                 LoadNextRoundClientRpc();
-                
             }
             else
             {

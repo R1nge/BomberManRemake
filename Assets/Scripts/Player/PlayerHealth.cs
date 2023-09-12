@@ -26,8 +26,12 @@ namespace Player
         private void Awake()
         {
             _currentHealth = new NetworkVariable<int>(startHealth);
+            _currentHealth.OnValueChanged += HealthChanged;
             _playerShield = GetComponent<PlayerShield>();
         }
+
+        private void HealthChanged(int _, int health) => OnDamageTaken?.Invoke(health);
+
         private void Start() => OnInit?.Invoke(_currentHealth.Value);
 
         public void TakeDamage(int amount, ulong killerId)
@@ -41,7 +45,7 @@ namespace Player
             _killerId = killerId;
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
             
-            OnDamageTaken?.Invoke(_currentHealth.Value);
+            
             if (_currentHealth.Value == 0)
             {
                 OnDeath?.Invoke();
