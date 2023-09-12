@@ -54,13 +54,12 @@ namespace Game
         {
             Ray ray = new Ray(pos, dir);
 
-            var amount = Mathf.FloorToInt(dist * preset.Size / preset.Size);
+            int amount;
             if (Physics.SphereCast(ray, rad, out var hit, dist * preset.Size, ~ignore))
             {
+                amount = Mathf.CeilToInt((hit.distance) / preset.Size);
                 if (hit.transform.TryGetComponent(out NetworkObject net))
                 {
-                    amount = Mathf.FloorToInt(hit.distance * preset.Size / preset.Size);
-
                     if (hit.transform.TryGetComponent(out IDamageable damageable))
                     {
                         amount += 1;
@@ -68,7 +67,11 @@ namespace Game
                     }
                 }
             }
-            
+            else
+            {
+                amount = dist;
+            }
+
             SpawnExplosionVfx(dir, amount);
         }
 
