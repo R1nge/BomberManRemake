@@ -15,20 +15,20 @@ namespace Game
         private MapPreset _selected;
         private GameSettings _gameSettings;
         private DiContainer _diContainer;
-        private RoundManager _roundManager;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(DiContainer diContainer, GameSettings gameSettings, RoundManager roundManager)
+        private void Inject(DiContainer diContainer, GameSettings gameSettings, GameStateController gameStateController)
         {
             _diContainer = diContainer;
             _gameSettings = gameSettings;
-            _roundManager = roundManager;
+            _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _roundManager.OnLoadNextRound += Generate;
+            _gameStateController.OnLoadNextRound += Generate;
         }
 
         private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,

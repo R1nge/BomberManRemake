@@ -12,7 +12,7 @@ namespace Player
         [SerializeField] private float sensitivity;
         [SerializeField] private float limitX;
         private float _rotationX, _rotationY;
-        private RoundManager _roundManager;
+        private GameStateController _gameStateController;
 
         public void Disable()
         {
@@ -21,13 +21,13 @@ namespace Player
         }
 
         [Inject]
-        private void Inject(RoundManager roundManager) => _roundManager = roundManager;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                _roundManager.OnCleanUpBeforeEnd += Destroy;
+                _gameStateController.OnCleanUpBeforeEnd += Destroy;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _roundManager.OnCleanUpBeforeEnd -= Destroy;
+                _gameStateController.OnCleanUpBeforeEnd -= Destroy;
             }
         }
     }

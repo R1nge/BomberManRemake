@@ -9,17 +9,17 @@ namespace Misc
 {
     public class DestroyEveryChild : MonoBehaviour
     {
-        private RoundManager _roundManager;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(RoundManager roundManager)
+        private void Inject(GameStateController gameStateController)
         {
-            _roundManager = roundManager;
+            _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
-            _roundManager.OnCleanUpBeforeEnd += DestroyChildren;
+           _gameStateController.OnCleanUpBeforeEnd += DestroyChildren;
         }
 
         private void DestroyChildren()
@@ -43,7 +43,7 @@ namespace Misc
 
         private void OnDestroy()
         {
-            _roundManager.OnCleanUpBeforeEnd -= DestroyChildren;
+            _gameStateController.OnCleanUpBeforeEnd -= DestroyChildren;
         }
     }
 }

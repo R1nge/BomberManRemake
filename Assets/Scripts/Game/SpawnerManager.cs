@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -10,38 +11,51 @@ namespace Game
     {
         public event Action<ulong> OnPlayerSpawn;
         public event Action<ulong, ulong> OnPlayerDeath;
+        private NetworkList<ulong> _playersAlive = new ();
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
-        private RoundManager _roundManager;
+        private GameStateController _gameStateController;
         private GameSettings _gameSettings;
         private Lobby.Lobby _lobby;
 
         [Inject]
         private void Inject(
-            RoundManager roundManager,
+            GameStateController gameStateController,
             Lobby.Lobby lobby,
             GameSettings gameSettings,
             PlayerSpawnerFPS playerSpawnerFPS,
             PlayerSpawnerTPS playerSpawnerTPS
         )
         {
-            _roundManager = roundManager;
+            _gameStateController = gameStateController;
             _lobby = lobby;
             _gameSettings = gameSettings;
             _playerSpawnerFPS = playerSpawnerFPS;
             _playerSpawnerTPS = playerSpawnerTPS;
         }
 
+        public ulong LastPlayerAlive => _playersAlive[0];
+
         private void Awake()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _roundManager.OnLoadNextRound += RoundManagerOnOnLoadNextRound;
+            _gameStateController.OnLoadNextRound += RoundManagerOnOnLoadNextRound;
+            _playersAlive.OnListChanged += OnAlivePlayersChanged;
+        }
+
+        private void OnAlivePlayersChanged(NetworkListEvent<ulong> changeevent)
+        {
+            if (changeevent.Index == 0)
+            {
+                Debug.LogError("LIST ONLY 1 INDEX LEFT");
+                _gameStateController.EndGame();
+            }
         }
 
         private void RoundManagerOnOnLoadNextRound()
         {
             if (!IsServer) return;
-            OnNextRound();
+            Spawn();
         }
 
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loadedClients,
@@ -60,59 +74,45 @@ namespace Game
                 switch (_gameSettings.GameMode)
                 {
                     case GameSettings.GameModes.Fps:
-                        FpsMode(clientId, index);
+                        _playerSpawnerFPS.Spawn(clientId, index);
                         break;
                     case GameSettings.GameModes.Tps:
-                        TpsMode(clientId, index);
+                        _playerSpawnerTPS.Spawn(clientId, index);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+                
+                _playersAlive.Add(clientId);
 
                 OnPlayerSpawn?.Invoke(clientId);
             }
-        }
-
-        private void FpsMode(ulong clientId, int index)
-        {
-            _playerSpawnerFPS.InitPositions(clientId, index);
-        }
-
-        private void TpsMode(ulong clientId, int index)
-        {
-            _playerSpawnerTPS.InitPositions(clientId, index);
         }
 
         public void Despawn(ulong killedId, ulong killerId)
         {
-            print($"{killedId} was killed by {killerId}");
-            OnPlayerDeath?.Invoke(killedId, killerId);
+            if (IsServer)
+            {
+                _playersAlive.Remove(killedId);
+                OnPlayerDeath?.Invoke(killedId, killerId);
+            }
+            else
+            {
+                DespawnServerRpc(killedId, killerId);
+            }
         }
 
-        private void OnNextRound()
+        [ServerRpc(RequireOwnership = false)]
+        private void DespawnServerRpc(ulong killedId, ulong killerId)
         {
-            for (int index = 0; index < _lobby.PlayerData.Count; index++)
-            {
-                var clientId = _lobby.PlayerData[index].ClientId;
-                switch (_gameSettings.GameMode)
-                {
-                    case GameSettings.GameModes.Fps:
-                        _playerSpawnerFPS.OnNextRound(clientId, index);
-                        break;
-                    case GameSettings.GameModes.Tps:
-                        _playerSpawnerTPS.OnNextRound(clientId, index);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                OnPlayerSpawn?.Invoke(clientId);
-            }
+            _playersAlive.Remove(killedId);
+            Debug.LogError($"{killedId} was killed by {killerId}");
+            OnPlayerDeath?.Invoke(killedId, killerId);
         }
 
         public override void OnDestroy()
         {
-            _roundManager.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
+            _gameStateController.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
             base.OnDestroy();
         }
     }

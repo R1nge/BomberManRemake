@@ -9,7 +9,6 @@ namespace Game
 {
     public class PlayerSpawnerFPS : NetworkBehaviour
     {
-        private event Action<ulong, int> OnPositionsInit;
         [SerializeField] private Transform dynamicParent;
         [SerializeField] private MapPreset mapPreset;
         private readonly List<Vector3> _positions = new();
@@ -28,13 +27,7 @@ namespace Game
             _skinManager = skinManager;
         }
 
-        private void Awake() => OnPositionsInit += OnOnPositionsInit;
-
-        public void OnNextRound(ulong clientId, int index) => InitPositions(clientId, index);
-        
-        private void OnOnPositionsInit(ulong clientId, int index) => Spawn(clientId, index);
-
-        public void InitPositions(ulong clientId, int index)
+        private void InitPositions()
         {
             _positions.Clear();
             _positions.Add(new Vector3(0, 0, 0));
@@ -42,12 +35,11 @@ namespace Game
             _positions.Add(new Vector3(0, 0, (_gameSettings.MapLength - 1) * mapPreset.Size));
             _positions.Add(new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0,
                 (_gameSettings.MapLength - 1) * mapPreset.Size));
-
-            OnPositionsInit?.Invoke(clientId, index);
         }
 
-        private void Spawn(ulong clientId, int index)
+        public void Spawn(ulong clientId, int index)
         {
+            InitPositions();
             var skinIndex = _lobby.GetData(clientId).Value.SkinIndex;
             print($"SKIN INDEX: {skinIndex}");
             var position = _positions[index];
@@ -69,11 +61,5 @@ namespace Game
         //Right Bottom new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0, 0)
         //Left Top new Vector3(0, 0, (_gameSettings.MapLength - 1) * mapPreset.Size)
         //Right Top  new Vector3((_gameSettings.MapWidth - 1) * mapPreset.Size, 0, (_gameSettings.MapLength - 1) * mapPreset.Size);
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            OnPositionsInit -= OnOnPositionsInit;
-        }
     }
 }

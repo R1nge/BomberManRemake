@@ -12,7 +12,6 @@ namespace Installers
             Container.Bind<PlayerSpawnerFPS>().FromComponentInHierarchy().AsSingle();
             Container.Bind<PlayerSpawnerTPS>().FromComponentInHierarchy().AsSingle();
             Container.Bind<SpawnerManager>().FromComponentInHierarchy().AsSingle();
-            Container.Bind<RoundManager>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

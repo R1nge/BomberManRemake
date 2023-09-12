@@ -10,32 +10,44 @@ namespace Game
 {
     public class GameStateController : NetworkBehaviour
     {
+        public event Action OnCleanUpBeforeEnd;
         public event Action OnRoundStarted;
         public event Action OnRoundEnded;
+        public event Action OnLoadNextRound;
+        public event Action OnLoadEndGame;
         public event Action<float> OnTimeChanged;
         [SerializeField] private int countdownTime;
         private NetworkVariable<float> _time;
         private NetworkVariable<bool> _gameStarted, _gameEnded;
-        private RoundManager _roundManager;
+        private int _roundsElapsed;
         private bool _mapLoaded;
+        private GameSettings _gameSettings;
 
         [Inject]
-        private void Inject(RoundManager roundManager)
-        {
-            _roundManager = roundManager;
-        }
+        private void Inject(GameSettings gameSettings) => _gameSettings = gameSettings;
 
         private void Awake()
         {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
             NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
             _time = new NetworkVariable<float>(countdownTime);
             _time.OnValueChanged += OnValueChanged;
             _gameStarted = new NetworkVariable<bool>();
             _gameEnded = new NetworkVariable<bool>();
-            _roundManager.OnCleanUpBeforeEnd += ResetTimer;
-            _roundManager.OnPreStartRound += OnMapLoaded;
         }
 
+        private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loaded,
+            List<ulong> ___)
+        {
+            if (!IsServer) return;
+            if (sceneName != "Game") return;
+            if (loaded.Count == NetworkManager.Singleton.ConnectedClients.Count)
+            {
+                ResetTimer();
+                OnMapLoaded();
+            }
+        }
+        
         private void OnMapLoaded()
         {
             if (IsServer)
@@ -51,7 +63,6 @@ namespace Game
                 _time.Value = countdownTime;
                 _gameStarted.Value = false;
                 _gameEnded.Value = false;
-                _mapLoaded = false;
             }
         }
 
@@ -84,7 +95,7 @@ namespace Game
             OnRoundStarted?.Invoke();
             Debug.Log("ROUND STARTED");
         }
-        
+
         public void EndGame()
         {
             if (!_gameStarted.Value || _gameEnded.Value)
@@ -93,14 +104,44 @@ namespace Game
                 return;
             }
 
-            StartCoroutine(Wait());
+            StartCoroutine(OnRoundEnded_C());
         }
 
-        private IEnumerator Wait()
+        private IEnumerator OnRoundEnded_C()
         {
-            yield return new WaitForSeconds(1f);
-            _gameEnded.Value = true;
-            EndGameClientRpc();
+            
+            CleanupClientRpc();
+            _roundsElapsed++;
+            yield return new WaitForSeconds(2f);
+            ResetTimer();
+            if (_roundsElapsed < _gameSettings.RoundsAmount)
+            {
+                print($"Elapsed: {_roundsElapsed}, Total: {_gameSettings.RoundsAmount}");
+                LoadNextRoundClientRpc();
+                
+            }
+            else
+            {
+                print("LOAD END GAME");
+                OnLoadEndGame?.Invoke();
+
+                yield return new WaitForSeconds(1f);
+                _gameEnded.Value = true;
+                EndGameClientRpc();
+            }
+        }
+
+        [ClientRpc]
+        private void CleanupClientRpc()
+        {
+            OnCleanUpBeforeEnd?.Invoke();
+        }
+
+        [ClientRpc]
+        private void LoadNextRoundClientRpc()
+        {
+            OnLoadNextRound?.Invoke();
+            print("LOAD NEXT ROUND");
         }
 
         [ClientRpc]
@@ -112,8 +153,6 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _roundManager.OnCleanUpBeforeEnd -= ResetTimer;
-            _roundManager.OnPreStartRound -= OnMapLoaded;
             if (!NetworkManager.Singleton) return;
             NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
         }

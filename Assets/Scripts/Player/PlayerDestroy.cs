@@ -6,16 +6,16 @@ namespace Player
 {
     public class PlayerDestroy : NetworkBehaviour
     {
-        private RoundManager _roundManager;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(RoundManager roundManager) => _roundManager = roundManager;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                _roundManager.OnLoadNextRound += Destroy;
+                _gameStateController.OnLoadNextRound += Destroy;
             }
         }
 
@@ -25,7 +25,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _roundManager.OnLoadNextRound -= Destroy;
+                _gameStateController.OnLoadNextRound -= Destroy;
             }
         }
     }

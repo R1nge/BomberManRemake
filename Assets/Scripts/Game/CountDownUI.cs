@@ -16,39 +16,17 @@ namespace Game
             _gameStateController = gameStateController;
         }
 
-        private void Awake()
-        {
-            _gameStateController.OnTimeChanged += UpdateUI;
-            _gameStateController.OnRoundEnded += ShowTimerUI;
-        }
-
-        private void ShowTimerUI()
-        {
-            if (IsServer)
-            {
-                ShowTimerClientRpc();
-            }
-        }
-
-        [ClientRpc]
-        private void ShowTimerClientRpc()
-        {
-            timerText.gameObject.SetActive(true);
-        }
+        private void Awake() => _gameStateController.OnTimeChanged += UpdateUI;
 
         private void UpdateUI(float time)
         {
             timerText.text = time.ToString("#");
             if (time == 0)
             {
-                timerText.gameObject.SetActive(false);
+                timerText.text = "";
             }
         }
 
-        public override void OnDestroy()
-        {
-            _gameStateController.OnTimeChanged -= UpdateUI;
-            _gameStateController.OnRoundEnded -= ShowTimerUI;
-        }
+        public override void OnDestroy() => _gameStateController.OnTimeChanged -= UpdateUI;
     }
 }

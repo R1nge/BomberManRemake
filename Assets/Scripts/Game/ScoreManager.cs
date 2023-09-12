@@ -9,29 +9,25 @@ namespace Game
         [SerializeField] private int killScore, winScore;
         private SpawnerManager _spawnerManager;
         private Lobby.Lobby _lobby;
-        private RoundManager _roundManager;
-        private NetworkVariable<ulong> _lastPlayerId;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, RoundManager roundManager)
+        private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, GameStateController gameStateController)
         {
             _spawnerManager = spawnerManager;
             _lobby = lobby;
-            _roundManager = roundManager;
+            _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
-            _lastPlayerId = new NetworkVariable<ulong>();
             _spawnerManager.OnPlayerDeath += AddKillScoreServerRpc;
-            _roundManager.OnCleanUpBeforeEnd += AddWinScore;
+            _gameStateController.OnCleanUpBeforeEnd += AddWinScore;
         }
 
         [ServerRpc(RequireOwnership = false)]
         private void AddKillScoreServerRpc(ulong killedId, ulong killerId)
         {
-            _lastPlayerId.Value = killerId;
-
             if (killedId == killerId)
             {
                 return;
@@ -45,14 +41,14 @@ namespace Game
         private void AddWinScore()
         {
             if (!IsServer) return;
-            _lobby.AddPoints(_lastPlayerId.Value, winScore);
-            Debug.LogError($"ADD WIN POINTS TO {_lastPlayerId.Value}");
+            _lobby.AddPoints(_spawnerManager.LastPlayerAlive, winScore);
+            Debug.LogError($"ADD WIN POINTS TO {_spawnerManager.LastPlayerAlive}");
         }
 
         public override void OnDestroy()
         {
             _spawnerManager.OnPlayerDeath -= AddKillScoreServerRpc;
-            _roundManager.OnCleanUpBeforeEnd -= AddWinScore;
+            _gameStateController.OnCleanUpBeforeEnd -= AddWinScore;
         }
     }
 }

@@ -7,17 +7,17 @@ namespace Game
 {
     public class LoadEndGame : NetworkBehaviour
     {
-        private RoundManager _roundManager;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(RoundManager roundManager)
+        private void Inject(GameStateController gameStateController)
         {
-            _roundManager = roundManager;
+            _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
-            _roundManager.OnLoadEndGame += RoundManagerOnOnLoadEndGame;
+            _gameStateController.OnLoadEndGame += RoundManagerOnOnLoadEndGame;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
         }
 
@@ -41,7 +41,7 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _roundManager.OnLoadEndGame -= RoundManagerOnOnLoadEndGame;
+            _gameStateController.OnLoadEndGame -= RoundManagerOnOnLoadEndGame;
         }
     }
 }
