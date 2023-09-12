@@ -29,9 +29,12 @@ namespace Player
             Vector3 right = transform.TransformDirection(Vector3.right);
             var direction = forward * _speedX + right * _speedZ;
             var inputData = new InputData(direction);
-            SendDataServerRpc(inputData);
             _characterController.Move(direction);
-            MoveServerRpc();
+            if (!IsServer)
+            {
+                SendDataServerRpc(inputData);
+                MoveServerRpc();
+            }
         }
 
         [ServerRpc]

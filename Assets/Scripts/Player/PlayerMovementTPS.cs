@@ -48,10 +48,14 @@ namespace Player
             if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
             var inputData = new InputData(_moveDirection);
-            SendDataServerRpc(inputData);
             _characterController.Move(_moveDirection);
             Rotate();
-            MoveServerRpc();
+
+            if (!IsServer)
+            {
+                SendDataServerRpc(inputData);
+                MoveServerRpc();
+            }
         }
         
         [ServerRpc]
