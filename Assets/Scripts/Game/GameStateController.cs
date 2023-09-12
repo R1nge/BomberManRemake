@@ -52,8 +52,14 @@ namespace Game
         {
             if (IsServer)
             {
-                _mapLoaded = true;
+                StartCoroutine(MapLoaded_C());
             }
+        }
+
+        private IEnumerator MapLoaded_C()
+        {
+            yield return new WaitForSeconds(2f);
+            _mapLoaded = true;
         }
 
         private void ResetTimer()
