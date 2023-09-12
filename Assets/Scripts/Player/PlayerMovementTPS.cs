@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,6 +14,7 @@ namespace Player
         private bool _isFlipped;
         private CharacterController _characterController;
         private PlayerInput _playerInput;
+        private readonly Queue<InputData> _inputOnServer = new();
 
         protected override void Awake()
         {
@@ -27,6 +29,7 @@ namespace Player
 
         public void OnMove(InputValue value)
         {
+            if (!_playerInput.InputEnabled) return;
             if (_isFlipped)
             {
                 _curSpeedX = -value.Get<Vector2>().y * CurrentSpeed;
@@ -42,15 +45,27 @@ namespace Player
         private void OnTick()
         {
             if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
+            var inputData = new InputData(_moveDirection);
+            SendDataServerRpc(inputData);
+            _characterController.Move(_moveDirection);
             Rotate();
-            MoveServerRpc(_moveDirection);
+            MoveServerRpc();
+        }
+        
+        [ServerRpc]
+        private void SendDataServerRpc(InputData inputData)
+        {
+            _inputOnServer.Enqueue(inputData);
         }
 
         [ServerRpc]
-        private void MoveServerRpc(Vector3 direction)
+        private void MoveServerRpc()
         {
-            _characterController.Move(direction);
+            if (_inputOnServer.Count <= 0) return;
+            var inputData = _inputOnServer.Dequeue();
+            _characterController.Move(inputData.MovementDirection);
         }
 
         private void Rotate()
