@@ -27,7 +27,6 @@ namespace Player
 
         public void OnMove(InputValue value)
         {
-            if (!_playerInput.InputEnabled) return;
             if (_isFlipped)
             {
                 _curSpeedX = -value.Get<Vector2>().y * CurrentSpeed;
@@ -43,10 +42,15 @@ namespace Player
         private void OnTick()
         {
             if (!IsOwner) return;
-            if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
             Rotate();
-            _characterController.Move(_moveDirection);
+            MoveServerRpc(_moveDirection);
+        }
+
+        [ServerRpc]
+        private void MoveServerRpc(Vector3 direction)
+        {
+            _characterController.Move(direction);
         }
 
         private void Rotate()

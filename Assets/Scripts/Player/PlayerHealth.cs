@@ -44,8 +44,7 @@ namespace Player
 
             _killerId = killerId;
             _currentHealth.Value = Mathf.Clamp(_currentHealth.Value - amount, 0, 100);
-            
-            
+
             if (_currentHealth.Value == 0)
             {
                 OnDeath?.Invoke();
