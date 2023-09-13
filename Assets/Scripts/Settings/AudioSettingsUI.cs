@@ -34,6 +34,7 @@ namespace Settings
 
         private void OnDestroy()
         {
+            _audioController.OnSettingsLoaded -= SettingsLoaded;
             master.onValueChanged.RemoveAllListeners();
             music.onValueChanged.RemoveAllListeners();
             sfx.onValueChanged.RemoveAllListeners();

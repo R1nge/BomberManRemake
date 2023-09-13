@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +13,7 @@ namespace Player
         private float _speedX, _speedZ;
         private PlayerInput _playerInput;
         private readonly Queue<InputData> _inputOnServer = new();
+        private InputData _inputData;
 
         protected override void Awake()
         {
@@ -21,20 +23,24 @@ namespace Player
             _playerInput = GetComponent<PlayerInput>();
         }
 
-        private void OnTick()
+        private void Update()
         {
             if (!IsOwner) return;
             if (!_playerInput.InputEnabled) return;
             Vector3 forward = transform.TransformDirection(Vector3.forward);
             Vector3 right = transform.TransformDirection(Vector3.right);
             var direction = forward * _speedX + right * _speedZ;
-            var inputData = new InputData(direction);
+            _inputData = new InputData(direction);
             _characterController.Move(direction);
-            if (!IsServer)
-            {
-                SendDataServerRpc(inputData);
-                MoveServerRpc();
-            }
+        }
+
+        private void OnTick()
+        {
+            if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
+            if (IsServer) return;
+            SendDataServerRpc(_inputData);
+            MoveServerRpc();
         }
 
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]

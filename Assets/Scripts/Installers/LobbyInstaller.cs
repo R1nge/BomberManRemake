@@ -1,4 +1,5 @@
-﻿using Zenject;
+﻿using Lobby;
+using Zenject;
 
 namespace Installers
 {
@@ -7,6 +8,7 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.Bind<Lobby.Lobby>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<PowerupSelection>().FromNew().AsSingle();
         }
     }
 }

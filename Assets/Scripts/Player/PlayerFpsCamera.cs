@@ -1,8 +1,6 @@
-﻿using System;
-using Unity.Netcode;
+﻿using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 namespace Player
 {
@@ -12,11 +10,6 @@ namespace Player
         [SerializeField] private float sensitivity;
         [SerializeField] private float limitX;
         private float _rotationX, _rotationY;
-
-        private void Awake()
-        {
-            NetworkManager.Singleton.NetworkTickSystem.Tick += Rotate;
-        }
 
         private void Start()
         {
@@ -29,19 +22,13 @@ namespace Player
             _rotationX += -value.Get<Vector2>().y * sensitivity;
             _rotationX = Mathf.Clamp(_rotationX, -limitX, limitX);
             _rotationY = value.Get<Vector2>().x * sensitivity;
+            Rotate();
         }
 
         private void Rotate()
         {
             transform.rotation *= Quaternion.Euler(0, _rotationY, 0);
             camera.transform.localRotation = Quaternion.Euler(_rotationX, 0, 0);
-        }
-
-        public override void OnDestroy()
-        {
-            if (!NetworkManager.Singleton) return;
-            if(NetworkManager.Singleton.NetworkTickSystem== null) return;
-            NetworkManager.Singleton.NetworkTickSystem.Tick -= Rotate;
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Player
         private CharacterController _characterController;
         private PlayerInput _playerInput;
         private readonly Queue<InputData> _inputOnServer = new();
+        private InputData _inputData;
 
         protected override void Awake()
         {
@@ -42,22 +43,25 @@ namespace Player
             }
         }
 
-        private void OnTick()
+        private void Update()
         {
             if (!IsOwner) return;
             if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
-            var inputData = new InputData(_moveDirection);
+            _inputData = new InputData(_moveDirection);
             _characterController.Move(_moveDirection);
             Rotate();
-
-            if (!IsServer)
-            {
-                SendDataServerRpc(inputData);
-                MoveServerRpc();
-            }
         }
-        
+
+        private void OnTick()
+        {
+            if (!IsOwner) return;
+            if (!_playerInput.InputEnabled) return;
+            if (IsServer) return;
+            SendDataServerRpc(_inputData);
+            MoveServerRpc();
+        }
+
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]
         private void SendDataServerRpc(InputData inputData)
         {
