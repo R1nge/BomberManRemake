@@ -60,10 +60,21 @@ namespace Game
                 amount = Mathf.CeilToInt((hit.distance) / preset.Size);
                 if (hit.transform.TryGetComponent(out NetworkObject net))
                 {
-                    if (hit.transform.TryGetComponent(out IDamageable damageable))
+                    if (hit.transform.TryGetComponent(out Bomb bomb))
                     {
-                        amount += 1;
-                        DoDamageServerRpc(net, DAMAGE);
+                        if (!bomb._exploded.Value)
+                        {
+                            amount += 1;
+                            DoDamageServerRpc(net, DAMAGE);
+                        }
+                    }
+                    else
+                    {
+                        if (hit.transform.TryGetComponent(out IDamageable damageable))
+                        {
+                            amount += 1;
+                            DoDamageServerRpc(net, DAMAGE);
+                        }
                     }
                 }
             }
