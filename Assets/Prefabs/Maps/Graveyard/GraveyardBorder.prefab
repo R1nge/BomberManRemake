@@ -90,6 +90,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 951099334
       objectReference: {fileID: 0}
+    - target: {fileID: 4998792727921089666, guid: 9743c88217ca5f141a23c225b76e1af4, type: 3}
+      propertyPath: SceneMigrationSynchronization
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6596658382262603356, guid: 9743c88217ca5f141a23c225b76e1af4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

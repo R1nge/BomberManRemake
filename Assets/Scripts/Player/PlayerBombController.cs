@@ -56,15 +56,15 @@ namespace Player
             if (!_playerInput.InputEnabled) return;
             if (_bombsAvailable.Value == 0) return;
             if (!CanSpawn()) return;
-            SpawnBombServerRpc();
+            SpawnBombServerRpc(transform.position);
         }
 
         [ServerRpc]
-        private void SpawnBombServerRpc()
+        private void SpawnBombServerRpc(Vector3 position)
         {
             _bombsAvailable.Value--;
             print($"BOMB OWNER {OwnerClientId}");
-            var bomb = _spawnerOnGrid.SpawnBomb(transform.position, OwnerClientId);
+            var bomb = _spawnerOnGrid.SpawnBomb(position, OwnerClientId);
             bomb.OnExplosion += ReturnBomb;
         }
 

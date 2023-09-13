@@ -58,13 +58,13 @@ namespace Player
             }
         }
         
-        [ServerRpc]
+        [ServerRpc(Delivery = RpcDelivery.Unreliable)]
         private void SendDataServerRpc(InputData inputData)
         {
             _inputOnServer.Enqueue(inputData);
         }
 
-        [ServerRpc]
+        [ServerRpc(Delivery = RpcDelivery.Unreliable)]
         private void MoveServerRpc()
         {
             if (_inputOnServer.Count <= 0) return;
