@@ -1,0 +1,27 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Background" style="flex-grow: 1;">
+        <ui:VisualElement name="GameSettings" style="flex-grow: 1; position: absolute; height: auto; right: 0; top: 0; left: 0; bottom: 0; justify-content: center; align-self: center; align-items: center; visibility: hidden;">
+            <ui:VisualElement name="Settings" style="flex-grow: 1; position: absolute; left: auto; top: auto;">
+                <ui:EnumField label="Map mode" type="Game.GameSettings+MapModes, Assembly-CSharp" name="MapModes" />
+                <ui:EnumField label="Perspective mode" type="Game.GameSettings+PerspectiveModes, Assembly-CSharp" name="PerspectiveModes" />
+                <ui:EnumField label="Rounds" type="Game.GameSettings+RoundAmount, Assembly-CSharp" name="Rounds" value="One" />
+                <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GameSettingsNext" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="MapCustomization" style="flex-grow: 1; position: absolute; align-items: center; justify-content: center; left: 0; top: 0; right: 0; bottom: 0; display: flex; visibility: hidden;">
+            <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="MapCustomizationNext" />
+        </ui:VisualElement>
+        <ui:VisualElement name="ProceduralMapCustomization" style="flex-grow: 1; position: absolute; display: flex; visibility: hidden; justify-content: center; left: 0; top: 0; right: 0; bottom: 0;">
+            <ui:VisualElement name="Settings" style="flex-grow: 1; align-items: center; justify-content: center;">
+                <ui:SliderInt picking-mode="Ignore" label="Size X" value="8" high-value="36" low-value="8" name="MapSizeX" show-input-field="true" style="width: 400px;" />
+                <ui:SliderInt picking-mode="Ignore" label="Size X" value="8" high-value="36" low-value="8" name="MapSizeZ" show-input-field="true" style="width: 400px;" />
+                <ui:Button text="Next" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ProceduralMapCustomizationNext" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="PowerupCustomization" style="flex-grow: 1; position: absolute; display: flex; visibility: hidden;" />
+        <ui:VisualElement name="BottomBar" style="flex-grow: 1; justify-content: space-around; flex-direction: row; height: 50px; align-items: stretch; width: 400px; position: absolute; align-self: center; bottom: 0;">
+            <ui:Button text="Start" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Start" focusable="true" style="width: 150px;" />
+            <ui:Button text="Ready" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Ready" style="width: 150px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

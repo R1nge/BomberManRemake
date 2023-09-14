@@ -71,12 +71,12 @@ namespace Game
             for (int index = 0; index < _lobby.PlayerData.Count; index++)
             {
                 var clientId = _lobby.PlayerData[index].ClientId;
-                switch (_gameSettings.GameMode)
+                switch (_gameSettings.PerspectiveMode)
                 {
-                    case GameSettings.GameModes.Fps:
+                    case GameSettings.PerspectiveModes.Fps:
                         _playerSpawnerFPS.Spawn(clientId, index);
                         break;
-                    case GameSettings.GameModes.Tps:
+                    case GameSettings.PerspectiveModes.Tps:
                         _playerSpawnerTPS.Spawn(clientId, index);
                         break;
                     default:

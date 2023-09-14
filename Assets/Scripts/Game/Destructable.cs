@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Lobby;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
@@ -11,12 +12,14 @@ namespace Game
         private NetworkVariable<int> _dropIndex;
         private SpawnerOnGrid _spawnerOnGrid;
         private GameSettings _gameSettings;
+        private PowerupSelection _powerupSelection;
 
         [Inject]
-        private void Inject(SpawnerOnGrid spawnerOnGrid, GameSettings gameSettings)
+        private void Inject(SpawnerOnGrid spawnerOnGrid, GameSettings gameSettings, PowerupSelection powerupSelection)
         {
             _spawnerOnGrid = spawnerOnGrid;
             _gameSettings = gameSettings;
+            _powerupSelection = powerupSelection;
         }
 
         private void Awake() => _dropIndex = new NetworkVariable<int>();

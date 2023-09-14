@@ -32,7 +32,6 @@ namespace Game
             }
         }
 
-
         private void Tick()
         {
             if (IsServer)
@@ -44,9 +43,6 @@ namespace Game
             }
         }
 
-        public override void OnNetworkDespawn()
-        {
-            NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
-        }
+        public override void OnNetworkDespawn() => NetworkManager.Singleton.NetworkTickSystem.Tick -= Tick;
     }
 }

@@ -39,6 +39,11 @@ namespace Lobby
 
         public bool CanStartGame()
         {
+            if (_players.Count <= 1)
+            {
+                return false;
+            }
+            
             bool everyoneIsReady = true;
 
             for (int i = 0; i < _players.Count; i++)
