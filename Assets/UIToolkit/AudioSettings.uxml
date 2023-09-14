@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UIToolkit/AudioSlider.uss?fileID=7433441132597879392&amp;guid=14602a5924b48dc4fba797bc6f2a6634&amp;type=3#AudioSlider" />
+    <ui:VisualElement name="Background" style="flex-grow: 1; visibility: visible;">
+        <ui:VisualElement name="Panel" style="flex-grow: 1; justify-content: center; align-items: stretch;">
+            <ui:SliderInt picking-mode="Ignore" label="Master" value="-30" high-value="20" name="Master" low-value="-80" class="AudioSlider" />
+            <ui:SliderInt picking-mode="Ignore" label="Music" value="-30" high-value="20" name="Music" low-value="-80" class="AudioSlider" />
+            <ui:SliderInt picking-mode="Ignore" label="Sfx" value="-30" high-value="20" name="Sfx" low-value="-80" class="AudioSlider" style="align-items: stretch; align-self: auto;" />
+            <ui:VisualElement name="Bottom" style="flex-grow: 1; justify-content: flex-end; align-items: center;">
+                <ui:Button text="Close" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Close" style="justify-content: flex-start;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Background" style="flex-grow: 1;">
+        <ui:VisualElement name="Menu" style="flex-grow: 1; align-items: stretch; justify-content: center;">
+            <ui:TextField picking-mode="Ignore" label="IP" name="Ip" />
+            <ui:TextField picking-mode="Ignore" label="Nickname" name="Nickname" />
+            <ui:Button text="Host" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Host" />
+            <ui:Button text="Join" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Join" />
+            <ui:Button text="Skins" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Skins" />
+            <ui:Button text="Bombs" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Bombs" />
+            <ui:Button text="Settings" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Settings" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
