@@ -36,6 +36,8 @@ namespace Game
             _gameEnded = new NetworkVariable<bool>();
         }
 
+        public bool GameStarted => _gameStarted.Value;
+
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loaded,
             List<ulong> ___)
         {
@@ -115,6 +117,8 @@ namespace Game
                 Debug.LogError("Can't end game, because it already ended");
                 return;
             }
+            
+            _gameEnded.Value = true;
 
             StartCoroutine(OnRoundEnded_C());
         }
@@ -136,7 +140,6 @@ namespace Game
                 OnLoadEndGame?.Invoke();
 
                 yield return new WaitForSeconds(1f);
-                _gameEnded.Value = true;
                 EndGameClientRpc();
             }
         }

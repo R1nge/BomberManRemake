@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using System;
+using Game;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,7 @@ namespace Lobby
         private const string MAP_MODE = "MapModes";
         private const string PERSPECTIVE_MODE = "PerspectiveModes";
         private const string ROUNDS = "Rounds";
+        private const string ROUND_TIME = "RoundTime";
         private const string GAME_SETTINGS_NEXT = "GameSettingsNext";
         private const string MAP_CUSTOMIZATION = "MapCustomization";
         private const string MAP_CUSTOMIZATION_NEXT = "MapCustomizationNext";
@@ -55,10 +57,17 @@ namespace Lobby
                 _gameSettings.SetRoundsAmount((GameSettings.RoundAmount)evt.newValue);
             });
 
+            root.Q<SliderInt>(ROUND_TIME).RegisterValueChangedCallback(evt =>
+            {
+                _gameSettings.SetRoundTime(evt.newValue * 60);
+            });
+
             root.Q<Button>(GAME_SETTINGS_NEXT).clicked += () =>
             {
-                root.Q<VisualElement>(GAME_SETTINGS).visible = false;
-                root.Q<VisualElement>(PROCEDURAL_MAP_CUSTOMIZATION).visible = true;
+                root.Q<VisualElement>(GAME_SETTINGS).style.display =
+                    new StyleEnum<DisplayStyle>(DisplayStyle.None);
+                root.Q<VisualElement>(PROCEDURAL_MAP_CUSTOMIZATION).style.display =
+                    new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
                 //root.Q<VisualElement>(MAP_CUSTOMIZATION).visible = true;
             };
 
@@ -69,7 +78,10 @@ namespace Lobby
 
             root.Q<Button>(PROCEDURAL_MAP_NEXT).clicked += () =>
             {
-                root.Q<VisualElement>(PROCEDURAL_MAP_CUSTOMIZATION).visible = false;
+                root.Q<VisualElement>(PROCEDURAL_MAP_CUSTOMIZATION).style.display =
+                    new StyleEnum<DisplayStyle>(DisplayStyle.None);
+
+
                 root.Q<VisualElement>(POWERUP_CUSTOMIZATION).visible = true;
             };
 
@@ -125,7 +137,11 @@ namespace Lobby
         {
             uiDocument.rootVisualElement.Q<Button>(START).visible = IsOwner;
             uiDocument.rootVisualElement.Q<Button>(START).SetEnabled(_lobby.CanStartGame());
-            uiDocument.rootVisualElement.Q<VisualElement>(GAME_SETTINGS).visible = IsOwner;
+            if (!IsOwner)
+            {
+                uiDocument.rootVisualElement.Q<VisualElement>(GAME_SETTINGS).style.display =
+                    new StyleEnum<DisplayStyle>(DisplayStyle.None);
+            }
         }
 
         public override void OnDestroy()
