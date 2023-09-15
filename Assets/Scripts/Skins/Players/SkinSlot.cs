@@ -1,33 +1,26 @@
-﻿using System;
+﻿using Skins.Players;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using Zenject;
 
-namespace Skins.Players
+namespace Skins
 {
     public class SkinSlot : MonoBehaviour
     {
-        [SerializeField] private UIDocument slot;
+        [SerializeField] private TextMeshProUGUI titleText;
+        [SerializeField] private Image icon;
+        [SerializeField] private Button select;
         private int _skinIndex;
         private SkinManager _skinManager;
-
-        private const string TITLE = "Title";
-        private const string ICON = "Icon";
-        private const string SELECT = "Select";
 
         [Inject]
         private void Inject(SkinManager skinManager) => _skinManager = skinManager;
 
-        private void Awake()
-        {
-            slot.rootVisualElement.Q<Button>(SELECT).clicked += SelectSkin;
-        }
+        private void Awake() => select.onClick.AddListener(SelectSkin);
 
-        public void SetTitle(string title) => slot.rootVisualElement.Q<Label>(TITLE).text = title;
-
-        public void SetIcon(Sprite sprite) =>
-            slot.rootVisualElement.Q<VisualElement>(ICON).style.backgroundImage = sprite.texture;
-
+        public void SetTitle(string title) => titleText.text = title;
+        public void SetIcon(Sprite sprite) => icon.sprite = sprite;
         public void SetIndex(int skinIndex) => _skinIndex = skinIndex;
         private void SelectSkin() => _skinManager.SelectSkin(_skinIndex);
     }

@@ -1,13 +1,16 @@
-﻿using System.Collections;
+﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Skins.Players
 {
     public class SkinsUI : MonoBehaviour
     {
+        [SerializeField] private GameObject UI;
         [SerializeField] private Transform slotParent;
         [SerializeField] private SkinSlot slot;
+        [SerializeField] private Button open, close;
         private DiContainer _diContainer;
         private SkinManager _skinManager;
 
@@ -18,6 +21,22 @@ namespace Skins.Players
             _skinManager = skinManager;
         }
 
+        private void Awake()
+        {
+            open.onClick.AddListener(Open);
+            close.onClick.AddListener(Close);
+        }
+
+        private void Open()
+        {
+            UI.SetActive(true);
+        }
+
+        private void Close()
+        {
+            UI.SetActive(false);
+        }
+
         private void Start() => Init();
 
         private void Init()
@@ -26,16 +45,10 @@ namespace Skins.Players
             {
                 var skin = _skinManager.Skins[i];
                 var slotInstance = _diContainer.InstantiatePrefabForComponent<SkinSlot>(slot, slotParent);
-                StartCoroutine(Wait_C(skin, slotInstance, i));
+                slotInstance.SetIcon(skin.Icon);
+                slotInstance.SetTitle(skin.Title);
+                slotInstance.SetIndex(i);
             }
-        }
-
-        private IEnumerator Wait_C(SkinSo skin, SkinSlot slotInstance, int i)
-        {
-            yield return new WaitForSeconds(1f);
-            //slotInstance.SetIcon(skin.Icon);
-            slotInstance.SetTitle(skin.Title);
-            slotInstance.SetIndex(i);
         }
     }
 }

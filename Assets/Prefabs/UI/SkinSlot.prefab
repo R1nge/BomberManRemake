@@ -248,7 +248,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a634b3e383de44f8a1e98303809f40eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slot: {fileID: 3470269220455578841}
+  titleText: {fileID: 6445738494265574514}
+  icon: {fileID: 4037098599977508663}
+  select: {fileID: 8375725009657373612}
 --- !u!114 &3470269220455578841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,7 +258,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2915090772455900009}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
