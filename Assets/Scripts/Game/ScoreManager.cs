@@ -22,7 +22,7 @@ namespace Game
         private void Awake()
         {
             _spawnerManager.OnPlayerDeath += AddKillScoreServerRpc;
-            _gameStateController.OnCleanUpBeforeEnd += AddWinScore;
+            _gameStateController.OnWin += AddWinScore;
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -41,6 +41,12 @@ namespace Game
         private void AddWinScore()
         {
             if (!IsServer) return;
+            if (_spawnerManager.PlayersAliveCount > 1)
+            {
+                Debug.LogError("The game ended in a tie, no points will be added");
+                return;
+            }
+
             _lobby.AddPoints(_spawnerManager.LastPlayerAlive, winScore);
             Debug.LogError($"ADD WIN POINTS TO {_spawnerManager.LastPlayerAlive}");
         }

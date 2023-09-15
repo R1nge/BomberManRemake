@@ -25,6 +25,7 @@ namespace Game
 
         private void GameStateControllerOnOnRoundEnded()
         {
+            if (!IsServer) return;
             _currentTime.Value = _gameSettings.RoundTime;
         }
 
@@ -35,7 +36,7 @@ namespace Game
             if (!IsServer) return;
             if (time <= 0)
             {
-                _gameStateController.EndGame();
+                _gameStateController.Tie();
             }
         }
 
@@ -49,6 +50,8 @@ namespace Game
         private void Tick()
         {
             if (!_gameStateController.GameStarted) return;
+            if (_gameStateController.GameEnded) return;
+            if (_currentTime.Value <= 0) return;
             _currentTime.Value -= 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
         }
     }

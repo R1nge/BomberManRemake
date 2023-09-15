@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Game
 {
@@ -39,9 +38,10 @@ namespace Game
             _mapWidth = 15;
             _mapLength = 15;
             _dropChance = .5f;
-            _roundTime = 1;
+            _roundTime = 1 * 60;
             _roundsAmount = RoundAmount.One;
-            _perspectiveMode = 0;
+            _perspectiveMode = PerspectiveModes.Fps;
+            _mapModes = MapModes.Procedural;
         }
 
         public enum PerspectiveModes

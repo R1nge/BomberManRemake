@@ -10,6 +10,8 @@ namespace Game
 {
     public class GameStateController : NetworkBehaviour
     {
+        public event Action OnWin;
+        public event Action OnTie;
         public event Action OnCleanUpBeforeEnd;
         public event Action OnRoundStarted;
         public event Action OnRoundEnded;
@@ -37,6 +39,7 @@ namespace Game
         }
 
         public bool GameStarted => _gameStarted.Value;
+        public bool GameEnded => _gameEnded.Value;
 
         private void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode _, List<ulong> loaded,
             List<ulong> ___)
@@ -104,8 +107,10 @@ namespace Game
             Debug.Log("ROUND STARTED");
         }
 
-        public void EndGame()
+        public void Win()
         {
+            if (!IsServer) return;
+
             if (!_gameStarted.Value)
             {
                 Debug.LogError("Can't end game, because it didn't start");
@@ -117,15 +122,48 @@ namespace Game
                 Debug.LogError("Can't end game, because it already ended");
                 return;
             }
-            
+
             _gameEnded.Value = true;
 
-            StartCoroutine(OnRoundEnded_C());
+            OnWin?.Invoke();
+
+            StartCoroutine(Wait_C(2f));
+
+            EndGame();
         }
 
-        private IEnumerator OnRoundEnded_C()
+        public void Tie()
         {
-            yield return new WaitForSeconds(2f);
+            if (!IsServer) return;
+
+            if (!_gameStarted.Value)
+            {
+                Debug.LogError("Can't end game, because it didn't start");
+                return;
+            }
+
+            if (_gameEnded.Value)
+            {
+                Debug.LogError("Can't end game, because it already ended");
+                return;
+            }
+
+            _gameEnded.Value = true;
+
+            OnTie?.Invoke();
+
+            StartCoroutine(Wait_C(2f));
+
+            EndGame();
+        }
+
+        private IEnumerator Wait_C(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+        }
+
+        private void EndGame()
+        {
             CleanupClientRpc();
             _roundsElapsed++;
             ResetTimer();
@@ -139,7 +177,7 @@ namespace Game
                 print("LOAD END GAME");
                 OnLoadEndGame?.Invoke();
 
-                yield return new WaitForSeconds(1f);
+                StartCoroutine(Wait_C(1f));
                 EndGameClientRpc();
             }
         }

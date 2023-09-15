@@ -11,7 +11,7 @@ namespace Game
     {
         public event Action<ulong> OnPlayerSpawn;
         public event Action<ulong, ulong> OnPlayerDeath;
-        private NetworkList<ulong> _playersAlive = new ();
+        private readonly NetworkList<ulong> _playersAlive = new ();
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
         private GameStateController _gameStateController;
@@ -36,6 +36,8 @@ namespace Game
 
         public ulong LastPlayerAlive => _playersAlive[0];
 
+        public int PlayersAliveCount => _playersAlive.Count;
+
         private void Awake()
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
@@ -45,10 +47,10 @@ namespace Game
 
         private void OnAlivePlayersChanged(NetworkListEvent<ulong> changeevent)
         {
-            if (changeevent.Index == 0)
+            if (changeevent is { Index: 0, Type: NetworkListEvent<ulong>.EventType.Remove })
             {
                 Debug.LogError("LIST ONLY 1 INDEX LEFT");
-                _gameStateController.EndGame();
+                _gameStateController.Win();
             }
         }
 
