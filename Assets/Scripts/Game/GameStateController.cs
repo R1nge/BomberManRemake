@@ -164,9 +164,9 @@ namespace Game
 
         private void EndGame()
         {
+            ResetTimer();
             CleanupClientRpc();
             _roundsElapsed++;
-            ResetTimer();
             if (_roundsElapsed < (int)_gameSettings.RoundsAmount)
             {
                 print($"Elapsed: {_roundsElapsed}, Total: {_gameSettings.RoundsAmount}");

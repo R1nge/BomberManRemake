@@ -20,10 +20,10 @@ namespace Game
         {
             _currentTime = new NetworkVariable<float>(_gameSettings.RoundTime);
             _currentTime.OnValueChanged += TimeChanged;
-            _gameStateController.OnRoundEnded += GameStateControllerOnOnRoundEnded;
+            _gameStateController.OnLoadNextRound += ResetTime; 
         }
 
-        private void GameStateControllerOnOnRoundEnded()
+        private void ResetTime()
         {
             if (!IsServer) return;
             _currentTime.Value = _gameSettings.RoundTime;

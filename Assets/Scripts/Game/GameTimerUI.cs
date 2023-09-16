@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using Zenject;
 
 namespace Game
 {
@@ -7,8 +8,30 @@ namespace Game
     {
         [SerializeField] private TextMeshProUGUI roundTime;
         private GameTimer _gameTimer;
+        private GameStateController _gameStateController;
 
-        private void Awake() => _gameTimer = GetComponent<GameTimer>();
+        [Inject]
+        private void Inject(GameStateController gameStateController)
+        {
+            _gameStateController = gameStateController;
+        }
+
+        private void Awake()
+        {
+            _gameTimer = GetComponent<GameTimer>();
+            _gameStateController.OnLoadNextRound += Hide;
+            _gameStateController.OnRoundStarted += Show;
+        }
+
+        private void Show()
+        {
+            roundTime.gameObject.SetActive(true);
+        }
+
+        private void Hide()
+        {
+            roundTime.gameObject.SetActive(false);
+        }
 
         private void Start()
         {

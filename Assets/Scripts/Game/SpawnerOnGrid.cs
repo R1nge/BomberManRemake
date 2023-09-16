@@ -53,9 +53,10 @@ namespace Game
             go.transform.parent = dynamicParent;
         }
 
-        public void SpawnInjectWithOwnership(GameObject prefab, Vector3 position, ulong ownerId)
+        public void SpawnInjectWithOwnership(GameObject prefab, Vector3 position, ulong ownerId, Vector3 offset)
         {
             position = GetNearestGridPosition(position);
+            position += offset;
             var go = _diContainer.InstantiatePrefab(prefab, position, Quaternion.identity, dynamicParent);
             go.transform.parent = dynamicParent;
             go.GetComponent<NetworkObject>().SpawnWithOwnership(ownerId, true);

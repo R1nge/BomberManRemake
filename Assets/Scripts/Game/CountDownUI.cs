@@ -11,12 +11,10 @@ namespace Game
         private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController gameStateController)
-        {
-            _gameStateController = gameStateController;
-        }
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake() => _gameStateController.OnTimeChanged += UpdateUI;
+
 
         private void UpdateUI(float time)
         {
