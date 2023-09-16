@@ -32,16 +32,16 @@ namespace Game
             _gameStateController.OnCleanUpBeforeEnd += () =>
             {
                 _started = false;
-                StopCoroutine(_coroutine);
+                if (_coroutine != null)
+                {
+                    StopCoroutine(_coroutine);
+                }
             };
         }
 
-        private void Start()
-        {
-            _gameTimer.CurrentTimer.OnValueChanged += OnValueChanged;
-        }
+        private void Start() => _gameTimer.CurrentTimer.OnValueChanged += OnValueChanged;
 
-        private void OnValueChanged(float previousvalue, float time)
+        private void OnValueChanged(float _, float time)
         {
             if (!IsServer) return;
             if (_started) return;
