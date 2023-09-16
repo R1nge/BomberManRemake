@@ -20,22 +20,21 @@ namespace Player
         private void Awake()
         {
             _playerHealth = GetComponent<PlayerHealth>();
-            _playerHealth.OnDeath += SpawnThumbStonerServerRpc;
+            _playerHealth.OnDeath += SpawnTombStoneServerRpc;
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void SpawnThumbStonerServerRpc()
+        private void SpawnTombStoneServerRpc()
         {
-            print("SPAWNED A THUMB STONE");
             var position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-            var offset = new Vector3(0, transform.position.y - .5f, 0);
+            var offset = new Vector3(0, transform.position.y - 1, 0);
             _spawnerOnGrid.SpawnInjectWithOwnership(tombstone.gameObject, position, NetworkObject.OwnerClientId, offset);
         }
 
         public override void OnDestroy()
         {
             base.OnDestroy();
-            _playerHealth.OnDeath -= SpawnThumbStonerServerRpc;
+            _playerHealth.OnDeath -= SpawnTombStoneServerRpc;
         }
     }
 }
