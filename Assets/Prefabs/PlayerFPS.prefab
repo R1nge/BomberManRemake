@@ -428,7 +428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56e309ae37bc4c61b549977d768db8ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thumbstone: {fileID: 2889618070522803051, guid: d7197ca34591b1e43917488603a1e329, type: 3}
+  tombstone: {fileID: 2889618070522803051, guid: d7197ca34591b1e43917488603a1e329, type: 3}
 --- !u!1 &2190917478672296892
 GameObject:
   m_ObjectHideFlags: 0

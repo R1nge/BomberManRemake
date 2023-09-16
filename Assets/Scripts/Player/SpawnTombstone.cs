@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Player
 {
-    public class SpawnThumbstone : NetworkBehaviour
+    public class SpawnTombstone : NetworkBehaviour
     {
         [SerializeField] private Tombstone tombstone;
         private PlayerHealth _playerHealth;
@@ -27,8 +27,9 @@ namespace Player
         private void SpawnThumbStonerServerRpc()
         {
             print("SPAWNED A THUMB STONE");
-            var position = new Vector3(transform.position.x, transform.position.y - .5f, transform.position.z);
-            _spawnerOnGrid.SpawnInjectWithOwnership(tombstone.gameObject, position, NetworkObject.OwnerClientId);
+            var position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            var offset = new Vector3(0, transform.position.y - .5f, 0);
+            _spawnerOnGrid.SpawnInjectWithOwnership(tombstone.gameObject, position, NetworkObject.OwnerClientId, offset);
         }
 
         public override void OnDestroy()
