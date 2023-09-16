@@ -11,10 +11,7 @@ namespace Game
         private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController gameStateController)
-        {
-            _gameStateController = gameStateController;
-        }
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake()
         {
@@ -23,24 +20,12 @@ namespace Game
             _gameStateController.OnRoundStarted += Show;
         }
 
-        private void Show()
-        {
-            roundTime.gameObject.SetActive(true);
-        }
+        private void Show() => roundTime.gameObject.SetActive(true);
 
-        private void Hide()
-        {
-            roundTime.gameObject.SetActive(false);
-        }
+        private void Hide() => roundTime.gameObject.SetActive(false);
 
-        private void Start()
-        {
-            _gameTimer.CurrentTimer.OnValueChanged += UpdateUI;
-        }
+        private void Start() => _gameTimer.CurrentTimer.OnValueChanged += UpdateUI;
 
-        private void UpdateUI(float _, float time)
-        {
-            roundTime.text = "Time left: " + time.ToString("#");
-        }
+        private void UpdateUI(float _, float time) => roundTime.text = "Time left: " + time.ToString("#");
     }
 }

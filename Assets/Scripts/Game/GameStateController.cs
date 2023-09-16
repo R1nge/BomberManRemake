@@ -127,9 +127,7 @@ namespace Game
 
             OnWin?.Invoke();
 
-            StartCoroutine(Wait_C(2f));
-
-            EndGame();
+            StartCoroutine(EndGame());
         }
 
         public void Tie()
@@ -152,18 +150,12 @@ namespace Game
 
             OnTie?.Invoke();
 
-            StartCoroutine(Wait_C(2f));
-
-            EndGame();
+            StartCoroutine(EndGame());
         }
 
-        private IEnumerator Wait_C(float waitTime)
+        private IEnumerator EndGame()
         {
-            yield return new WaitForSeconds(waitTime);
-        }
-
-        private void EndGame()
-        {
+            yield return new WaitForSeconds(2f);
             ResetTimer();
             CleanupClientRpc();
             _roundsElapsed++;
@@ -177,7 +169,7 @@ namespace Game
                 print("LOAD END GAME");
                 OnLoadEndGame?.Invoke();
 
-                StartCoroutine(Wait_C(1f));
+                yield return new WaitForSeconds(1f);
                 EndGameClientRpc();
             }
         }

@@ -15,7 +15,6 @@ namespace Game
 
         private void Awake() => _gameStateController.OnTimeChanged += UpdateUI;
 
-
         private void UpdateUI(float time)
         {
             timerText.text = time.ToString("#");

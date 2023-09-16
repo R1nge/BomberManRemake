@@ -47,7 +47,7 @@ namespace Game
 
         private void OnAlivePlayersChanged(NetworkListEvent<ulong> changeevent)
         {
-            if (_playersAlive.Count <= 1)
+            if (_playersAlive.Count <= 1 && changeevent.Type == NetworkListEvent<ulong>.EventType.Remove)
             {
                 _gameStateController.Win();
             }

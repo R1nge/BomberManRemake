@@ -43,7 +43,6 @@ namespace Game
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-
             NetworkManager.Singleton.NetworkTickSystem.Tick += Tick;
         }
 
