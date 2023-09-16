@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c4e122c6ffe48a0aa8df32c38099573, type: 3}
+  m_Name: SpaceMap
+  m_EditorClassIdentifier: 
+  border: {fileID: 8560669281288005633, guid: 4ad1d8af849ff0340919b68df111a449, type: 3}
+  floor: {fileID: 1484308175810404618, guid: ea6cfc406acc02048a902fdbd8dfa7ab, type: 3}
+  destructable: {fileID: 7509529058266756415, guid: 3d771640332041d4a80a25c7bbabb7c1, type: 3}
+  wall: {fileID: 8272717008279034561, guid: 1141c81f822e3ae478c5ee1aef342b8d, type: 3}
+  corner: {fileID: 8272717008279034561, guid: 1141c81f822e3ae478c5ee1aef342b8d, type: 3}
+  drops:
+  - {fileID: 8491427633619751694, guid: bf668a2ed2870cc4c9eaa34a80caba2c, type: 3}
+  - {fileID: 5756353572909614907, guid: 88b1381d0dc58e04e90b2069f091c354, type: 3}
+  - {fileID: 2865074018043587239, guid: c8d92c1eb8372b948bf88bc1ab0457e1, type: 3}
+  - {fileID: 3882955579993842782, guid: 86544afecb20be84ea5378ad5e9cae75, type: 3}
+  - {fileID: 3563662994330632757, guid: 7cf9e93be35250445916dae175c6b01c, type: 3}
+  size: 2
+  leftBottomCornerRotation: {x: 0, y: 0, z: 0}
+  leftTopCornerRotation: {x: 0, y: 0, z: 0}
+  leftBorderRotation: {x: 0, y: 0, z: 0}
+  bottomBorderRotation: {x: 0, y: 0, z: 0}
+  topBorderRotation: {x: 0, y: 0, z: 0}
