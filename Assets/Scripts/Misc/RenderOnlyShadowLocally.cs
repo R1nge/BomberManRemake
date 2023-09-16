@@ -6,12 +6,16 @@ namespace Misc
 {
     public class RenderOnlyShadowLocally : NetworkBehaviour
     {
-        [SerializeField] private new Renderer renderer;
+        [SerializeField] private new Renderer[] renderer;
+
         public override void OnNetworkSpawn()
         {
             if (IsOwner)
             {
-                renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+                for (int i = 0; i < renderer.Length; i++)
+                {
+                    renderer[i].shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+                }
             }
         }
     }
