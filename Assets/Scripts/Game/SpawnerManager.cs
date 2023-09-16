@@ -47,9 +47,8 @@ namespace Game
 
         private void OnAlivePlayersChanged(NetworkListEvent<ulong> changeevent)
         {
-            if (changeevent is { Index: 0, Type: NetworkListEvent<ulong>.EventType.Remove })
+            if (_playersAlive.Count <= 1)
             {
-                Debug.LogError("LIST ONLY 1 INDEX LEFT");
                 _gameStateController.Win();
             }
         }
@@ -57,6 +56,7 @@ namespace Game
         private void RoundManagerOnOnLoadNextRound()
         {
             if (!IsServer) return;
+            _playersAlive.Clear();
             Spawn();
         }
 

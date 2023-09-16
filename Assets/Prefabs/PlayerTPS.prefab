@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 6589948449935878769}
   - component: {fileID: 4906661085660483113}
   - component: {fileID: 8804616253600563950}
+  - component: {fileID: 2539892248917342525}
   m_Layer: 0
   m_Name: PlayerTPS
   m_TagString: Untagged
@@ -527,6 +528,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ping: {fileID: 2742881548361175202}
+--- !u!114 &2539892248917342525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746142922312464863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56e309ae37bc4c61b549977d768db8ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thumbstone: {fileID: 2889618070522803051, guid: d7197ca34591b1e43917488603a1e329, type: 3}
 --- !u!1 &3071716921317876537
 GameObject:
   m_ObjectHideFlags: 0
