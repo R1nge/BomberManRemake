@@ -831,7 +831,6 @@ GameObject:
   - component: {fileID: 338895839}
   - component: {fileID: 338895838}
   - component: {fileID: 338895837}
-  - component: {fileID: 338895840}
   m_Layer: 0
   m_Name: AudioSettings
   m_TagString: Untagged
@@ -851,8 +850,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 020898fb194f416ab25ab3cdc4e3ecc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settings: {fileID: 338895840}
-  mainMenu: {fileID: 834876091}
+  mainMenu: {fileID: 0}
+  settings: {fileID: 621025286}
+  master: {fileID: 1114228645}
+  music: {fileID: 1718140070}
+  sfx: {fileID: 1337884551}
+  open: {fileID: 1100595790}
+  close: {fileID: 1027607384}
 --- !u!114 &338895838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -881,22 +885,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &338895840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 338895836}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 7246491df5e4b2349823a90c097afc95, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: a65eac7fa0287564bb1f793fb6de06c7, type: 3}
-  m_SortingOrder: 0
 --- !u!1 &340909759
 GameObject:
   m_ObjectHideFlags: 0
@@ -2780,7 +2768,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 834876092}
-  - component: {fileID: 834876091}
   - component: {fileID: 834876093}
   m_Layer: 0
   m_Name: MainMenu
@@ -2789,22 +2776,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &834876091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834876090}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 7246491df5e4b2349823a90c097afc95, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: f8b5dd511bc2a564cb5045fea17c2d87, type: 3}
-  m_SortingOrder: 0
 --- !u!4 &834876092
 Transform:
   m_ObjectHideFlags: 0
@@ -4809,7 +4780,6 @@ GameObject:
   - component: {fileID: 1517972319}
   - component: {fileID: 1517972318}
   - component: {fileID: 1517972320}
-  - component: {fileID: 1517972321}
   m_Layer: 0
   m_Name: SkinsUI
   m_TagString: Untagged
@@ -4866,22 +4836,6 @@ MonoBehaviour:
   close: {fileID: 62634420}
   slotParent: {fileID: 935089766}
   slot: {fileID: 8662316710759088861, guid: 7fbc5c5e32ac2a749b593ba4e51b6e4a, type: 3}
---- !u!114 &1517972321
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1517972317}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PanelSettings: {fileID: 11400000, guid: 7246491df5e4b2349823a90c097afc95, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 3440a82759d91994482f131173bfbf87, type: 3}
-  m_SortingOrder: 0
 --- !u!1 &1564345180
 GameObject:
   m_ObjectHideFlags: 0

@@ -50,6 +50,7 @@ namespace Game
             _coroutine = StartCoroutine(Spawn());
         }
 
+        //TODO: square loop
         private IEnumerator Spawn()
         {
             for (int z = 0; z < _gameSettings.MapLength; z++)

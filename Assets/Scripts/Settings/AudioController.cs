@@ -6,25 +6,25 @@ namespace Settings
 {
     public class AudioController : MonoBehaviour
     {
-        public event Action<int, int, int> OnSettingsLoaded;
+        public event Action<float, float, float> OnSettingsLoaded;
         [SerializeField] private AudioMixer audioMixer;
         private const string MASTER_VOLUME = "MasterVolume";
         private const string MUSIC_VOLUME = "MusicVolume";
         private const string SFX_VOLUME = "SfxVolume";
 
-        private void Awake() => Load();
+        private void Start() => Load();
 
-        public void SetMasterVolume(int volume) => audioMixer.SetFloat(MASTER_VOLUME, volume);
+        public void SetMasterVolume(float volume) => audioMixer.SetFloat(MASTER_VOLUME, volume);
 
-        public void SetMusicVolume(int volume) => audioMixer.SetFloat(MUSIC_VOLUME, volume);
+        public void SetMusicVolume(float volume) => audioMixer.SetFloat(MUSIC_VOLUME, volume);
 
-        public void SetSfxVolume(int volume) => audioMixer.SetFloat(SFX_VOLUME, volume);
+        public void SetSfxVolume(float volume) => audioMixer.SetFloat(SFX_VOLUME, volume);
 
         private void Load()
         {
-            var masterVolume = PlayerPrefs.GetInt(MASTER_VOLUME, -50);
-            var musicVolume = PlayerPrefs.GetInt(MUSIC_VOLUME, -50);
-            var sfxVolume = PlayerPrefs.GetInt(SFX_VOLUME, -50);
+            var masterVolume = PlayerPrefs.GetFloat(MASTER_VOLUME, -50);
+            var musicVolume = PlayerPrefs.GetFloat(MUSIC_VOLUME, -50);
+            var sfxVolume = PlayerPrefs.GetFloat(SFX_VOLUME, -50);
             OnSettingsLoaded?.Invoke(masterVolume, musicVolume, sfxVolume);
         }
 
