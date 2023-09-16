@@ -9,10 +9,21 @@ namespace Game
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.transform.TryGetComponent(out IDamageable damageable))
+            var transform = collision.transform;
+            if (transform.TryGetComponent(out NetworkObject networkObject))
             {
-                damageable.TakeDamage(DAMAGE, 123);
+                if (transform.TryGetComponent(out IDamageable damageable))
+                {
+                    damageable.TakeDamage(DAMAGE, networkObject.OwnerClientId, DeathType.Map);
+                }
             }
+            
         }
+    }
+
+    public enum DeathType
+    {
+        Map,
+        Player,
     }
 }

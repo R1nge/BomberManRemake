@@ -13,7 +13,8 @@ namespace Game
         private GameSettings _gameSettings;
         private GameStateController _gameStateController;
         private WaitForSeconds _waitForSeconds;
-        private const int HEIGHT = 2;
+        private Coroutine _coroutine;
+        private const int HEIGHT = 4;
         private bool _started;
         private GameTimer _gameTimer;
 
@@ -26,12 +27,12 @@ namespace Game
 
         private void Awake()
         {
-            _waitForSeconds = new WaitForSeconds(.25f);
+            _waitForSeconds = new WaitForSeconds(.05f);
             _gameTimer = FindObjectOfType<GameTimer>();
-            _gameStateController.OnRoundEnded += () =>
+            _gameStateController.OnCleanUpBeforeEnd += () =>
             {
-                StopAllCoroutines();
                 _started = false;
+                StopCoroutine(_coroutine);
             };
         }
 
@@ -46,7 +47,7 @@ namespace Game
             if (_started) return;
             if (time > 30) return;
             _started = true;
-            StartCoroutine(Spawn());
+            _coroutine = StartCoroutine(Spawn());
         }
 
         private IEnumerator Spawn()

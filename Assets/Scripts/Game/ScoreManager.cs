@@ -26,10 +26,17 @@ namespace Game
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void AddKillScoreServerRpc(ulong killedId, ulong killerId)
+        private void AddKillScoreServerRpc(ulong killedId, ulong killerId, DeathType deathType)
         {
+            if (deathType == DeathType.Map)
+            {
+                Debug.Log("Was killed by the map, no score will be added");
+                return;
+            }
+            
             if (killedId == killerId)
             {
+                Debug.Log("Killed himself, no score will be added");
                 return;
             }
 

@@ -9,6 +9,7 @@ namespace Game
     {
         [SerializeField] private KillFeedSlot slot;
         [SerializeField] private Transform parent;
+        private const string MAP = "map";
         private SpawnerManager _spawnerManager;
         private Lobby.Lobby _lobby;
 
@@ -22,11 +23,18 @@ namespace Game
         private void Awake() => _spawnerManager.OnPlayerDeath += UpdateKillFeedServerRpc;
 
         [ServerRpc(RequireOwnership = false)]
-        private void UpdateKillFeedServerRpc(ulong killedId, ulong killerId)
+        private void UpdateKillFeedServerRpc(ulong killedId, ulong killerId, DeathType deathType)
         {
             string killedName = _lobby.GetData(killedId).Value.NickName;
-            string killerName = _lobby.GetData(killerId).Value.NickName;
-            UpdateKillFeedClientRpc(killedName, killerName);
+            if (deathType == DeathType.Player)
+            {
+                string killerName = _lobby.GetData(killerId).Value.NickName;
+                UpdateKillFeedClientRpc(killedName, killerName);
+            }
+            else if (deathType == DeathType.Map)
+            {
+                UpdateKillFeedClientRpc(killedName, MAP);
+            }
         }
 
         [ClientRpc]

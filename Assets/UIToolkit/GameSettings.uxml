@@ -2,7 +2,7 @@
     <ui:VisualElement name="Background" style="flex-grow: 1;">
         <ui:VisualElement name="GameSettings" style="flex-grow: 1; position: absolute; height: auto; right: 0; top: 0; left: 0; bottom: 0; justify-content: center; align-self: center; align-items: center; visibility: visible; display: flex;">
             <ui:VisualElement name="Settings" style="flex-grow: 1; position: absolute; left: auto; top: auto; visibility: visible;">
-                <ui:EnumField label="Map mode" type="Game.GameSettings+MapModes, Assembly-CSharp" name="MapModes" />
+                <ui:EnumField label="Map mode" type="Game.GameSettings+MapModes, Assembly-CSharp" name="MapModes" style="visibility: hidden; display: none;" />
                 <ui:EnumField label="Perspective mode" type="Game.GameSettings+PerspectiveModes, Assembly-CSharp" name="PerspectiveModes" />
                 <ui:EnumField label="Rounds" type="Game.GameSettings+RoundAmount, Assembly-CSharp" name="Rounds" value="One" />
                 <ui:SliderInt picking-mode="Ignore" label="Round Time" value="1" high-value="5" name="RoundTime" low-value="1" show-input-field="true" />

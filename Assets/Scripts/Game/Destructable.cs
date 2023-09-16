@@ -24,7 +24,7 @@ namespace Game
 
         private void Awake() => _dropIndex = new NetworkVariable<int>();
 
-        public void TakeDamage(int amount, ulong killerId) => SpawnDropServerRpc();
+        public void TakeDamage(int amount, ulong killerId, DeathType deathType) => SpawnDropServerRpc();
 
         [ServerRpc(RequireOwnership = false)]
         public void SpawnDropServerRpc()

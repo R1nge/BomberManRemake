@@ -34,7 +34,7 @@ namespace Player
 
         private void Start() => OnInit?.Invoke(_currentHealth.Value);
 
-        public void TakeDamage(int amount, ulong killerId)
+        public void TakeDamage(int amount, ulong killerId, DeathType deathType)
         {
             if (_playerShield.IsActive)
             {
@@ -50,7 +50,7 @@ namespace Player
                 OnDeath?.Invoke();
                 if (IsServer)
                 {
-                    _spawnerManager.Despawn(NetworkObject.OwnerClientId, _killerId);
+                    _spawnerManager.Despawn(NetworkObject.OwnerClientId, _killerId, deathType);
                     NetworkObject.Despawn(true);
                 }
             }

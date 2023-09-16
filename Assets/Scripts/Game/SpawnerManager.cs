@@ -10,7 +10,7 @@ namespace Game
     public class SpawnerManager : NetworkBehaviour
     {
         public event Action<ulong> OnPlayerSpawn;
-        public event Action<ulong, ulong> OnPlayerDeath;
+        public event Action<ulong, ulong, DeathType> OnPlayerDeath;
         private readonly NetworkList<ulong> _playersAlive = new ();
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
@@ -91,25 +91,25 @@ namespace Game
             }
         }
 
-        public void Despawn(ulong killedId, ulong killerId)
+        public void Despawn(ulong killedId, ulong killerId, DeathType deathType)
         {
             if (IsServer)
             {
                 _playersAlive.Remove(killedId);
-                OnPlayerDeath?.Invoke(killedId, killerId);
+                OnPlayerDeath?.Invoke(killedId, killerId, deathType);
             }
             else
             {
-                DespawnServerRpc(killedId, killerId);
+                DespawnServerRpc(killedId, killerId, deathType);
             }
         }
 
         [ServerRpc(RequireOwnership = false)]
-        private void DespawnServerRpc(ulong killedId, ulong killerId)
+        private void DespawnServerRpc(ulong killedId, ulong killerId, DeathType deathType)
         {
             _playersAlive.Remove(killedId);
             Debug.LogError($"{killedId} was killed by {killerId}");
-            OnPlayerDeath?.Invoke(killedId, killerId);
+            OnPlayerDeath?.Invoke(killedId, killerId, deathType);
         }
 
         public override void OnDestroy()
