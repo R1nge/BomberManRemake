@@ -17,7 +17,7 @@ namespace Game
         public event Action OnRoundEnded;
         public event Action OnLoadNextRound;
         public event Action OnLoadEndGame;
-        public event Action<float> OnTimeChanged;
+        public event Action<float> OnCountDownTimeChanged;
         [SerializeField] private int countdownTime;
         private NetworkVariable<float> _time;
         private NetworkVariable<bool> _gameStarted, _gameEnded;
@@ -79,7 +79,7 @@ namespace Game
 
         private void OnValueChanged(float _, float time)
         {
-            OnTimeChanged?.Invoke(time);
+            OnCountDownTimeChanged?.Invoke(time);
             if (time <= 0)
             {
                 if (IsServer)

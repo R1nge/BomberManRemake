@@ -13,7 +13,7 @@ namespace Game
         [Inject]
         private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
-        private void Awake() => _gameStateController.OnTimeChanged += UpdateUI;
+        private void Awake() => _gameStateController.OnCountDownTimeChanged += UpdateUI;
 
         private void UpdateUI(float time)
         {
@@ -24,6 +24,6 @@ namespace Game
             }
         }
 
-        public override void OnDestroy() => _gameStateController.OnTimeChanged -= UpdateUI;
+        public override void OnDestroy() => _gameStateController.OnCountDownTimeChanged -= UpdateUI;
     }
 }
