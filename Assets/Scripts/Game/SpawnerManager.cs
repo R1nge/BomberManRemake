@@ -11,7 +11,7 @@ namespace Game
     {
         public event Action<ulong> OnPlayerSpawn;
         public event Action<ulong, ulong, DeathType> OnPlayerDeath;
-        private readonly NetworkList<ulong> _playersAlive = new ();
+        private NetworkList<ulong> _playersAlive;
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
         private GameStateController _gameStateController;
@@ -40,6 +40,7 @@ namespace Game
 
         private void Awake()
         {
+            _playersAlive = new();
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
             _gameStateController.OnLoadNextRound += RoundManagerOnOnLoadNextRound;
             _playersAlive.OnListChanged += OnAlivePlayersChanged;
@@ -115,6 +116,7 @@ namespace Game
         public override void OnDestroy()
         {
             _gameStateController.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
+            _playersAlive?.Dispose();
             base.OnDestroy();
         }
     }
