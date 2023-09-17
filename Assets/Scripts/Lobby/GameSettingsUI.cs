@@ -1,35 +1,24 @@
-﻿using System;
-using Game;
+﻿using Game;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Lobby
 {
     public class GameSettingsUI : NetworkBehaviour
     {
-        [SerializeField] private UIDocument uiDocument;
+        [SerializeField] private GameObject gameSettingsUI, proceduralSettingsUI;
+        [SerializeField] private TMP_Dropdown mapMode, perspectiveMode;
+        [SerializeField] private Slider roundAmount, roundTime;
+        [SerializeField] private TMP_InputField mapSizeX, mapSizeZ;
+        //[SerializeField] private Button next;
+        [SerializeField] private TMP_InputField dropChance;
+        [SerializeField] private Button ready, start;
         private GameSettings _gameSettings;
         private Lobby _lobby;
-        private const string GAME_SETTINGS = "GameSettings";
-        private const string MAP_MODE = "MapModes";
-        private const string PERSPECTIVE_MODE = "PerspectiveModes";
-        private const string ROUNDS = "Rounds";
-        private const string ROUND_TIME = "RoundTime";
-        private const string GAME_SETTINGS_NEXT = "GameSettingsNext";
-        private const string MAP_CUSTOMIZATION = "MapCustomization";
-        private const string MAP_CUSTOMIZATION_NEXT = "MapCustomizationNext";
-        private const string PROCEDURAL_MAP_CUSTOMIZATION = "ProceduralMapCustomization";
-        private const string MAP_SIZE_X = "MapSizeX";
-        private const string MAP_SIZE_Z = "MapSizeZ";
-        private const string PROCEDURAL_MAP_NEXT = "ProceduralMapCustomizationNext";
-        private const string POWERUP_CUSTOMIZATION = "PowerupCustomization";
-        private const string DROP_CHANCE = "DropChance";
-
-        private const string START = "Start";
-        private const string READY = "Ready";
 
         [Inject]
         private void Inject(GameSettings gameSettings, Lobby lobby)
@@ -40,89 +29,72 @@ namespace Lobby
 
         private void Awake()
         {
-            var root = uiDocument.rootVisualElement;
-
-            root.Q<EnumField>(MAP_MODE).RegisterValueChangedCallback(evt =>
+            mapMode.onValueChanged.AddListener(mode =>
             {
-                _gameSettings.SetMapMode((GameSettings.MapModes)evt.newValue);
+                _gameSettings.SetMapMode((GameSettings.MapModes)mode);
             });
 
-            root.Q<EnumField>(PERSPECTIVE_MODE).RegisterValueChangedCallback(evt =>
+            perspectiveMode.onValueChanged.AddListener(mode =>
             {
-                _gameSettings.SetPerspectiveMode((GameSettings.PerspectiveModes)evt.newValue);
+                _gameSettings.SetPerspectiveMode((GameSettings.PerspectiveModes)mode);
             });
 
-            root.Q<EnumField>(ROUNDS).RegisterValueChangedCallback(evt =>
+            roundAmount.onValueChanged.AddListener(rounds =>
             {
-                _gameSettings.SetRoundsAmount((GameSettings.RoundAmount)evt.newValue);
+                _gameSettings.SetRoundsAmount((GameSettings.RoundAmount)rounds);
             });
 
-            root.Q<SliderInt>(ROUND_TIME).RegisterValueChangedCallback(evt =>
+            roundTime.onValueChanged.AddListener(time =>
             {
-                _gameSettings.SetRoundTime(evt.newValue * 60);
+                _gameSettings.SetRoundTime(time * 60);
             });
 
-            root.Q<Button>(GAME_SETTINGS_NEXT).clicked += () =>
+            // next.onClick.AddListener(() =>
+            // {
+            //     gameSettingsUI.gameObject.SetActive(false);
+            //     proceduralSettingsUI.gameObject.SetActive(true);
+            // });
+
+            mapSizeX.onValueChanged.AddListener(sizeX =>
             {
-                root.Q<VisualElement>(GAME_SETTINGS).style.display =
-                    new StyleEnum<DisplayStyle>(DisplayStyle.None);
-                root.Q<VisualElement>(PROCEDURAL_MAP_CUSTOMIZATION).style.display =
-                    new StyleEnum<DisplayStyle>(DisplayStyle.Flex);
-                //root.Q<VisualElement>(MAP_CUSTOMIZATION).visible = true;
-            };
+                var intSizeX = int.Parse(sizeX);
 
-            root.Q<Button>(MAP_CUSTOMIZATION_NEXT).clicked += () =>
-            {
-                // root.Q<VisualElement>(MAP_CUSTOMIZATION).visible = false;
-            };
-
-            root.Q<Button>(PROCEDURAL_MAP_NEXT).clicked += () =>
-            {
-                root.Q<VisualElement>(PROCEDURAL_MAP_CUSTOMIZATION).style.display =
-                    new StyleEnum<DisplayStyle>(DisplayStyle.None);
-
-
-                root.Q<VisualElement>(POWERUP_CUSTOMIZATION).visible = true;
-            };
-
-            root.Q<SliderInt>(MAP_SIZE_X).RegisterValueChangedCallback(evt =>
-            {
-                var size = evt.newValue;
-
-                if (size % 2 != 1)
+                if (intSizeX % 2 != 1)
                 {
-                    size++;
+                    intSizeX++;
                 }
 
-                _gameSettings.SetMapWidth(size);
+                _gameSettings.SetMapWidth(intSizeX);
             });
 
-            root.Q<SliderInt>(MAP_SIZE_Z).RegisterValueChangedCallback(evt =>
+            mapSizeZ.onValueChanged.AddListener(sizeZ =>
             {
-                var size = evt.newValue;
+                var intSizeZ = int.Parse(sizeZ);
 
-                if (size % 2 != 1)
+                if (intSizeZ % 2 != 1)
                 {
-                    size++;
+                    intSizeZ++;
                 }
 
-                _gameSettings.SetMapLength(size);
+                _gameSettings.SetMapLength(intSizeZ);
             });
 
-            root.Q<SliderInt>(DROP_CHANCE).RegisterValueChangedCallback(evt =>
+            dropChance.onValueChanged.AddListener(chance =>
             {
-                _gameSettings.SetDropChance(evt.newValue);
+                var chanceInt = int.Parse(chance);
+                chanceInt = Mathf.Clamp(chanceInt, 0, 100);
+                _gameSettings.SetDropChance(chanceInt);
             });
 
-            root.Q<Button>(START).clicked += () =>
+            start.onClick.AddListener(() =>
             {
                 NetworkManager.Singleton.SceneManager.UnloadScene(SceneManager.GetSceneByName("Lobby"));
-            };
+            });
 
-            root.Q<Button>(READY).clicked += () =>
+            ready.onClick.AddListener(() =>
             {
                 _lobby.ChangeReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
-            };
+            });
 
             NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;
             _lobby.OnReadyStateChanged += ReadyStateChanged;
@@ -130,18 +102,14 @@ namespace Lobby
 
         private void ClientConnected(ulong clientId) => ReadyStateChanged(clientId, false);
 
-        private void ReadyStateChanged(ulong clientId, bool isReady) =>
-            uiDocument.rootVisualElement.Q<Button>(START).SetEnabled(_lobby.CanStartGame());
+        private void ReadyStateChanged(ulong clientId, bool isReady) => start.interactable = _lobby.CanStartGame();
 
         public override void OnNetworkSpawn()
         {
-            uiDocument.rootVisualElement.Q<Button>(START).visible = IsOwner;
-            uiDocument.rootVisualElement.Q<Button>(START).SetEnabled(_lobby.CanStartGame());
-            if (!IsOwner)
-            {
-                uiDocument.rootVisualElement.Q<VisualElement>(GAME_SETTINGS).style.display =
-                    new StyleEnum<DisplayStyle>(DisplayStyle.None);
-            }
+            start.gameObject.SetActive(IsOwner);
+            ready.gameObject.SetActive(true);
+            gameSettingsUI.gameObject.SetActive(IsOwner);
+            proceduralSettingsUI.gameObject.SetActive(false);
         }
 
         public override void OnDestroy()

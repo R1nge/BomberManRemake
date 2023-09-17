@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1274966932085776512, guid: d5d588fc14b11224aa99cf04060fad2e, type: 3}
+      propertyPath: renderer.Array.data[0]
+      value: 
+      objectReference: {fileID: 157293652955239689}
     - target: {fileID: 1746142922312464863, guid: d5d588fc14b11224aa99cf04060fad2e, type: 3}
       propertyPath: m_Name
       value: CubeFPS
@@ -65,3 +69,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d5d588fc14b11224aa99cf04060fad2e, type: 3}
+--- !u!23 &157293652955239689 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2578080991707547459, guid: d5d588fc14b11224aa99cf04060fad2e, type: 3}
+  m_PrefabInstance: {fileID: 2443764368131248714}
+  m_PrefabAsset: {fileID: 0}
