@@ -115,9 +115,8 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _gameStateController.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
-            _playersAlive?.Dispose();
             base.OnDestroy();
+            _gameStateController.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
         }
     }
 }
