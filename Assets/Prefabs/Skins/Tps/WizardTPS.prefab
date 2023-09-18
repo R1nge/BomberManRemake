@@ -63,6 +63,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 43234790468e1494b8c61d9e21013095, type: 3}
       insertIndex: -1
       addedObject: {fileID: 608292455873610120}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 43234790468e1494b8c61d9e21013095, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4932530860150590141}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 43234790468e1494b8c61d9e21013095, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4837829309694251042}
   m_SourcePrefab: {fileID: 100100000, guid: 43234790468e1494b8c61d9e21013095, type: 3}
 --- !u!4 &301989532363596536 stripped
 Transform:
@@ -104,6 +110,41 @@ MonoBehaviour:
   InLocalSpace: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!95 &4932530860150590141
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115539542319528002}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2f61349f207559b449f81084324dee6c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4837829309694251042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115539542319528002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5f9df1ccce94dfba9e26be5da700c71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 4932530860150590141}
 --- !u!1001 &6172028413393621482
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -160,6 +201,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 951099334
       objectReference: {fileID: 0}
+    - target: {fileID: 5098783791842327327, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 4837829309694251042}
     - target: {fileID: 6589948449935878769, guid: 7258af8111825a0448fef5a7687a4123, type: 3}
       propertyPath: model
       value: 

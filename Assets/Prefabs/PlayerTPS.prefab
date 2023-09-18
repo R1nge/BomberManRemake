@@ -136,13 +136,12 @@ GameObject:
   - component: {fileID: 8822662333101843635}
   - component: {fileID: 6428309076241787360}
   - component: {fileID: -3896501209610995612}
-  - component: {fileID: -9005592659518683103}
-  - component: {fileID: 4668021876086161458}
   - component: {fileID: 2988861394034579975}
   - component: {fileID: 6589948449935878769}
   - component: {fileID: 4906661085660483113}
   - component: {fileID: 8804616253600563950}
   - component: {fileID: 2539892248917342525}
+  - component: {fileID: 5098783791842327327}
   m_Layer: 0
   m_Name: PlayerTPS
   m_TagString: Untagged
@@ -448,33 +447,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftStick: {fileID: 8893886773863070474}
   rightStick: {fileID: 1329792127648845926}
---- !u!114 &-9005592659518683103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1746142922312464863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 378c33fd0b9349e8b00d75e76fe60b0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bombStartAmount: 2
-  playerInput: {fileID: 711819770836009535}
---- !u!114 &4668021876086161458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1746142922312464863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 062e72dfb3854245a97d7939b416b43e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bombs: {fileID: 1971133325310257591}
 --- !u!114 &2988861394034579975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -541,6 +513,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tombstone: {fileID: 2889618070522803051, guid: d7197ca34591b1e43917488603a1e329, type: 3}
+--- !u!114 &5098783791842327327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746142922312464863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cddacdf92684528a315d4d3eda5c690, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
 --- !u!1 &3071716921317876537
 GameObject:
   m_ObjectHideFlags: 0

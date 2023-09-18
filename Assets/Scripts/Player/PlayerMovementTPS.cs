@@ -48,6 +48,14 @@ namespace Player
             if (!IsOwner) return;
             if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
+            print(_moveDirection.magnitude);
+
+            if (PlayerAnimator != null)
+            {
+                PlayerAnimator.Move(_moveDirection.magnitude);
+            }
+            
+            
             _inputData = new InputData(_moveDirection);
             _characterController.Move(_moveDirection);
             Rotate();
@@ -56,10 +64,12 @@ namespace Player
         private void OnTick()
         {
             if (!IsOwner) return;
+            
             if (!_playerInput.InputEnabled) return;
             if (IsServer) return;
             SendDataServerRpc(_inputData);
             MoveServerRpc();
+           
         }
 
         [ServerRpc(Delivery = RpcDelivery.Unreliable)]
