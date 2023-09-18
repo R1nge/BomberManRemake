@@ -14,7 +14,7 @@ namespace Game
         public event Action OnTie;
         public event Action OnCleanUpBeforeEnd;
         public event Action OnRoundStarted;
-        public event Action OnRoundEnded;
+        public event Action OnGameEnded;
         public event Action OnLoadNextRound;
         public event Action OnLoadEndGame;
         public event Action<float> OnCountDownTimeChanged;
@@ -191,7 +191,7 @@ namespace Game
         private void EndGameClientRpc()
         {
             print("ROUND ENDED");
-            OnRoundEnded?.Invoke();
+            OnGameEnded?.Invoke();
         }
 
         public override void OnDestroy()

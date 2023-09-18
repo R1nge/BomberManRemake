@@ -11,18 +11,23 @@ namespace Game
     public class MapGenerator : NetworkBehaviour
     {
         [SerializeField] private Transform dynamicParent;
-        [SerializeField] private MapPreset[] presets;
-        private MapPreset _selected;
         private GameSettings _gameSettings;
         private DiContainer _diContainer;
         private GameStateController _gameStateController;
+        private MapSelector _mapSelector;
 
         [Inject]
-        private void Inject(DiContainer diContainer, GameSettings gameSettings, GameStateController gameStateController)
+        private void Inject(
+            DiContainer diContainer,
+            GameSettings gameSettings,
+            GameStateController gameStateController,
+            MapSelector mapSelector
+        )
         {
             _diContainer = diContainer;
             _gameSettings = gameSettings;
             _gameStateController = gameStateController;
+            _mapSelector = mapSelector;
         }
 
         private void Awake()
@@ -44,7 +49,6 @@ namespace Game
         {
             if (!IsServer) return;
             print("GENERATE");
-            _selected = presets[Random.Range(0, presets.Length)];
             SpawnFloor();
             SpawnBorders();
             SpawnWalls();
@@ -57,7 +61,7 @@ namespace Game
             {
                 for (int z = 0; z < _gameSettings.MapLength; z++)
                 {
-                    Spawn(_selected.Floor, x * _selected.Size, z * _selected.Size, Quaternion.identity);
+                    Spawn(_mapSelector.SelectedMap.Floor, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, Quaternion.identity);
                 }
             }
         }
@@ -69,32 +73,32 @@ namespace Game
                 for (int z = -1; z < _gameSettings.MapLength + 1; z++)
                 {
                     Quaternion cornerRotation;
-                    
+
                     if (LeftBottomCorner(x, z))
                     {
-                        cornerRotation = Quaternion.Euler(_selected.LeftBottomCornerRotation);
-                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        cornerRotation = Quaternion.Euler(_mapSelector.SelectedMap.LeftBottomCornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
-                    
+
                     if (LeftTopCorner(x, z))
                     {
-                        cornerRotation = Quaternion.Euler(_selected.LeftTopCornerRotation);
-                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        cornerRotation = Quaternion.Euler(_mapSelector.SelectedMap.LeftTopCornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
-                    
+
                     if (RightBottomCorner(x, z))
                     {
-                        cornerRotation = Quaternion.Euler(-_selected.LeftBottomCornerRotation);
-                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        cornerRotation = Quaternion.Euler(-_mapSelector.SelectedMap.LeftBottomCornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
-                    
+
                     if (RightTopCorner(x, z))
                     {
-                        cornerRotation = Quaternion.Euler(-_selected.LeftTopCornerRotation);
-                        Spawn(_selected.Corner, x * _selected.Size, z * _selected.Size, cornerRotation);
+                        cornerRotation = Quaternion.Euler(-_mapSelector.SelectedMap.LeftTopCornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
 
@@ -130,7 +134,8 @@ namespace Game
         {
             if (x == _gameSettings.MapWidth && z < _gameSettings.MapLength + 1)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(_selected.LeftBorderRotation));
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                    Quaternion.Euler(_mapSelector.SelectedMap.LeftBorderRotation));
             }
         }
 
@@ -138,7 +143,8 @@ namespace Game
         {
             if (x == -1 && z < _gameSettings.MapLength + 1)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(-_selected.LeftBorderRotation));
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                    Quaternion.Euler(-_mapSelector.SelectedMap.LeftBorderRotation));
             }
         }
 
@@ -146,7 +152,8 @@ namespace Game
         {
             if (x < _gameSettings.MapWidth + 1 && z == _gameSettings.MapLength)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(_selected.TopBorderRotation));
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                    Quaternion.Euler(_mapSelector.SelectedMap.TopBorderRotation));
             }
         }
 
@@ -154,7 +161,8 @@ namespace Game
         {
             if (x < _gameSettings.MapWidth + 1 && z == -1)
             {
-                Spawn(_selected.Border, x * _selected.Size, z * _selected.Size, Quaternion.Euler(_selected.BottomBorderRotation));
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                    Quaternion.Euler(_mapSelector.SelectedMap.BottomBorderRotation));
             }
         }
 
@@ -168,7 +176,7 @@ namespace Game
                     {
                         if (IsCenter(x, z)) continue;
 
-                        Spawn(_selected.Wall, x * _selected.Size, z * _selected.Size, Quaternion.identity);
+                        Spawn(_mapSelector.SelectedMap.Wall, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, Quaternion.identity);
                     }
                 }
             }
@@ -196,7 +204,7 @@ namespace Game
 
                     if (IsCenter(x, z)) continue;
 
-                    Spawn(_selected.Destructable, x * _selected.Size, z * _selected.Size, Quaternion.identity);
+                    Spawn(_mapSelector.SelectedMap.Destructable, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, Quaternion.identity);
                 }
             }
         }

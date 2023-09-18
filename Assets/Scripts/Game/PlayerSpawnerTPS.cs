@@ -46,7 +46,7 @@ namespace Game
             var skinIndex = _lobby.GetData(clientId).Value.SkinIndex;
             print($"SKIN INDEX: {skinIndex}");
             var position = _positions[index];
-            var player = _diContainer.InstantiatePrefab(_skinManager.Skins[skinIndex].PrefabTPS, position,
+            var player = _diContainer.InstantiatePrefab(_skinManager.GetSkinTPS(skinIndex), position,
                 Quaternion.identity, null);
             player.transform.parent = dynamicParent;
             player.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);

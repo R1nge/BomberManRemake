@@ -10,7 +10,9 @@ namespace Skins.Players
 
         public void SelectSkin(int index) => _selectedSkin = index;
 
-        public SkinSo[] Skins => skins;
+        public SkinSo GetSkinSo(int index) => skins[index];
+
+        public int SkinsAmount => skins.Length;
 
         public int SkinIndex => _selectedSkin;
 

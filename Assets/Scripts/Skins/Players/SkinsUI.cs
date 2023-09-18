@@ -41,9 +41,9 @@ namespace Skins.Players
 
         private void Init()
         {
-            for (int i = 0; i < _skinManager.Skins.Length; i++)
+            for (int i = 0; i < _skinManager.SkinsAmount; i++)
             {
-                var skin = _skinManager.Skins[i];
+                var skin = _skinManager.GetSkinSo(i);
                 var slotInstance = _diContainer.InstantiatePrefabForComponent<SkinSlot>(slot, slotParent);
                 slotInstance.SetIcon(skin.Icon);
                 slotInstance.SetTitle(skin.Title);

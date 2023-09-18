@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4e122c6ffe48a0aa8df32c38099573, type: 3}
   m_Name: SpaceMap
   m_EditorClassIdentifier: 
+  skybox: {fileID: 2100000, guid: aa78c8d403a8547fe86d1f74239e6b03, type: 2}
   border: {fileID: 8560669281288005633, guid: 4ad1d8af849ff0340919b68df111a449, type: 3}
   floor: {fileID: 1484308175810404618, guid: ea6cfc406acc02048a902fdbd8dfa7ab, type: 3}
   destructable: {fileID: 7509529058266756415, guid: 3d771640332041d4a80a25c7bbabb7c1, type: 3}

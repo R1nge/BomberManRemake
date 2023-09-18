@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4e122c6ffe48a0aa8df32c38099573, type: 3}
   m_Name: GraveyardMap
   m_EditorClassIdentifier: 
+  skybox: {fileID: 2100000, guid: 51b74d7bad397457d883c5940f7664d8, type: 2}
   border: {fileID: 3177934936578468323, guid: ce815b4a7aa65d04796bb172f65f8acc, type: 3}
   floor: {fileID: 5718552521782455240, guid: 369ebb3325439774a861e545e3bf63ce, type: 3}
   destructable: {fileID: 578910907398183821, guid: 9b3a5ca8f4aef264bab515781d324965, type: 3}

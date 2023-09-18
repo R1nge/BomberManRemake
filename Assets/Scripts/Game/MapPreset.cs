@@ -6,13 +6,14 @@ namespace Game
     [CreateAssetMenu(fileName = "MapPreset", menuName = "Map preset")]
     public class MapPreset : ScriptableObject
     {
-        //TODO: add skyboxies, corner prefab
+        [SerializeField] private Material skybox;
         [SerializeField] private GameObject border, floor, destructable, wall, corner;
         [SerializeField] private Powerup[] drops;
         [SerializeField] private int size;
         [SerializeField] private Vector3 leftBottomCornerRotation, leftTopCornerRotation;
         [SerializeField] private Vector3 leftBorderRotation, bottomBorderRotation, topBorderRotation;
 
+        public Material Skybox => skybox;
         public GameObject Border => border;
         public GameObject Floor => floor;
         public GameObject Destructable => destructable;
