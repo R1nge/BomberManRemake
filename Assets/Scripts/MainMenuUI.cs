@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField ip, nick;
+    [SerializeField] private TMP_InputField ip;
     [SerializeField] private Button host, join;
 
     private void Awake()
@@ -16,13 +16,7 @@ public class MainMenuUI : MonoBehaviour
         {
             NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = s;
         });
-        
-        nick.onEndEdit.AddListener(s =>
-        {
-            PlayerPrefs.SetString("Nick", s);
-            PlayerPrefs.Save();
-        });
-        
+
         host.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
@@ -34,7 +28,6 @@ public class MainMenuUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        nick.onEndEdit.RemoveAllListeners();
         host.onClick.RemoveAllListeners();
         join.onClick.RemoveAllListeners();
     }

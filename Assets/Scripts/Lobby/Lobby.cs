@@ -20,7 +20,16 @@ namespace Lobby
         private NetworkList<LobbyData> _players;
         private BombSkinManager _bombSkinManager;
         private SkinManager _skinManager;
+        private PlayFabManager _playFabManager;
         public NetworkList<LobbyData> PlayerData => _players;
+
+        [Inject]
+        private void Inject(SkinManager skinManager, BombSkinManager bombSkinManager, PlayFabManager playFabManager)
+        {
+            _skinManager = skinManager;
+            _bombSkinManager = bombSkinManager;
+            _playFabManager = playFabManager;
+        }
 
         public LobbyData? GetData(ulong clientId)
         {
@@ -111,13 +120,6 @@ namespace Lobby
             return 99999;
         }
 
-        [Inject]
-        private void Inject(SkinManager skinManager, BombSkinManager bombSkinManager)
-        {
-            _skinManager = skinManager;
-            _bombSkinManager = bombSkinManager;
-        }
-
         private void Awake()
         {
             _players = new NetworkList<LobbyData>();
@@ -156,7 +158,7 @@ namespace Lobby
 
         private void CreatePlayerData(ulong clientId)
         {
-            CreatePlayerDataServerRpc(clientId, PlayerPrefs.GetString("Nick"), _skinManager.SkinIndex,
+            CreatePlayerDataServerRpc(clientId, _playFabManager.GetUserName, _skinManager.SkinIndex,
                 _bombSkinManager.SkinIndex);
         }
 
