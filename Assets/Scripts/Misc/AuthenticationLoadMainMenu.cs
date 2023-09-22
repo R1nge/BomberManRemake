@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -13,7 +14,13 @@ namespace Misc
 
         private void Awake() => _playFabManager.OnLoginSuccessful += LoadMainMenu;
 
-        private void LoadMainMenu() => SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+        private void LoadMainMenu() => StartCoroutine(Wait());
+
+        private IEnumerator Wait()
+        {
+            yield return new WaitForSeconds(5f);
+            SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+        }
 
         private void OnDestroy() => _playFabManager.OnLoginSuccessful -= LoadMainMenu;
     }

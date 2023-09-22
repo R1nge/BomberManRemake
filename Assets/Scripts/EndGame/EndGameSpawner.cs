@@ -31,7 +31,7 @@ namespace EndGame
                 _lobby.SortDescending();
             }
 
-            SpawnServerRpc(_skinManager.SkinIndex);
+            SpawnServerRpc(_skinManager.SelectedSkinIndex);
         }
 
         [ServerRpc(RequireOwnership = false)]

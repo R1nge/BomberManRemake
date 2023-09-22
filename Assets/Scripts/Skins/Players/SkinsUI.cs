@@ -27,6 +27,8 @@ namespace Skins.Players
             close.onClick.AddListener(Close);
         }
 
+        private void Start() => Init();
+
         private void Open()
         {
             UI.SetActive(true);
@@ -36,8 +38,6 @@ namespace Skins.Players
         {
             UI.SetActive(false);
         }
-
-        private void Start() => Init();
 
         private void Init()
         {

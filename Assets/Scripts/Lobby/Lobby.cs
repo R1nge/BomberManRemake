@@ -158,7 +158,7 @@ namespace Lobby
 
         private void CreatePlayerData(ulong clientId)
         {
-            CreatePlayerDataServerRpc(clientId, _playFabManager.GetUserName, _skinManager.SkinIndex,
+            CreatePlayerDataServerRpc(clientId, _playFabManager.GetUserName, _skinManager.SelectedSkinIndex,
                 _bombSkinManager.SkinIndex);
         }
 

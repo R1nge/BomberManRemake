@@ -13,11 +13,16 @@ namespace Misc
         private const string MoneyString = "Money";
         private bool _firstLaunch = true;
         private PlayFabManager _playFabManager;
+        private SaveManager _saveManager;
 
         [Inject]
-        private void Inject(PlayFabManager playFabManager) => _playFabManager = playFabManager;
+        private void Inject(PlayFabManager playFabManager, SaveManager saveManager)
+        {
+            _playFabManager = playFabManager;
+            _saveManager = saveManager;
+        }
 
-        public void Initialize() => _playFabManager.OnLoginSuccessful += Load;
+        public void Initialize() => _playFabManager.OnLoginSuccessful += GetMoneyFromServer;
 
         public int Money
         {
@@ -50,6 +55,8 @@ namespace Misc
                 return false;
             }
 
+            GetMoneyFromServer();
+
             if (Money - amount >= 0)
             {
                 Money -= amount;
@@ -58,43 +65,21 @@ namespace Misc
             }
 
             Debug.LogWarning("Not enough money");
-            
+
             return false;
         }
 
-        private void Load()
+        private void GetMoneyFromServer()
         {
-            var keys = new List<string> { MoneyString };
+            Money = _saveManager.LoadInt(MoneyString);
 
-            var request = new GetUserDataRequest
-            {
-                PlayFabId = _playFabManager.GetUserID, Keys = keys
-            };
-
-            PlayFabClientAPI.GetUserData(request, result =>
-            {
-                if (result.Data.ContainsKey(MoneyString))
-                {
-                    var moneyAmount = result.Data[MoneyString].Value;
-                    Money = int.Parse(moneyAmount);
-                    Debug.Log($"Wallet: Loaded save. Money: {Money}");
-                }
-                else
-                {
-                    Debug.Log("Wallet: Save not found");
-                }
-
-                _firstLaunch = false;
-            }, error =>
-            {
-                Debug.LogError($"Wallet {error.GenerateErrorReport()}");
-            });
+            _firstLaunch = false;
         }
 
         private void Save()
         {
             if (_firstLaunch) return;
-            
+
             var request = new UpdateUserDataRequest
             {
                 Data = new Dictionary<string, string>(1)
@@ -108,7 +93,7 @@ namespace Misc
             {
                 request.Data.Add(MoneyString, Money.ToString());
             }
-            
+
             PlayFabClientAPI.UpdateUserData(request, OnSaveSuccess, OnSaveError);
         }
 
@@ -122,6 +107,6 @@ namespace Misc
             Debug.LogError($"Wallet: Error while saving money {error.GenerateErrorReport()}");
         }
 
-        public void Dispose() => _playFabManager.OnLoginSuccessful -= Load;
+        public void Dispose() => _playFabManager.OnLoginSuccessful -= GetMoneyFromServer;
     }
 }

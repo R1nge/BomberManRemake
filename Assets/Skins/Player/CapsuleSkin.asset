@@ -18,3 +18,4 @@ MonoBehaviour:
   prefabFPS: {fileID: 1414254978110925564, guid: a1d4237d79be59d4e8053beb04235eec, type: 3}
   prefabTPS: {fileID: 3395053404095204142, guid: 135a68cb214f3c745800c1cfdb0a9dfe, type: 3}
   endGamePrefab: {fileID: 9203899959888104501, guid: ab2899c06a36f854f89ea53ad8237ca9, type: 3}
+  price: 10
