@@ -7,7 +7,6 @@ using PlayFab;
 using PlayFab.ClientModels;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Skins.Players
@@ -70,7 +69,7 @@ namespace Skins.Players
 
         public async Task Save()
         {
-            SaveSkins();
+            await SaveSkins();
             SaveSelectedSkin();
         }
 
@@ -176,7 +175,7 @@ namespace Skins.Players
                 var skinUnlocked = _skinData[i].Unlocked;
                 var data = new SkinData(i, skinUnlocked);
                 var dataJson = JsonUtility.ToJson(data);
-                _saveManager.Save(skinTitle, dataJson);
+                await _saveManager.Save(skinTitle, dataJson);
             }
 
             saved = true;
@@ -184,12 +183,12 @@ namespace Skins.Players
             await UniTask.WaitUntil(() => saved);
         }
 
-        private void SaveSelectedSkin() => _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
+        private async void SaveSelectedSkin() => await _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
 
-        private void OnApplicationQuit()
+        private async void OnApplicationQuit()
         {
             SaveSelectedSkin();
-            SaveSkins();
+            await SaveSkins();
         }
 
         private void OnDestroy() => _playFabManager.OnLoginSuccessful -= SaveLoaded;

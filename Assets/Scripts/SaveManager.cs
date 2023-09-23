@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
+using Cysharp.Threading.Tasks;
 using Misc;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -53,8 +52,9 @@ public class SaveManager : IInitializable
         }
     }
 
-    public void Save(string name, string value)
+    public async Task Save(string name, string value)
     {
+        var saved = false;
         var request = new UpdateUserDataRequest
         {
             Data = new Dictionary<string, string>(1)
@@ -70,6 +70,9 @@ public class SaveManager : IInitializable
         }
 
         PlayFabClientAPI.UpdateUserData(request, OnSaveSuccess, OnSaveError);
+        saved = true;
+
+        await UniTask.WaitWhile(() => saved);
     }
 
     private void OnSaveSuccess(UpdateUserDataResult data)
