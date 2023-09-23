@@ -19,20 +19,37 @@ namespace Skins
         private void Inject(SkinManager skinManager)
         {
             _skinManager = skinManager;
-            print($"INJEECTED {skinManager}");
         }
 
         private void Awake()
         {
+            _skinManager.OnSkinChanged += UpdateSelectedSkin;
             select.onClick.AddListener(SelectSkin);
+        }
+
+        private void UpdateSelectedSkin(int previous, int current)
+        {
+            if (_skinIndex == previous)
+            {
+                select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
+                select.interactable = true;
+            }
+
+            if (_skinIndex == current)
+            {
+                select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
+                select.interactable = false;
+            }
+            
+            print("Updated selected skin");
         }
 
         private void OnEnable()
         {
             select.interactable = _skinManager.SkinUnlocked(_skinIndex);
-            
+
             print($"SKIN {_skinIndex} UNLOCKED: {_skinManager.SkinUnlocked(_skinIndex)}");
-            
+
             if (_skinManager.SkinUnlocked(_skinIndex))
             {
                 if (_skinManager.SelectedSkinIndex == _skinIndex)
@@ -43,12 +60,13 @@ namespace Skins
                 else
                 {
                     select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
+                    select.interactable = true;
                 }
-                
             }
             else
             {
                 select.GetComponentInChildren<TextMeshProUGUI>().text = _skinManager.GetSkinSo(_skinIndex).Price.ToString();
+                select.interactable = false;
             }
         }
 
@@ -56,5 +74,7 @@ namespace Skins
         public void SetIcon(Sprite sprite) => icon.sprite = sprite;
         public void SetIndex(int skinIndex) => _skinIndex = skinIndex;
         private void SelectSkin() => _skinManager.SelectSkin(_skinIndex);
+
+        private void OnDestroy() => _skinManager.OnSkinChanged -= UpdateSelectedSkin;
     }
 }

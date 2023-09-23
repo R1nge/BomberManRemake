@@ -1,49 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Misc;
 using PlayFab;
 using PlayFab.ClientModels;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Skins.Players
 {
-    public class SkinManager : MonoBehaviour
+    public class SkinManager : MonoBehaviour, ISavable
     {
+        public event Action<int, int> OnSkinChanged;
         [SerializeField] private SkinSo[] skins;
         private SkinData[] _skinData;
-        private int selectedSelectedSkin;
+        private int selectedSkin;
         private Wallet _wallet;
-        private PlayFabManager _playFabManager;
         private SaveManager _saveManager;
+        private PlayFabManager _playFabManager;
         private const string SELECTED_SKIN = "SelectedSkin";
 
         [Inject]
-        private void Inject(Wallet wallet, PlayFabManager playFabManager, SaveManager saveManager)
+        private void Inject(Wallet wallet, SaveManager saveManager, PlayFabManager playFabManager)
         {
             _wallet = wallet;
-            _playFabManager = playFabManager;
             _saveManager = saveManager;
+            _playFabManager = playFabManager;
         }
 
         private void Awake()
         {
-            _playFabManager.OnLoginSuccessful += PlayFabManagerOnOnLoginSuccessful;
+            _saveManager.OnSaveLoaded += SaveLoaded;
         }
 
-        private void PlayFabManagerOnOnLoginSuccessful()
+        private void SaveLoaded()
         {
-            Load();
-            //UnlockSkin(0);
-            //Save();
+            SelectSkin(selectedSkin);
         }
 
         public bool SkinUnlocked(int index) => _skinData[index].Unlocked;
 
         public bool UnlockSkin(int index)
         {
-            if (_wallet.Spend(skins[index].Price))
+            if (_wallet.Spend(skins[index].Price).Result)
             {
                 print("Skin unlocked");
                 _skinData[index].Unlock();
@@ -55,12 +57,16 @@ namespace Skins.Players
             return false;
         }
 
-        public void SelectSkin(int index) => selectedSelectedSkin = index;
+        public void SelectSkin(int index)
+        {
+            OnSkinChanged?.Invoke(selectedSkin, index);
+            selectedSkin = index;
+        }
 
         public SkinSo GetSkinSo(int index) => skins[index];
 
         public int SkinsAmount => skins.Length;
-        public int SelectedSkinIndex => selectedSelectedSkin;
+        public int SelectedSkinIndex => selectedSkin;
 
         public NetworkObject GetLobby(int index) => skins[index].LobbyPrefab;
         public NetworkObject GetSkinFPS(int index) => skins[index].PrefabFPS;
@@ -68,23 +74,30 @@ namespace Skins.Players
         public NetworkObject GetEndGame(int index) => skins[index].EndGamePrefab;
 
 
-        private void Load()
+        public void Save()
+        {
+            SaveSkins();
+            SaveSelectedSkin();
+        }
+
+        public async Task Load()
         {
             _skinData = new SkinData[skins.Length];
-            
-            print($"LOAD {skins.Length}");
 
-            selectedSelectedSkin = _saveManager.LoadInt(SELECTED_SKIN);
-            
+            print($"LOAD SKINS {skins.Length}");
+
             for (int i = 0; i < skins.Length; i++)
             {
-                LoadSkinData(skins[i].Title, i);
+                await LoadSkinData(skins[i].Title, i);
             }
+
+            await LoadSelectedSkin();
         }
-        
-        private void LoadSkinData(string name, int index)
+
+        private async Task LoadSkinData(string name, int index)
         {
             var keys = new List<string> { name };
+            var loaded = false;
 
             var request = new GetUserDataRequest
             {
@@ -99,15 +112,53 @@ namespace Skins.Players
                     var skinData = JsonUtility.FromJson<SkinData>(data);
                     _skinData[index] = skinData;
                     Debug.Log($"Loaded save {name} SKIN DATA {data} SKIN DATA JSON {skinData.Unlocked}");
+                    loaded = true;
                 }
                 else
                 {
                     Debug.Log($"Save not found {name}");
+                    loaded = true;
                 }
             }, error =>
             {
                 Debug.LogError($"Load save error: {error.GenerateErrorReport()}");
+                loaded = true;
             });
+
+            await UniTask.WaitUntil(() => loaded);
+        }
+
+        private async Task LoadSelectedSkin()
+        {
+            var keys = new List<string> { SELECTED_SKIN };
+            var loaded = false;
+
+            var request = new GetUserDataRequest
+            {
+                PlayFabId = _playFabManager.GetUserID, Keys = keys
+            };
+
+            PlayFabClientAPI.GetUserData(request, result =>
+            {
+                if (result.Data.ContainsKey(name))
+                {
+                    var data = result.Data[name].Value;
+                    SelectSkin(int.Parse(data));
+                    Debug.Log($"Loaded saved last skin index");
+                    loaded = true;
+                }
+                else
+                {
+                    Debug.Log($"Save not found {SELECTED_SKIN}");
+                    loaded = true;
+                }
+            }, error =>
+            {
+                Debug.LogError($"Load save error: {error.GenerateErrorReport()}");
+                loaded = true;
+            });
+            
+            await UniTask.WaitUntil(() => loaded);
         }
 
         private void SaveSkins()
@@ -124,7 +175,7 @@ namespace Skins.Players
 
         private void SaveSelectedSkin()
         {
-            _saveManager.Save(SELECTED_SKIN, selectedSelectedSkin.ToString());
+            _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
         }
 
         private void OnApplicationQuit()
@@ -133,6 +184,6 @@ namespace Skins.Players
             SaveSkins();
         }
 
-        private void OnDestroy() => _playFabManager.OnLoginSuccessful -= PlayFabManagerOnOnLoginSuccessful;
+        private void OnDestroy() => _playFabManager.OnLoginSuccessful -= SaveLoaded;
     }
 }

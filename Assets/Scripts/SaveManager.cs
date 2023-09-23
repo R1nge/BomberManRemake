@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Misc;
 using PlayFab;
@@ -8,14 +10,42 @@ using Skins.Players;
 using UnityEngine;
 using Zenject;
 
-public class SaveManager
+public class SaveManager : IInitializable
 {
+    public event Action OnSaveLoaded;
+    private List<ISavable> _savables;
     private PlayFabManager _playFabManager;
+    private Wallet _wallet;
+    private SkinManager _skinManager;
 
     [Inject]
-    private void Inject(PlayFabManager playFabManager)
+    private void Inject(PlayFabManager playFabManager, Wallet wallet, SkinManager skinManager)
     {
         _playFabManager = playFabManager;
+        _wallet = wallet;
+        _skinManager = skinManager;
+    }
+
+    public void Initialize()
+    {
+        _playFabManager.OnLoginSuccessful += OnLoginSuccessful;
+    }
+
+    private async void OnLoginSuccessful()
+    {
+        _savables = new List<ISavable>
+        {
+            _wallet,
+            _skinManager
+        };
+
+        for (int i = 0; i < _savables.Count; i++)
+        {
+            await _savables[i].Load();
+            Debug.Log($"SAVE MANAGER LOADED {i}");
+        }
+
+        OnSaveLoaded?.Invoke();
     }
 
     public void Save(string name, string value)
@@ -44,66 +74,6 @@ public class SaveManager
 
     private void OnSaveError(PlayFabError error)
     {
-        Debug.LogError($"Error while saving {error.Error}");
-    }
-
-    public int LoadInt(string name)
-    {
-        var dataInt = -1;
-        var keys = new List<string> { name };
-
-        var request = new GetUserDataRequest
-        {
-            PlayFabId = _playFabManager.GetUserID, Keys = keys
-        };
-
-        PlayFabClientAPI.GetUserData(request, result =>
-        {
-            if (result.Data.ContainsKey(name))
-            {
-                var data = result.Data[name].Value;
-                dataInt = int.Parse(data);
-                Debug.Log($"Loaded save {name}");
-            }
-            else
-            {
-                Debug.Log($"Save not found {name}");
-            }
-        }, error =>
-        {
-            Debug.LogError($"Save error: {error.GenerateErrorReport()}");
-        });
-
-        return dataInt;
-    }
-
-    public bool LoadBool(string name)
-    {
-        var dataBool = false;
-        var keys = new List<string> { name };
-
-        var request = new GetUserDataRequest
-        {
-            PlayFabId = _playFabManager.GetUserID, Keys = keys
-        };
-
-        PlayFabClientAPI.GetUserData(request, result =>
-        {
-            if (result.Data.ContainsKey(name))
-            {
-                var data = result.Data[name].Value;
-                dataBool = bool.Parse(data);
-                Debug.Log($"Loaded save {name}");
-            }
-            else
-            {
-                Debug.Log($"Save not found {name}");
-            }
-        }, error =>
-        {
-            Debug.LogError($"Save error: {error.GenerateErrorReport()}");
-        });
-
-        return dataBool;
+        Debug.LogError($"Error while saving {error.Error}; Message: {error.ErrorMessage}");
     }
 }

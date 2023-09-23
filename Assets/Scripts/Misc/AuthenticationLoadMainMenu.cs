@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -7,21 +6,15 @@ namespace Misc
 {
     public class AuthenticationLoadMainMenu : MonoBehaviour
     {
-        private PlayFabManager _playFabManager;
+        private SaveManager _saveManager;
 
         [Inject]
-        private void Inject(PlayFabManager playFabManager) => _playFabManager = playFabManager;
+        private void Inject(SaveManager saveManager) => _saveManager = saveManager;
 
-        private void Awake() => _playFabManager.OnLoginSuccessful += LoadMainMenu;
+        private void Awake() => _saveManager.OnSaveLoaded += LoadMainMenu;
 
-        private void LoadMainMenu() => StartCoroutine(Wait());
+        private void LoadMainMenu() => SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
 
-        private IEnumerator Wait()
-        {
-            yield return new WaitForSeconds(5f);
-            SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
-        }
-
-        private void OnDestroy() => _playFabManager.OnLoginSuccessful -= LoadMainMenu;
+        private void OnDestroy() => _saveManager.OnSaveLoaded -= LoadMainMenu;
     }
 }

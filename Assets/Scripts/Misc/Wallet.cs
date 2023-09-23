@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
@@ -7,22 +9,18 @@ using Zenject;
 
 namespace Misc
 {
-    public class Wallet : IInitializable, IDisposable
+    public class Wallet : ISavable
     {
         private int _money;
         private const string MoneyString = "Money";
         private bool _firstLaunch = true;
         private PlayFabManager _playFabManager;
-        private SaveManager _saveManager;
 
         [Inject]
-        private void Inject(PlayFabManager playFabManager, SaveManager saveManager)
+        private void Inject(PlayFabManager playFabManager)
         {
             _playFabManager = playFabManager;
-            _saveManager = saveManager;
         }
-
-        public void Initialize() => _playFabManager.OnLoginSuccessful += GetMoneyFromServer;
 
         public int Money
         {
@@ -47,7 +45,7 @@ namespace Misc
             Money += amount;
         }
 
-        public bool Spend(int amount)
+        public async Task<bool> Spend(int amount)
         {
             if (amount < 0)
             {
@@ -55,7 +53,7 @@ namespace Misc
                 return false;
             }
 
-            GetMoneyFromServer();
+            await GetMoneyFromServer();
 
             if (Money - amount >= 0)
             {
@@ -69,14 +67,40 @@ namespace Misc
             return false;
         }
 
-        private void GetMoneyFromServer()
+        private async Task GetMoneyFromServer()
         {
-            Money = _saveManager.LoadInt(MoneyString);
+            var keys = new List<string> { MoneyString };
+            var loaded = false;
 
-            _firstLaunch = false;
+            var request = new GetUserDataRequest
+            {
+                PlayFabId = _playFabManager.GetUserID, Keys = keys
+            };
+
+            PlayFabClientAPI.GetUserData(request, result =>
+            {
+                if (result.Data.ContainsKey(MoneyString))
+                {
+                    var data = result.Data[MoneyString].Value;
+                    Money = int.Parse(data);
+                    loaded = true;
+                    Debug.Log($"Loaded save {MoneyString}");
+                }
+                else
+                {
+                    Debug.Log($"Save not found {MoneyString}");
+                    loaded = true;
+                }
+            }, error =>
+            {
+                Debug.LogError($"Save error: {error.GenerateErrorReport()}");
+                loaded = true;
+            });
+
+            await UniTask.WaitUntil(() => loaded);
         }
 
-        private void Save()
+        public void Save()
         {
             if (_firstLaunch) return;
 
@@ -107,6 +131,11 @@ namespace Misc
             Debug.LogError($"Wallet: Error while saving money {error.GenerateErrorReport()}");
         }
 
-        public void Dispose() => _playFabManager.OnLoginSuccessful -= GetMoneyFromServer;
+        public async Task Load()
+        {
+            await GetMoneyFromServer();
+
+            _firstLaunch = false;
+        }
     }
 }
