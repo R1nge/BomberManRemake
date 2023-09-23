@@ -46,6 +46,11 @@ public class SaveManager : IInitializable
         }
 
         OnSaveLoaded?.Invoke();
+
+        for (int i = 0; i < _savables.Count; i++)
+        {
+            await _savables[i].Save();
+        }
     }
 
     public void Save(string name, string value)

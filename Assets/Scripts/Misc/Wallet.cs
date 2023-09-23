@@ -100,9 +100,10 @@ namespace Misc
             await UniTask.WaitUntil(() => loaded);
         }
 
-        public void Save()
+        public async Task Save()
         {
             if (_firstLaunch) return;
+            var loaded = false;
 
             var request = new UpdateUserDataRequest
             {
@@ -119,6 +120,9 @@ namespace Misc
             }
 
             PlayFabClientAPI.UpdateUserData(request, OnSaveSuccess, OnSaveError);
+            loaded = true;
+
+            await UniTask.WaitUntil(() => loaded);
         }
 
         private void OnSaveSuccess(UpdateUserDataResult result)

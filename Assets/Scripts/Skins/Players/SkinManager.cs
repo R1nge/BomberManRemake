@@ -31,15 +31,9 @@ namespace Skins.Players
             _playFabManager = playFabManager;
         }
 
-        private void Awake()
-        {
-            _saveManager.OnSaveLoaded += SaveLoaded;
-        }
+        private void Awake() => _saveManager.OnSaveLoaded += SaveLoaded;
 
-        private void SaveLoaded()
-        {
-            SelectSkin(selectedSkin);
-        }
+        private void SaveLoaded() => SelectSkin(selectedSkin);
 
         public bool SkinUnlocked(int index) => _skinData[index].Unlocked;
 
@@ -74,7 +68,7 @@ namespace Skins.Players
         public NetworkObject GetEndGame(int index) => skins[index].EndGamePrefab;
 
 
-        public void Save()
+        public async Task Save()
         {
             SaveSkins();
             SaveSelectedSkin();
@@ -117,6 +111,18 @@ namespace Skins.Players
                 else
                 {
                     Debug.Log($"Save not found {name}");
+                    for (int i = 0; i < skins.Length; i++)
+                    {
+                        if (i == 0)
+                        {
+                            _skinData[i] = new SkinData(i, true);
+                        }
+                        else
+                        {
+                            _skinData[i] = new SkinData(i, false);
+                        }
+                    }
+
                     loaded = true;
                 }
             }, error =>
@@ -140,11 +146,11 @@ namespace Skins.Players
 
             PlayFabClientAPI.GetUserData(request, result =>
             {
-                if (result.Data.ContainsKey(name))
+                if (result.Data.ContainsKey(SELECTED_SKIN))
                 {
-                    var data = result.Data[name].Value;
+                    var data = result.Data[SELECTED_SKIN].Value;
                     SelectSkin(int.Parse(data));
-                    Debug.Log($"Loaded saved last skin index");
+                    Debug.Log("Loaded last skin index");
                     loaded = true;
                 }
                 else
@@ -157,12 +163,13 @@ namespace Skins.Players
                 Debug.LogError($"Load save error: {error.GenerateErrorReport()}");
                 loaded = true;
             });
-            
+
             await UniTask.WaitUntil(() => loaded);
         }
 
-        private void SaveSkins()
+        private async Task SaveSkins()
         {
+            var saved = false;
             for (int i = 0; i < skins.Length; i++)
             {
                 var skinTitle = skins[i].Title;
@@ -171,12 +178,13 @@ namespace Skins.Players
                 var dataJson = JsonUtility.ToJson(data);
                 _saveManager.Save(skinTitle, dataJson);
             }
+
+            saved = true;
+
+            await UniTask.WaitUntil(() => saved);
         }
 
-        private void SaveSelectedSkin()
-        {
-            _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
-        }
+        private void SaveSelectedSkin() => _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
 
         private void OnApplicationQuit()
         {
