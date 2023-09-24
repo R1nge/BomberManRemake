@@ -84,6 +84,8 @@ namespace Misc
             try
             {
                 money = getMoneyTask.Result.Result.Data[MoneyString].Value;
+                
+                Money = int.Parse(money);
             }
             catch (Exception e)
             {

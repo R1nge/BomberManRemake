@@ -42,7 +42,7 @@ namespace Player
                 _curSpeedY = value.Get<Vector2>().x * CurrentSpeed;
             }
         }
-
+        
         private void Update()
         {
             if (!IsOwner) return;
@@ -54,10 +54,9 @@ namespace Player
             {
                 PlayerAnimator.Move(_moveDirection.magnitude);
             }
-            
-            
+
             _inputData = new InputData(_moveDirection);
-            _characterController.Move(_moveDirection);
+            _characterController.Move(_moveDirection * Time.deltaTime);
             Rotate();
         }
 
