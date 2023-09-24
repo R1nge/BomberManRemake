@@ -53,14 +53,16 @@ namespace Skins.Players
 
         public bool SkinUnlocked(int index) => _skinData[index].Unlocked;
 
-        public bool UnlockSkin(int index)
+        public async Task<bool> UnlockSkin(int index)
         {
-            // if (_wallet.Spend(skins[index].Price).Result)
-            // {
-            //     print("Skin unlocked");
-            //     _skinData[index].Unlock();
-            //     return true;
-            // }
+            var spend = await _wallet.Spend(_skinData[index].Price);
+            
+            if (spend)
+            {
+                print("Skin unlocked");
+                _skinData[index].Unlock();
+                return true;
+            }
 
             print($"Not enough money to unlock this skin {skins[index].Title}");
 
@@ -71,6 +73,7 @@ namespace Skins.Players
         {
             OnSkinChanged?.Invoke(selectedSkin, index);
             selectedSkin = index;
+            SaveSkins();
         }
 
         public SkinSo GetSkinSo(int index) => skins[index];
@@ -168,11 +171,8 @@ namespace Skins.Players
         {
             for (int i = 0; i < skins.Length; i++)
             {
-                var skinTitle = skins[i].Title;
-                var skinUnlocked = _skinData[i].Unlocked;
-                // var data = new SkinData(i, skinUnlocked);
-                // var dataJson = JsonUtility.ToJson(data);
-                // await _saveManager.Save(skinTitle, dataJson);
+                var dataJson = JsonUtility.ToJson(_skinData[i]);
+                await _saveManager.Save(skins[i].Title, dataJson);
             }
         }
 

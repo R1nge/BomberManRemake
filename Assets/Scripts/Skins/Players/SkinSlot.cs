@@ -27,8 +27,6 @@ namespace Skins
         {
             _skinManager.OnSkinChanged += UpdateSelectedSkin;
             select.onClick.AddListener(SelectSkin);
-            
-            UpdateUI();
         }
 
         //TODO: update on skin change
@@ -37,7 +35,7 @@ namespace Skins
         private async void UpdateUI()
         {
             var price = await _skinManager.GetSkinData(_skinIndex);
-            
+
             if (_skinManager.SkinUnlocked(_skinIndex))
             {
                 if (_skinManager.SelectedSkinIndex == _skinIndex)
@@ -77,7 +75,23 @@ namespace Skins
         public void SetTitle(string title) => titleText.text = title;
         public void SetIcon(Sprite sprite) => icon.sprite = sprite;
         public void SetIndex(int skinIndex) => _skinIndex = skinIndex;
-        private void SelectSkin() => _skinManager.SelectSkin(_skinIndex);
+
+        private async void SelectSkin()
+        {
+            if (_skinManager.SkinUnlocked(_skinIndex))
+            {
+                _skinManager.SelectSkin(_skinIndex);
+            }
+
+            var unlockTask = _skinManager.UnlockSkin(_skinIndex);
+
+            await unlockTask;
+
+            if (unlockTask.Result)
+            {
+                _skinManager.SelectSkin(_skinIndex);
+            }
+        }
 
         private void OnDestroy() => _skinManager.OnSkinChanged -= UpdateSelectedSkin;
     }
