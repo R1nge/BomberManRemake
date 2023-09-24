@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
@@ -29,15 +28,9 @@ namespace Skins.Players
 
         private void Start() => Init();
 
-        private void Open()
-        {
-            UI.SetActive(true);
-        }
+        private void Open() => UI.SetActive(true);
 
-        private void Close()
-        {
-            UI.SetActive(false);
-        }
+        private void Close() => UI.SetActive(false);
 
         private void Init()
         {

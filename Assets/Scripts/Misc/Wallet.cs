@@ -57,7 +57,7 @@ namespace Misc
             if (Money - amount >= 0)
             {
                 Money -= amount;
-                Save();
+                await Save();
                 return true;
             }
 
@@ -79,8 +79,41 @@ namespace Misc
 
             await getMoneyTask;
 
-            Money = int.Parse(getMoneyTask.Result.Result.Data[MoneyString].Value);
-            
+            var money = "";
+
+            try
+            {
+                money = getMoneyTask.Result.Result.Data[MoneyString].Value;
+            }
+            catch (Exception e)
+            {
+                if (string.IsNullOrEmpty(money))
+                {
+                    var request2 = new UpdateUserDataRequest
+                    {
+                        Data = new Dictionary<string, string>(1)
+                    };
+
+                    if (request2.Data.TryGetValue(MoneyString, out _))
+                    {
+                        request2.Data[MoneyString] = Money.ToString();
+                    }
+                    else
+                    {
+                        request2.Data.Add(MoneyString, Money.ToString());
+                    }
+
+                    var updateMoneyTask = PlayFabClientAPI.UpdateUserDataAsync(request2);
+
+                    await updateMoneyTask;
+                }
+                else
+                {
+                    Money = int.Parse(money);
+                }
+            }
+
+
             Debug.Log($"Loaded save {MoneyString}");
         }
 
@@ -103,10 +136,10 @@ namespace Misc
             }
 
             var updateMoneyTask = PlayFabClientAPI.UpdateUserDataAsync(request);
-            
+
             await updateMoneyTask;
         }
-        
+
         public async Task Load()
         {
             await GetMoneyFromServer();

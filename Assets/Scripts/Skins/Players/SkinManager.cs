@@ -68,11 +68,11 @@ namespace Skins.Players
             return false;
         }
 
-        public void SelectSkin(int index)
+        public async void SelectSkin(int index)
         {
-            OnSkinChanged?.Invoke(selectedSkin, index);
             selectedSkin = index;
-            SaveSelectedSkin();
+            OnSkinChanged?.Invoke(selectedSkin, index);
+            await Save();
         }
 
         public SkinSo GetSkinSo(int index) => skins[index];
@@ -111,11 +111,26 @@ namespace Skins.Players
             };
 
             var loadSkinDataTask = PlayFabClientAPI.GetUserDataAsync(request);
+
             await loadSkinDataTask;
 
-            var skin = loadSkinDataTask.Result.Result.Data[name].Value;
 
-            var unlocked = JsonConvert.DeserializeObject<SkinData>(skin);
+            var skin = String.Empty;
+            var unlocked = false;
+
+
+            try
+            {
+                skin = loadSkinDataTask.Result.Result.Data[name].Value;
+                unlocked = JsonConvert.DeserializeObject<SkinData>(skin).Unlocked;
+            }
+            catch (Exception e)
+            {
+                if (string.IsNullOrEmpty(skin))
+                {
+                    unlocked = index == 0;
+                }
+            }
 
             #endregion
 
@@ -138,10 +153,11 @@ namespace Skins.Players
 
             #endregion
 
-            var data = new SkinData(unlocked.Unlocked, skinPrice);
+
+            var data = new SkinData(unlocked, skinPrice);
 
             _skinData[index] = data;
-            
+
             //if save not found   LoadSkinPrices();
         }
 
@@ -158,9 +174,20 @@ namespace Skins.Players
 
             await loadSelectedSkinTask;
 
-            var value = loadSelectedSkinTask.Result.Result.Data[SELECTED_SKIN].Value;
 
-            SelectSkin(int.Parse(value));
+            var value = 0;
+
+            try
+            {
+                value = int.Parse(loadSelectedSkinTask.Result.Result.Data[SELECTED_SKIN].Value);
+            }
+            catch (Exception e)
+            {
+                value = 0;
+            }
+
+
+            SelectSkin(value);
 
             print($"SELECTED SKIN DATA: {value}");
         }
@@ -173,7 +200,7 @@ namespace Skins.Players
 
             for (int i = 0; i < skins.Length; i++)
             {
-                var status = i == 0;
+                var status = _skinData[i].Unlocked;
                 var key = $"{skins[i].Title}Price";
                 var priceString = skinPrice.Result.Result.Data[key];
                 var price = int.Parse(priceString);
@@ -183,14 +210,12 @@ namespace Skins.Players
             for (int i = 0; i < skins.Length; i++)
             {
                 var dataJson = JsonUtility.ToJson(_skinData[i]);
-                //Debug.LogError(dataJson);
+                Debug.LogError(dataJson);
                 await _saveManager.Save(skins[i].Title, dataJson);
             }
         }
 
         private async void SaveSelectedSkin() => await _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
-
-        private async void OnApplicationQuit() => await Save();
 
         private void OnDestroy() => _playFabManager.OnLoginSuccessful -= SaveLoaded;
     }
