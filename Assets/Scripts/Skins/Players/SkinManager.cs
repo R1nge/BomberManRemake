@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using Misc;
 using Newtonsoft.Json;
 using PlayFab;
@@ -56,7 +55,7 @@ namespace Skins.Players
         public async Task<bool> UnlockSkin(int index)
         {
             var spend = await _wallet.Spend(_skinData[index].Price);
-            
+
             if (spend)
             {
                 print("Skin unlocked");
@@ -73,16 +72,18 @@ namespace Skins.Players
         {
             OnSkinChanged?.Invoke(selectedSkin, index);
             selectedSkin = index;
-            SaveSkins();
+            SaveSelectedSkin();
         }
 
         public SkinSo GetSkinSo(int index) => skins[index];
 
-        public async Task<SkinData> GetSkinData(int index)
+        public async Task<SkinData> GetSkinDataFromServer(int index)
         {
             await Load();
             return _skinData[index];
         }
+
+        public SkinData GetSkinData(int index) => _skinData[index];
 
         public async Task Load()
         {
@@ -100,6 +101,8 @@ namespace Skins.Players
 
         private async Task LoadSkinData(string name, int index)
         {
+            #region Unlocked
+
             var keys = new List<string> { name };
 
             var request = new GetUserDataRequest
@@ -108,45 +111,40 @@ namespace Skins.Players
             };
 
             var loadSkinDataTask = PlayFabClientAPI.GetUserDataAsync(request);
-
             await loadSkinDataTask;
 
-            print($"SKIN DATA LOADED: {loadSkinDataTask.Result.Result.Data[name].Value}");
-            var skinData = JsonConvert.DeserializeObject<SkinData>(loadSkinDataTask.Result.Result.Data[name].Value);
+            var skin = loadSkinDataTask.Result.Result.Data[name].Value;
 
-            _skinData[index] = skinData;
+            var unlocked = JsonConvert.DeserializeObject<SkinData>(skin);
 
+            #endregion
+
+            #region Price
+
+            name += "Price";
+
+            keys = new List<string> { name };
+
+            var request2 = new GetTitleDataRequest
+            {
+                Keys = keys,
+            };
+
+            var loadSkinDataTask2 = PlayFabClientAPI.GetTitleDataAsync(request2);
+
+            await loadSkinDataTask2;
+
+            var skinPrice = JsonConvert.DeserializeObject<int>(loadSkinDataTask2.Result.Result.Data[name]);
+
+            #endregion
+
+            var data = new SkinData(unlocked.Unlocked, skinPrice);
+
+            _skinData[index] = data;
+            
             //if save not found   LoadSkinPrices();
         }
 
-        private int _loadSkinIndex = 0;
-
-        private async void LoadSkinPrices()
-        {
-            for (_loadSkinIndex = 0; _loadSkinIndex < skins.Length; _loadSkinIndex++)
-            {
-                if (_loadSkinIndex == 0)
-                {
-                    _skinData[_loadSkinIndex] = new SkinData(true, 0);
-                }
-                else
-                {
-                    //load skins
-                    // if (data.Data == null || !data.Data.ContainsKey("Prices"))
-                    // {
-                    //     Debug.LogError("No such skin price");
-                    // }
-                    //
-                    // var prices = new int[_skinData.Length];
-                    //
-                    // prices[_loadSkinIndex] = JsonUtility.FromJson<RequestData>(data.Data.ToString()).Price;
-                    //
-                    // _skinData[_loadSkinIndex] = new SkinData(false, prices[_loadSkinIndex]);
-                    // print($"PRICE: {prices[_loadSkinIndex]}");
-                }
-            }
-        }
-        
         private async Task LoadSelectedSkin()
         {
             var keys = new List<string> { SELECTED_SKIN };
@@ -161,28 +159,38 @@ namespace Skins.Players
             await loadSelectedSkinTask;
 
             var value = loadSelectedSkinTask.Result.Result.Data[SELECTED_SKIN].Value;
-            
+
             SelectSkin(int.Parse(value));
-            
+
             print($"SELECTED SKIN DATA: {value}");
         }
 
         private async Task SaveSkins()
         {
+            var skinPrice = PlayFabClientAPI.GetTitleDataAsync(new GetTitleDataRequest());
+
+            await skinPrice;
+
+            for (int i = 0; i < skins.Length; i++)
+            {
+                var status = i == 0;
+                var key = $"{skins[i].Title}Price";
+                var priceString = skinPrice.Result.Result.Data[key];
+                var price = int.Parse(priceString);
+                _skinData[i] = new SkinData(status, price);
+            }
+
             for (int i = 0; i < skins.Length; i++)
             {
                 var dataJson = JsonUtility.ToJson(_skinData[i]);
+                //Debug.LogError(dataJson);
                 await _saveManager.Save(skins[i].Title, dataJson);
             }
         }
 
         private async void SaveSelectedSkin() => await _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
 
-        private async void OnApplicationQuit()
-        {
-            SaveSelectedSkin();
-            await SaveSkins();
-        }
+        private async void OnApplicationQuit() => await Save();
 
         private void OnDestroy() => _playFabManager.OnLoginSuccessful -= SaveLoaded;
     }

@@ -1,4 +1,6 @@
-﻿using Misc;
+﻿using System;
+using System.Threading.Tasks;
+using Misc;
 using Skins.Players;
 using TMPro;
 using UnityEngine;
@@ -15,6 +17,7 @@ namespace Skins
         private int _skinIndex;
         private SkinManager _skinManager;
         private Wallet _wallet;
+        private SlotStatus _slotStatus;
 
         [Inject]
         private void Inject(SkinManager skinManager, Wallet wallet)
@@ -29,47 +32,68 @@ namespace Skins
             select.onClick.AddListener(SelectSkin);
         }
 
-        //TODO: update on skin change
         private void OnEnable() => UpdateUI();
 
         private async void UpdateUI()
         {
-            var price = await _skinManager.GetSkinData(_skinIndex);
-
             if (_skinManager.SkinUnlocked(_skinIndex))
             {
-                if (_skinManager.SelectedSkinIndex == _skinIndex)
-                {
-                    select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
-                    select.interactable = false;
-                }
-                else
-                {
-                    select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
-                    select.interactable = true;
-                }
+                _slotStatus = _skinManager.SelectedSkinIndex == _skinIndex ? SlotStatus.Selected : SlotStatus.Unlocked;
             }
             else
             {
-                select.interactable = _skinManager.SkinUnlocked(_skinIndex);
-                select.GetComponentInChildren<TextMeshProUGUI>().text = price.Price.ToString();
-                select.interactable = _wallet.Money >= price.Price;
+                _slotStatus = SlotStatus.Locked;
             }
+
+            switch (_slotStatus)
+            {
+                case SlotStatus.Locked:
+                    Locked();
+                    break;
+                case SlotStatus.Unlocked:
+                    Unlocked();
+                    break;
+                case SlotStatus.Selected:
+                    Selected();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void Locked()
+        {
+            var price = _skinManager.GetSkinData(_skinIndex);
+            select.interactable = _skinManager.SkinUnlocked(_skinIndex);
+            select.GetComponentInChildren<TextMeshProUGUI>().text = price.Price.ToString();
+            select.interactable = _wallet.Money >= price.Price;
+        }
+
+        private void Unlocked()
+        {
+            select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
+            select.interactable = true;
+        }
+
+        private void Selected()
+        {
+            select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
+            select.interactable = false;
         }
 
         private void UpdateSelectedSkin(int previous, int current)
         {
             if (_skinIndex == previous)
             {
-                select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
-                select.interactable = true;
+                _slotStatus = SlotStatus.Unlocked;
             }
 
             if (_skinIndex == current)
             {
-                select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
-                select.interactable = false;
+                _slotStatus = SlotStatus.Selected;
             }
+
+            UpdateUI();
         }
 
         public void SetTitle(string title) => titleText.text = title;
@@ -94,5 +118,12 @@ namespace Skins
         }
 
         private void OnDestroy() => _skinManager.OnSkinChanged -= UpdateSelectedSkin;
+
+        private enum SlotStatus
+        {
+            Locked,
+            Unlocked,
+            Selected
+        }
     }
 }
