@@ -9,7 +9,6 @@ namespace Skins.Players
         [SerializeField] private string title;
         [SerializeField] private Sprite icon;
         [SerializeField] private NetworkObject lobbyPrefab, prefabFPS, prefabTPS, endGamePrefab;
-        [SerializeField] private int price;
 
         public string Title => title;
         public Sprite Icon => icon;
@@ -17,19 +16,19 @@ namespace Skins.Players
         public NetworkObject PrefabFPS => prefabFPS;
         public NetworkObject PrefabTPS => prefabTPS;
         public NetworkObject EndGamePrefab => endGamePrefab;
-        public int Price => price;
+        
     }
 
     public class SkinData
     {
-        public SkinData(int index, bool unlocked)
+        public SkinData(bool unlocked, int price)
         {
-            Index = index;
             Unlocked = unlocked;
+            Price = price;
         }
 
-        public int Index;
         public bool Unlocked;
+        public int Price;
         public void Unlock() => Unlocked = true;
     }
 }

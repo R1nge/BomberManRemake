@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Misc;
 using Skins.Players;
 using TMPro;
 using UnityEngine;
@@ -14,11 +14,13 @@ namespace Skins
         [SerializeField] private Button select;
         private int _skinIndex;
         private SkinManager _skinManager;
+        private Wallet _wallet;
 
         [Inject]
-        private void Inject(SkinManager skinManager)
+        private void Inject(SkinManager skinManager, Wallet wallet)
         {
             _skinManager = skinManager;
+            _wallet = wallet;
         }
 
         private void Awake()
@@ -40,15 +42,11 @@ namespace Skins
                 select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
                 select.interactable = false;
             }
-            
-            print("Updated selected skin");
         }
 
         private void OnEnable()
         {
             select.interactable = _skinManager.SkinUnlocked(_skinIndex);
-
-            print($"SKIN {_skinIndex} UNLOCKED: {_skinManager.SkinUnlocked(_skinIndex)}");
 
             if (_skinManager.SkinUnlocked(_skinIndex))
             {
@@ -65,8 +63,9 @@ namespace Skins
             }
             else
             {
-                select.GetComponentInChildren<TextMeshProUGUI>().text = _skinManager.GetSkinSo(_skinIndex).Price.ToString();
-                select.interactable = false;
+                var price = _skinManager.GetSkinData(_skinIndex).Result.Price;
+                select.GetComponentInChildren<TextMeshProUGUI>().text = price.ToString();
+                select.interactable = _wallet.Money >= price;
             }
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Misc;
+using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
 using Unity.Netcode;
@@ -30,6 +31,22 @@ namespace Skins.Players
             _playFabManager = playFabManager;
         }
 
+
+        public int SkinsAmount => skins.Length;
+        public int SelectedSkinIndex => selectedSkin;
+
+        public NetworkObject GetLobby(int index) => skins[index].LobbyPrefab;
+        public NetworkObject GetSkinFPS(int index) => skins[index].PrefabFPS;
+        public NetworkObject GetSkinTPS(int index) => skins[index].PrefabTPS;
+        public NetworkObject GetEndGame(int index) => skins[index].EndGamePrefab;
+
+
+        public async Task Save()
+        {
+            SaveSelectedSkin();
+            await SaveSkins();
+        }
+
         private void Awake() => _saveManager.OnSaveLoaded += SaveLoaded;
 
         private void SaveLoaded() => SelectSkin(selectedSkin);
@@ -38,12 +55,12 @@ namespace Skins.Players
 
         public bool UnlockSkin(int index)
         {
-            if (_wallet.Spend(skins[index].Price).Result)
-            {
-                print("Skin unlocked");
-                _skinData[index].Unlock();
-                return true;
-            }
+            // if (_wallet.Spend(skins[index].Price).Result)
+            // {
+            //     print("Skin unlocked");
+            //     _skinData[index].Unlock();
+            //     return true;
+            // }
 
             print($"Not enough money to unlock this skin {skins[index].Title}");
 
@@ -58,19 +75,10 @@ namespace Skins.Players
 
         public SkinSo GetSkinSo(int index) => skins[index];
 
-        public int SkinsAmount => skins.Length;
-        public int SelectedSkinIndex => selectedSkin;
-
-        public NetworkObject GetLobby(int index) => skins[index].LobbyPrefab;
-        public NetworkObject GetSkinFPS(int index) => skins[index].PrefabFPS;
-        public NetworkObject GetSkinTPS(int index) => skins[index].PrefabTPS;
-        public NetworkObject GetEndGame(int index) => skins[index].EndGamePrefab;
-
-
-        public async Task Save()
+        public async Task<SkinData> GetSkinData(int index)
         {
-            await SaveSkins();
-            SaveSelectedSkin();
+            await Load();
+            return _skinData[index];
         }
 
         public async Task Load()
@@ -110,18 +118,7 @@ namespace Skins.Players
                 else
                 {
                     Debug.Log($"Save not found {name}");
-                    for (int i = 0; i < skins.Length; i++)
-                    {
-                        if (i == 0)
-                        {
-                            _skinData[i] = new SkinData(i, true);
-                        }
-                        else
-                        {
-                            _skinData[i] = new SkinData(i, false);
-                        }
-                    }
-
+                    LoadSkinPrices();
                     loaded = true;
                 }
             }, error =>
@@ -131,6 +128,48 @@ namespace Skins.Players
             });
 
             await UniTask.WaitUntil(() => loaded);
+        }
+
+        private int _loadSkinIndex = 0;
+
+        private void LoadSkinPrices()
+        {
+            for (_loadSkinIndex = 0; _loadSkinIndex < skins.Length; _loadSkinIndex++)
+            {
+                if (_loadSkinIndex == 0)
+                {
+                    _skinData[_loadSkinIndex] = new SkinData(true, 0);
+                }
+                else
+                {
+                    PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), OnGetPriceSuccess, OnGetPriceError);
+                }
+            }
+        }
+
+        private void OnGetPriceError(PlayFabError obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnGetPriceSuccess(GetTitleDataResult data)
+        {
+            if (data.Data == null || !data.Data.ContainsKey("Prices"))
+            {
+                Debug.LogError("No such skin price");
+            }
+
+            var prices = new int[_skinData.Length];
+
+            prices[_loadSkinIndex] = JsonUtility.FromJson<RequestData>(data.Data.ToString()).Price;
+
+            _skinData[_loadSkinIndex] = new SkinData(false, prices[_loadSkinIndex]);
+            print($"PRICE: {prices[_loadSkinIndex]}");
+        }
+
+        public class RequestData
+        {
+            public int Price;
         }
 
         private async Task LoadSelectedSkin()
@@ -173,9 +212,9 @@ namespace Skins.Players
             {
                 var skinTitle = skins[i].Title;
                 var skinUnlocked = _skinData[i].Unlocked;
-                var data = new SkinData(i, skinUnlocked);
-                var dataJson = JsonUtility.ToJson(data);
-                await _saveManager.Save(skinTitle, dataJson);
+                // var data = new SkinData(i, skinUnlocked);
+                // var dataJson = JsonUtility.ToJson(data);
+                // await _saveManager.Save(skinTitle, dataJson);
             }
 
             saved = true;
