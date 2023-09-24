@@ -27,16 +27,23 @@ namespace Game
             _bombTimer = GetComponent<BombTimer>();
             _bombTimer.OnTimeRunOut += OnTimeRunOut;
             _exploded = new NetworkVariable<bool>();
+            _exploded.OnValueChanged += OnValueChanged;
+
+            OnExplosion += bomb =>
+            {
+                NetworkObject.Despawn(true);
+            };
         }
 
-        private void OnTimeRunOut() => Explode();
-
-        public void TakeDamage(int amount, ulong killerId, DeathType deathType) => Explode();
-
-        private void Explode()
+        private void OnValueChanged(bool oldValue, bool newValue)
         {
-            if (_exploded.Value) return;
-            _exploded.Value = true;
+            if (oldValue == newValue)
+            {
+                Debug.LogError("Bomb has exploded", this);
+                NetworkObject.Despawn(true);
+                return;
+            }
+
             var position = transform.position;
             SpawnSoundServerRpc();
             _spawnerOnGrid.SpawnBombVfx(position);
@@ -47,7 +54,16 @@ namespace Game
             DoDamageInside();
 
             OnExplosion?.Invoke(this);
-            NetworkObject.Despawn(true);
+        }
+
+        private void OnTimeRunOut() => Explode();
+
+        public void TakeDamage(int amount, ulong killerId, DeathType deathType) => Explode();
+
+        private void Explode()
+        {
+            if (_exploded.Value) return;
+            _exploded.Value = true;
         }
 
         private void Raycast(Vector3 pos, Vector3 dir, int dist, float rad)
@@ -65,6 +81,12 @@ namespace Game
                         if (!bomb._exploded.Value)
                         {
                             amount += 1;
+                            if (!net.IsSpawned)
+                            {
+                                Debug.LogError("Bomb is not spawned, spawning...");
+                                net.SpawnWithOwnership(net.OwnerClientId);
+                            }
+
                             DoDamageServerRpc(net, DAMAGE);
                         }
                     }
@@ -73,6 +95,13 @@ namespace Game
                         if (hit.transform.TryGetComponent(out IDamageable damageable))
                         {
                             amount += 1;
+
+                            if (!net.IsSpawned)
+                            {
+                                Debug.LogError("Bomb is not spawned, spawning...");
+                                net.SpawnWithOwnership(net.OwnerClientId);
+                            }
+
                             DoDamageServerRpc(net, DAMAGE);
                         }
                     }
@@ -108,6 +137,12 @@ namespace Game
             {
                 if (net.transform.TryGetComponent(out IDamageable damageable))
                 {
+                    if (net == NetworkObject)
+                    {
+                        Debug.LogError("Bomb tried to explode itself", this);
+                        return;
+                    }
+
                     damageable.TakeDamage(damage, NetworkObject.OwnerClientId, DeathType.Player);
                 }
             }
