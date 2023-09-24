@@ -31,7 +31,7 @@ namespace Player
             Vector3 right = transform.TransformDirection(Vector3.right);
             var direction = forward * _speedX + right * _speedZ;
             _inputData = new InputData(direction);
-            _characterController.Move(direction);
+            _characterController.Move(direction * Time.deltaTime);
         }
 
         private void OnTick()
