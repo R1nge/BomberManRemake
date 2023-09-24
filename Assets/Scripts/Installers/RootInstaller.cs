@@ -11,7 +11,7 @@ namespace Installers
         public override void InstallBindings()
         {
             Container.Bind<GameSettings>().FromNew().AsSingle();
-            Container.Bind<PlayFabManager>().FromNew().AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayFabManager>().FromNew().AsSingle();
             Container.Bind<Wallet>().FromNew().AsSingle();
             Container.Bind<SkinManager>().FromComponentInHierarchy().AsSingle();
             Container.Bind<BombSkinManager>().FromComponentInHierarchy().AsSingle();

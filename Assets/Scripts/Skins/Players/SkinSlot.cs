@@ -27,27 +27,17 @@ namespace Skins
         {
             _skinManager.OnSkinChanged += UpdateSelectedSkin;
             select.onClick.AddListener(SelectSkin);
+            
+            UpdateUI();
         }
 
-        private void UpdateSelectedSkin(int previous, int current)
+        //TODO: update on skin change
+        private void OnEnable() => UpdateUI();
+
+        private async void UpdateUI()
         {
-            if (_skinIndex == previous)
-            {
-                select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
-                select.interactable = true;
-            }
-
-            if (_skinIndex == current)
-            {
-                select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
-                select.interactable = false;
-            }
-        }
-
-        private void OnEnable()
-        {
-            select.interactable = _skinManager.SkinUnlocked(_skinIndex);
-
+            var price = await _skinManager.GetSkinData(_skinIndex);
+            
             if (_skinManager.SkinUnlocked(_skinIndex))
             {
                 if (_skinManager.SelectedSkinIndex == _skinIndex)
@@ -63,9 +53,24 @@ namespace Skins
             }
             else
             {
-                var price = _skinManager.GetSkinData(_skinIndex).Result.Price;
-                select.GetComponentInChildren<TextMeshProUGUI>().text = price.ToString();
-                select.interactable = _wallet.Money >= price;
+                select.interactable = _skinManager.SkinUnlocked(_skinIndex);
+                select.GetComponentInChildren<TextMeshProUGUI>().text = price.Price.ToString();
+                select.interactable = _wallet.Money >= price.Price;
+            }
+        }
+
+        private void UpdateSelectedSkin(int previous, int current)
+        {
+            if (_skinIndex == previous)
+            {
+                select.GetComponentInChildren<TextMeshProUGUI>().text = "Select";
+                select.interactable = true;
+            }
+
+            if (_skinIndex == current)
+            {
+                select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
+                select.interactable = false;
             }
         }
 

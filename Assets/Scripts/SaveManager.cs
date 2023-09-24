@@ -54,7 +54,6 @@ public class SaveManager : IInitializable
 
     public async Task Save(string name, string value)
     {
-        var saved = false;
         var request = new UpdateUserDataRequest
         {
             Data = new Dictionary<string, string>(1)
@@ -69,19 +68,8 @@ public class SaveManager : IInitializable
             request.Data.Add(name, value);
         }
 
-        PlayFabClientAPI.UpdateUserData(request, OnSaveSuccess, OnSaveError);
-        saved = true;
+        var saveTask = PlayFabClientAPI.UpdateUserDataAsync(request);
 
-        await UniTask.WaitWhile(() => saved);
-    }
-
-    private void OnSaveSuccess(UpdateUserDataResult data)
-    {
-        Debug.Log($"Saved {data.Request.ToJson()}");
-    }
-
-    private void OnSaveError(PlayFabError error)
-    {
-        Debug.LogError($"Error while saving {error.Error}; Message: {error.ErrorMessage}");
+        await saveTask;
     }
 }

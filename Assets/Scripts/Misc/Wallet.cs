@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
@@ -70,40 +69,24 @@ namespace Misc
         private async Task GetMoneyFromServer()
         {
             var keys = new List<string> { MoneyString };
-            var loaded = false;
 
             var request = new GetUserDataRequest
             {
                 PlayFabId = _playFabManager.GetUserID, Keys = keys
             };
 
-            PlayFabClientAPI.GetUserData(request, result =>
-            {
-                if (result.Data.ContainsKey(MoneyString))
-                {
-                    var data = result.Data[MoneyString].Value;
-                    Money = int.Parse(data);
-                    loaded = true;
-                    Debug.Log($"Loaded save {MoneyString}");
-                }
-                else
-                {
-                    Debug.Log($"Save not found {MoneyString}");
-                    loaded = true;
-                }
-            }, error =>
-            {
-                Debug.LogError($"Save error: {error.GenerateErrorReport()}");
-                loaded = true;
-            });
+            var getMoneyTask = PlayFabClientAPI.GetUserDataAsync(request);
 
-            await UniTask.WaitUntil(() => loaded);
+            await getMoneyTask;
+
+            Money = int.Parse(getMoneyTask.Result.Result.Data[MoneyString].Value);
+            
+            Debug.Log($"Loaded save {MoneyString}");
         }
 
         public async Task Save()
         {
             if (_firstLaunch) return;
-            var loaded = false;
 
             var request = new UpdateUserDataRequest
             {
@@ -119,22 +102,11 @@ namespace Misc
                 request.Data.Add(MoneyString, Money.ToString());
             }
 
-            PlayFabClientAPI.UpdateUserData(request, OnSaveSuccess, OnSaveError);
-            loaded = true;
-
-            await UniTask.WaitUntil(() => loaded);
+            var updateMoneyTask = PlayFabClientAPI.UpdateUserDataAsync(request);
+            
+            await updateMoneyTask;
         }
-
-        private void OnSaveSuccess(UpdateUserDataResult result)
-        {
-            Debug.Log($"Wallet: Saved money: {Money}");
-        }
-
-        private void OnSaveError(PlayFabError error)
-        {
-            Debug.LogError($"Wallet: Error while saving money {error.GenerateErrorReport()}");
-        }
-
+        
         public async Task Load()
         {
             await GetMoneyFromServer();

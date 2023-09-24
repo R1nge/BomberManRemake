@@ -2,19 +2,25 @@
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
+using Zenject;
 
 namespace Misc
 {
-    public class PlayFabManager
+    public class PlayFabManager : IInitializable
     {
         public event Action OnLoginSuccessful;
         
         private string _email, _userName, _password;
         private string _userID;
 
-        public string GetUserName => _userName; 
-        
+        public string GetUserName => _userName;
+
         public string GetUserID => _userID;
+
+        public void Initialize()
+        {
+            PlayFabSettings.staticSettings.TitleId = "57D27";
+        }
 
         public void SetUserName(string username)
         {
@@ -31,7 +37,7 @@ namespace Misc
             _password = password;
         }
 
-        public void Register()
+        public async void Register()
         {
             if (_userName == string.Empty || _email == string.Empty || _password == string.Empty)
             {
@@ -46,21 +52,16 @@ namespace Misc
                 DisplayName = _userName
             };
 
-            PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterError);
+            var registerTask = PlayFabClientAPI.RegisterPlayFabUserAsync(request);
+
+            await registerTask;
+            
+            _userID = registerTask.Result.Result.PlayFabId;
+            
+            Debug.Log("Register successful");
         }
 
-        private void OnRegisterSuccess(RegisterPlayFabUserResult result)
-        {
-            _userID = result.PlayFabId;
-            Debug.Log("Successful register");
-        }
-
-        private void OnRegisterError(PlayFabError error)
-        {
-            Debug.LogError($"Error while registering; {error.GenerateErrorReport()}");
-        }
-
-        public void Login()
+        public async void Login()
         {
             if (_userName == string.Empty || _password == string.Empty)
             {
@@ -72,20 +73,15 @@ namespace Misc
                 Username = _userName,
                 Password = _password
             };
+            
+            var loginTask = PlayFabClientAPI.LoginWithPlayFabAsync(request);
 
-            PlayFabClientAPI.LoginWithPlayFab(request, OnLoginSuccess, OnLoginError);
-        }
-
-        private void OnLoginSuccess(LoginResult result)
-        {
-            Debug.Log("Successful login");
-            _userID = result.PlayFabId;
+            await loginTask;
+            
+            _userID = loginTask.Result.Result.PlayFabId;
             OnLoginSuccessful?.Invoke();
-        }
-
-        private void OnLoginError(PlayFabError error)
-        {
-            Debug.LogError($"Error while logging in; {error.GenerateErrorReport()}");
+            
+            Debug.Log("Login successful");
         }
     }
 }
