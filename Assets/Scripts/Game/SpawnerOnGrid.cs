@@ -13,13 +13,15 @@ namespace Game
         private DiContainer _diContainer;
         private BombSkinManager _bombSkinManager;
         private Lobby.Lobby _lobby;
+        private NetworkObjectPool _networkObjectPool;
 
         [Inject]
-        private void Inject(DiContainer diContainer, BombSkinManager bombSkinManager, Lobby.Lobby lobby)
+        private void Inject(DiContainer diContainer, BombSkinManager bombSkinManager, Lobby.Lobby lobby, NetworkObjectPool networkObjectPool)
         {
             _diContainer = diContainer;
             _bombSkinManager = bombSkinManager;
             _lobby = lobby;
+            _networkObjectPool = networkObjectPool;
         }
 
         public Bomb SpawnBomb(Vector3 position, ulong ownerId)
@@ -66,10 +68,7 @@ namespace Game
         public void SpawnBombVfx(Vector3 position)
         {
             position = GetNearestGridPosition(position);
-            var vfx = Instantiate(bombVfxPrefab, position, Quaternion.identity);
-            vfx.transform.parent = dynamicParent;
-            vfx.GetComponent<NetworkObject>().Spawn(true);
-            vfx.transform.parent = dynamicParent;
+            _networkObjectPool.GetNetworkObject(bombVfxPrefab.name, position, Quaternion.identity);
         }
 
         private Vector3 GetNearestGridPosition(Vector3 position)

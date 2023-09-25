@@ -13,6 +13,7 @@ namespace Installers
             Container.Bind<PlayerSpawnerTPS>().FromComponentInHierarchy().AsSingle();
             Container.Bind<SpawnerManager>().FromComponentInHierarchy().AsSingle();
             Container.Bind<MapSelector>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<NetworkObjectPool>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

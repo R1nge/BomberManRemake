@@ -8,6 +8,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2622192856246449356, guid: 114376cfadcca8c449a613b588213ce7, type: 3}
+      propertyPath: prefabName
+      value: WinterBombVFX
+      objectReference: {fileID: 0}
     - target: {fileID: 267915238202814957, guid: 114376cfadcca8c449a613b588213ce7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -50,7 +54,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 541015904105868133, guid: 114376cfadcca8c449a613b588213ce7, type: 3}
       propertyPath: m_Name
-      value: BombVFX
+      value: WinterBombVFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 3364012352083321455, guid: 114376cfadcca8c449a613b588213ce7, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
