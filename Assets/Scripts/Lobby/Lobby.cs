@@ -150,7 +150,7 @@ namespace Lobby
             var data = GetData(clientId);
             if (data != null)
             {
-                _players.Remove(data.Value);
+                _players?.Remove(data.Value);
             }
 
             OnPlayerDisconnected?.Invoke(clientId);

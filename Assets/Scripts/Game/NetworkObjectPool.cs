@@ -20,6 +20,8 @@ namespace Game
 
         public override void OnNetworkSpawn()
         {
+            if (!IsServer) return;
+
             foreach (var configObject in pooledPrefabsList)
             {
                 RegisterPrefabInternal(configObject.prefab, configObject.prewarmCount);
@@ -28,6 +30,8 @@ namespace Game
 
         public override void OnNetworkDespawn()
         {
+            if (!IsServer) return;
+
             foreach (var prefab in _prefabs)
             {
                 NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
@@ -58,7 +62,7 @@ namespace Game
             var noTransform = networkObject.transform;
             noTransform.position = position;
             noTransform.rotation = rotation;
-            
+
             SetPositionClientRpc(networkObject, position);
 
             return networkObject;
