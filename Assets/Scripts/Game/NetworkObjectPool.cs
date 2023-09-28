@@ -58,8 +58,19 @@ namespace Game
             var noTransform = networkObject.transform;
             noTransform.position = position;
             noTransform.rotation = rotation;
+            
+            SetPositionClientRpc(networkObject, position);
 
             return networkObject;
+        }
+
+        [ClientRpc]
+        private void SetPositionClientRpc(NetworkObjectReference networkObjectReference, Vector3 position)
+        {
+            if (networkObjectReference.TryGet(out NetworkObject networkObject))
+            {
+                networkObject.gameObject.transform.transform.position = position;
+            }
         }
 
         public void ReturnNetworkObject(NetworkObject networkObject, string prefab)
@@ -78,12 +89,12 @@ namespace Game
 
             void ActionOnGet(NetworkObject networkObject)
             {
-                networkObject.gameObject.SetActive(true);
+                GetClientRpc(networkObject);
             }
 
             void ActionOnRelease(NetworkObject networkObject)
             {
-                networkObject.gameObject.SetActive(false);
+                ReleaseClientRpc(networkObject);
             }
 
             void ActionOnDestroy(NetworkObject networkObject)
@@ -111,6 +122,24 @@ namespace Game
 
             // Register Netcode Spawn handlers
             NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
+        }
+
+        [ClientRpc]
+        private void ReleaseClientRpc(NetworkObjectReference networkObjectReference)
+        {
+            if (networkObjectReference.TryGet(out NetworkObject networkObject))
+            {
+                networkObject.gameObject.SetActive(false);
+            }
+        }
+
+        [ClientRpc]
+        private void GetClientRpc(NetworkObjectReference networkObjectReference)
+        {
+            if (networkObjectReference.TryGet(out NetworkObject networkObject))
+            {
+                networkObject.gameObject.SetActive(true);
+            }
         }
     }
 
