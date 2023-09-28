@@ -16,6 +16,7 @@ namespace Installers
             Container.Bind<SkinManager>().FromComponentInHierarchy().AsSingle();
             Container.Bind<BombSkinManager>().FromComponentInHierarchy().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveManager>().FromNew().AsSingle();
+            Container.Bind<ExitGame>().FromNew().AsSingle();
         }
     }
 }

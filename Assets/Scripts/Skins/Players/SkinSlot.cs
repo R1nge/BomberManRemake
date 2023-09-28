@@ -32,17 +32,13 @@ namespace Skins
             select.onClick.AddListener(SelectSkin);
         }
 
-        private void OnEnable() => UpdateUI();
+        private void OnEnable() => UpdateSelectedSkin(_skinManager.SelectedSkinIndex, _skinManager.SelectedSkinIndex);
 
-        private async void UpdateUI()
+        private void UpdateUI()
         {
-            if (_skinManager.SkinUnlocked(_skinIndex))
+            if (_skinIndex == _skinManager.SelectedSkinIndex)
             {
-                _slotStatus = _skinManager.SelectedSkinIndex == _skinIndex ? SlotStatus.Selected : SlotStatus.Unlocked;
-            }
-            else
-            {
-                _slotStatus = SlotStatus.Locked;
+                _slotStatus = SlotStatus.Selected;
             }
 
             switch (_slotStatus)
@@ -59,6 +55,20 @@ namespace Skins
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void UpdateSelectedSkin(int previous, int current)
+        {
+            if (_skinManager.SkinUnlocked(_skinIndex))
+            {
+                _slotStatus = SlotStatus.Unlocked;
+            }
+            else
+            {
+                _slotStatus = SlotStatus.Locked;
+            }
+
+            UpdateUI();
         }
 
         private void Locked()
@@ -79,21 +89,6 @@ namespace Skins
         {
             select.GetComponentInChildren<TextMeshProUGUI>().text = "Selected";
             select.interactable = false;
-        }
-
-        private void UpdateSelectedSkin(int previous, int current)
-        {
-            if (_skinIndex == previous)
-            {
-                _slotStatus = SlotStatus.Unlocked;
-            }
-
-            if (_skinIndex == current)
-            {
-                _slotStatus = SlotStatus.Selected;
-            }
-
-            UpdateUI();
         }
 
         public void SetTitle(string title) => titleText.text = title;

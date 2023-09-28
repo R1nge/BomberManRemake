@@ -24,9 +24,8 @@ namespace Skins.Players
         {
             open.onClick.AddListener(Open);
             close.onClick.AddListener(Close);
+            Init();
         }
-
-        private void Start() => Init();
 
         private void Open() => UI.SetActive(true);
 
@@ -42,6 +41,9 @@ namespace Skins.Players
                 slotInstance.SetTitle(skin.Title);
                 slotInstance.SetIndex(i);
             }
+
+            Open();
+            Close();
         }
     }
 }

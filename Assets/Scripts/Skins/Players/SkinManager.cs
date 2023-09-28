@@ -30,7 +30,6 @@ namespace Skins.Players
             _playFabManager = playFabManager;
         }
 
-
         public int SkinsAmount => skins.Length;
         public int SelectedSkinIndex => selectedSkin;
 
@@ -45,10 +44,6 @@ namespace Skins.Players
             SaveSelectedSkin();
             await SaveSkins();
         }
-
-        private void Awake() => _saveManager.OnSaveLoaded += SaveLoaded;
-
-        private void SaveLoaded() => SelectSkin(selectedSkin);
 
         public bool SkinUnlocked(int index) => _skinData[index].Unlocked;
 
@@ -153,7 +148,6 @@ namespace Skins.Players
 
             #endregion
 
-
             var data = new SkinData(unlocked, skinPrice);
 
             _skinData[index] = data;
@@ -189,34 +183,18 @@ namespace Skins.Players
 
             SelectSkin(value);
 
-            print($"SELECTED SKIN DATA: {value}");
+            Debug.LogError($"SELECTED SKIN DATA: {value}");
         }
 
         private async Task SaveSkins()
         {
-            var skinPrice = PlayFabClientAPI.GetTitleDataAsync(new GetTitleDataRequest());
-
-            await skinPrice;
-
             for (int i = 0; i < skins.Length; i++)
             {
-                var status = _skinData[i].Unlocked;
-                var key = $"{skins[i].Title}Price";
-                var priceString = skinPrice.Result.Result.Data[key];
-                var price = int.Parse(priceString);
-                _skinData[i] = new SkinData(status, price);
-            }
-
-            for (int i = 0; i < skins.Length; i++)
-            {
-                var dataJson = JsonUtility.ToJson(_skinData[i]);
-                Debug.LogError(dataJson);
-                await _saveManager.Save(skins[i].Title, dataJson);
+                var unlocked = _skinData[i].Unlocked;
+                await _saveManager.Save(skins[i].Title, unlocked.ToString());
             }
         }
 
         private async void SaveSelectedSkin() => await _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
-
-        private void OnDestroy() => _playFabManager.OnLoginSuccessful -= SaveLoaded;
     }
 }
