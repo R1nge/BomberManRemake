@@ -33,7 +33,7 @@ namespace Misc
 
         public event Action<int> OnMoneyAmountChanged;
 
-        public void Earn(int amount)
+        public async void Earn(int amount)
         {
             if (amount < 0)
             {
@@ -42,6 +42,8 @@ namespace Misc
             }
 
             Money += amount;
+
+            await Save();
         }
 
         public async Task<bool> Spend(int amount)
