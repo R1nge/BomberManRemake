@@ -59,6 +59,8 @@ namespace Misc
             _userID = registerTask.Result.Result.PlayFabId;
             
             Debug.Log("Register successful");
+            
+            Login();
         }
 
         public async void Login()

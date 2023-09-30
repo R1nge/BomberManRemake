@@ -41,7 +41,7 @@ namespace Skins.Players
 
         public async Task Save()
         {
-            SaveSelectedSkin();
+            await SaveSelectedSkin();
             await SaveSkins();
         }
 
@@ -72,19 +72,11 @@ namespace Skins.Players
 
         public SkinSo GetSkinSo(int index) => skins[index];
 
-        public async Task<SkinData> GetSkinDataFromServer(int index)
-        {
-            await Load();
-            return _skinData[index];
-        }
-
         public SkinData GetSkinData(int index) => _skinData[index];
 
         public async Task Load()
         {
             _skinData = new SkinData[skins.Length];
-
-            print($"LOAD SKINS {skins.Length}");
 
             for (int i = 0; i < skins.Length; i++)
             {
@@ -117,7 +109,8 @@ namespace Skins.Players
             try
             {
                 skin = loadSkinDataTask.Result.Result.Data[name].Value;
-                unlocked = JsonConvert.DeserializeObject<SkinData>(skin).Unlocked;
+                //TODO: redo if the data changes
+                unlocked = skin == "True";
             }
             catch (Exception e)
             {
@@ -151,8 +144,6 @@ namespace Skins.Players
             var data = new SkinData(unlocked, skinPrice);
 
             _skinData[index] = data;
-
-            //if save not found   LoadSkinPrices();
         }
 
         private async Task LoadSelectedSkin()
@@ -182,8 +173,6 @@ namespace Skins.Players
 
 
             SelectSkin(value);
-
-            Debug.LogError($"SELECTED SKIN DATA: {value}");
         }
 
         private async Task SaveSkins()
@@ -195,6 +184,6 @@ namespace Skins.Players
             }
         }
 
-        private async void SaveSelectedSkin() => await _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
+        private async Task SaveSelectedSkin() => await _saveManager.Save(SELECTED_SKIN, selectedSkin.ToString());
     }
 }

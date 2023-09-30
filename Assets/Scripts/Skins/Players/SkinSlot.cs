@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Misc;
 using Skins.Players;
 using TMPro;
@@ -34,13 +33,29 @@ namespace Skins
 
         private void OnEnable() => UpdateSelectedSkin(_skinManager.SelectedSkinIndex, _skinManager.SelectedSkinIndex);
 
-        private void UpdateUI()
+        private void UpdateSelectedSkin(int previous, int current)
         {
-            if (_skinIndex == _skinManager.SelectedSkinIndex)
+            var skinUnlocked = _skinManager.SkinUnlocked(_skinIndex);
+
+            if (skinUnlocked)
             {
-                _slotStatus = SlotStatus.Selected;
+                _slotStatus = SlotStatus.Unlocked;
+
+                if (_skinIndex == current)
+                {
+                    _slotStatus = SlotStatus.Selected;
+                }
+            }
+            else
+            {
+                _slotStatus = SlotStatus.Locked;
             }
 
+            UpdateUI();
+        }
+
+        private void UpdateUI()
+        {
             switch (_slotStatus)
             {
                 case SlotStatus.Locked:
@@ -57,24 +72,10 @@ namespace Skins
             }
         }
 
-        private void UpdateSelectedSkin(int previous, int current)
-        {
-            if (_skinManager.SkinUnlocked(_skinIndex))
-            {
-                _slotStatus = SlotStatus.Unlocked;
-            }
-            else
-            {
-                _slotStatus = SlotStatus.Locked;
-            }
-
-            UpdateUI();
-        }
-
         private void Locked()
         {
             var price = _skinManager.GetSkinData(_skinIndex);
-            select.interactable = _skinManager.SkinUnlocked(_skinIndex);
+            select.interactable = false;
             select.GetComponentInChildren<TextMeshProUGUI>().text = price.Price.ToString();
             select.interactable = _wallet.Money >= price.Price;
         }
@@ -97,7 +98,9 @@ namespace Skins
 
         private async void SelectSkin()
         {
-            if (_skinManager.SkinUnlocked(_skinIndex))
+            var skinUnlocked = _skinManager.SkinUnlocked(_skinIndex);
+
+            if (skinUnlocked)
             {
                 _skinManager.SelectSkin(_skinIndex);
             }
