@@ -22,6 +22,7 @@ namespace Player
             _playerHealth.OnDeath += Spawn;
         }
 
+        //Maybe it spawns twice
         private void Spawn() => SpawnServerRpc();
 
         [ServerRpc(RequireOwnership = false)]

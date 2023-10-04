@@ -1,4 +1,5 @@
 ﻿using System;
+using Cysharp.Threading.Tasks;
 using Misc;
 using Skins.Players;
 using TMPro;
@@ -107,9 +108,9 @@ namespace Skins
 
             var unlockTask = _skinManager.UnlockSkin(_skinIndex);
 
-            await unlockTask;
+            var unlocked = await unlockTask;
 
-            if (unlockTask.Result)
+            if (unlocked)
             {
                 _skinManager.SelectSkin(_skinIndex);
             }

@@ -48,7 +48,7 @@ namespace Skins.Players
 
         public bool SkinUnlocked(int index) => _skinData[index].Unlocked;
 
-        public async Task<bool> UnlockSkin(int index)
+        public async UniTask<bool> UnlockSkin(int index)
         {
             var spend = await _wallet.Spend(_skinData[index].Price);
 
