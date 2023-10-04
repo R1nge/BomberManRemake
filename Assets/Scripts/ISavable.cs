@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 
 public interface ISavable
 {
-    Task Save();
-    Task Load();
+    UniTask Save();
+    UniTask Load();
 }

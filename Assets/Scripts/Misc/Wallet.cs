@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using PlayFab;
 using PlayFab.ClientModels;
 using UnityEngine;
@@ -46,7 +47,7 @@ namespace Misc
             await Save();
         }
 
-        public async Task<bool> Spend(int amount)
+        public async UniTask<bool> Spend(int amount)
         {
             if (amount < 0)
             {
@@ -68,7 +69,7 @@ namespace Misc
             return false;
         }
 
-        private async Task GetMoneyFromServer()
+        private async UniTask GetMoneyFromServer()
         {
             var keys = new List<string> { MoneyString };
 
@@ -121,7 +122,7 @@ namespace Misc
             Debug.Log($"Loaded save {MoneyString}");
         }
 
-        public async Task Save()
+        public async UniTask Save()
         {
             if (_firstLaunch) return;
 
@@ -144,7 +145,7 @@ namespace Misc
             await updateMoneyTask;
         }
 
-        public async Task Load()
+        public async UniTask Load()
         {
             await GetMoneyFromServer();
 

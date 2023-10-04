@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Misc;
 using Newtonsoft.Json;
 using PlayFab;
@@ -39,7 +40,7 @@ namespace Skins.Players
         public NetworkObject GetEndGame(int index) => skins[index].EndGamePrefab;
 
 
-        public async Task Save()
+        public async UniTask Save()
         {
             await SaveSelectedSkin();
             await SaveSkins();
@@ -74,7 +75,7 @@ namespace Skins.Players
 
         public SkinData GetSkinData(int index) => _skinData[index];
 
-        public async Task Load()
+        public async UniTask Load()
         {
             _skinData = new SkinData[skins.Length];
 
@@ -86,7 +87,7 @@ namespace Skins.Players
             await LoadSelectedSkin();
         }
 
-        private async Task LoadSkinData(string name, int index)
+        private async UniTask LoadSkinData(string name, int index)
         {
             #region Unlocked
 
@@ -146,7 +147,7 @@ namespace Skins.Players
             _skinData[index] = data;
         }
 
-        private async Task LoadSelectedSkin()
+        private async UniTask LoadSelectedSkin()
         {
             var keys = new List<string> { SELECTED_SKIN };
 
@@ -175,7 +176,7 @@ namespace Skins.Players
             SelectSkin(value);
         }
 
-        private async Task SaveSkins()
+        private async UniTask SaveSkins()
         {
             for (int i = 0; i < skins.Length; i++)
             {
