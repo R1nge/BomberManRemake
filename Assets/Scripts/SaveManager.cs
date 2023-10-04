@@ -38,18 +38,22 @@ public class SaveManager : IInitializable
             _skinManager
         };
 
+        var tasks = new List<UniTask>();
+
         for (int i = 0; i < _savables.Count; i++)
         {
-            await _savables[i].Load();
+            tasks.Add(_savables[i].Load());
             Debug.Log($"SAVE MANAGER LOADED {i}");
         }
+
+        await UniTask.WhenAll(tasks);
         
         Debug.Log($"ALL SAVE LOADED");
 
         OnSaveLoaded?.Invoke();
     }
 
-    public async Task Save(string name, string value)
+    public async UniTask Save(string name, string value)
     {
         var request = new UpdateUserDataRequest
         {
