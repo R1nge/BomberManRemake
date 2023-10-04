@@ -176,6 +176,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Menu",
+            "id": "bfb72a3f-a886-499c-98a5-1a9ec7e730e8",
+            "actions": [
+                {
+                    "name": "In-game Menu",
+                    "type": "Button",
+                    "id": "32a68519-8b55-4a64-aa2f-dd49c7f0dd27",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "bd0bc2b7-5d3e-4866-8cd5-484cda0148f6",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "In-game Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

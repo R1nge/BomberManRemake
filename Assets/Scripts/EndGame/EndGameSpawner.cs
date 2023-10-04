@@ -39,11 +39,14 @@ namespace EndGame
         {
             var skin = _skinManager.GetEndGame(skinIndex);
             var clientId = rpcParams.Receive.SenderClientId;
+            var place = _lobby.GetPlace(clientId);
+
+            if (!place.HasValue) return;
 
             var player = _diContainer.InstantiatePrefabForComponent<NetworkObject>
             (
                 skin,
-                spawnPoints[_lobby.GetPlace(clientId)].position,
+                spawnPoints[place.Value].position,
                 Quaternion.identity,
                 null
             );

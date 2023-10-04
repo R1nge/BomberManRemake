@@ -408,8 +408,7 @@ MonoBehaviour:
       m_Calls: []
   _parentNewObjectsUnderSceneContext: 0
   _contractNames: []
-  _parentContractNames:
-  - LobbyDataSingleton
+  _parentContractNames: []
 --- !u!4 &687278125
 Transform:
   m_ObjectHideFlags: 0

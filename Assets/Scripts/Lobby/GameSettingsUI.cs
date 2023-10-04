@@ -13,12 +13,15 @@ namespace Lobby
         [SerializeField] private GameObject gameSettingsUI, proceduralSettingsUI;
         [SerializeField] private TMP_Dropdown mapMode, perspectiveMode;
         [SerializeField] private Slider roundAmount, roundTime;
+
         [SerializeField] private TMP_InputField mapSizeX, mapSizeZ;
+
         //[SerializeField] private Button next;
         [SerializeField] private TMP_InputField dropChance;
         [SerializeField] private Button ready, start;
         private GameSettings _gameSettings;
         private Lobby _lobby;
+        private LobbyNetworkBehaviour _lobbyNetworkBehaviour;
 
         [Inject]
         private void Inject(GameSettings gameSettings, Lobby lobby)
@@ -29,6 +32,9 @@ namespace Lobby
 
         private void Awake()
         {
+            _lobbyNetworkBehaviour =
+                FindObjectsByType<LobbyNetworkBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None)[0];
+
             mapMode.onValueChanged.AddListener(mode =>
             {
                 _gameSettings.SetMapMode((GameSettings.MapModes)mode);
@@ -88,12 +94,12 @@ namespace Lobby
 
             start.onClick.AddListener(() =>
             {
-                NetworkManager.Singleton.SceneManager.UnloadScene(SceneManager.GetSceneByName("Lobby"));
+                NetworkManager.Singleton.SceneManager.LoadScene("Game", LoadSceneMode.Single);
             });
 
             ready.onClick.AddListener(() =>
             {
-                _lobby.ChangeReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
+                _lobbyNetworkBehaviour.ChangeReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
             });
 
             NetworkManager.Singleton.OnClientConnectedCallback += ClientConnected;

@@ -16,29 +16,18 @@ public class SaveManager : IInitializable
     private PlayFabManager _playFabManager;
     private Wallet _wallet;
     private SkinManager _skinManager;
-    private ExitGame _exitGame;
 
     [Inject]
-    private void Inject(PlayFabManager playFabManager, Wallet wallet, SkinManager skinManager, ExitGame exitGame)
+    private void Inject(PlayFabManager playFabManager, Wallet wallet, SkinManager skinManager)
     {
         _playFabManager = playFabManager;
         _wallet = wallet;
         _skinManager = skinManager;
-        _exitGame = exitGame;
     }
 
     public void Initialize()
     {
         _playFabManager.OnLoginSuccessful += OnLoginSuccessful;
-        _exitGame.OnGameExit += async () =>
-        {
-            for (int i = 0; i < _savables.Count; i++)
-            {
-                await _savables[i].Save();
-            }
-
-            Application.Quit();
-        };
     }
 
     private async void OnLoginSuccessful()

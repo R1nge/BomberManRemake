@@ -11,10 +11,6 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private TMP_InputField ip;
     [SerializeField] private Button host, join;
     [SerializeField] private Button quit;
-    private ExitGame _exitGame;
-
-    [Inject]
-    private void Inject(ExitGame exitGame) => _exitGame = exitGame;
 
     private void Awake()
     {
@@ -26,12 +22,12 @@ public class MainMenuUI : MonoBehaviour
         host.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("LobbyDataSingleton", LoadSceneMode.Additive);
+            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
         });
 
         join.onClick.AddListener(() => { NetworkManager.Singleton.StartClient(); });
 
-        quit.onClick.AddListener(() => _exitGame.Exit());
+        quit.onClick.AddListener(Application.Quit);
     }
 
     private void OnDestroy()
