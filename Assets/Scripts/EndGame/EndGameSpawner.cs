@@ -32,33 +32,42 @@ namespace EndGame
         {
             if (IsServer)
             {
-                _lobby.SortDescending();
+                if (_lobby.PlayerData.Count == completed.Count)
+                {
+                    _lobby.SortDescending();
+                    SpawnPlayers();
+                }
             }
-
-            SpawnServerRpc(_skinManager.SelectedSkinIndex);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        private void SpawnServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
+        private void SpawnPlayers()
         {
-            var skin = _skinManager.GetEndGame(skinIndex);
-            var clientId = rpcParams.Receive.SenderClientId;
-            var place = _lobby.GetPlace(clientId);
+            for (int i = 0; i < _lobby.PlayerData.Count; i++)
+            {
+                var skinIndex = _lobby.PlayerData[i].SkinIndex;
+                var skin = _skinManager.GetEndGame(skinIndex);
+                var clientId = _lobby.PlayerData[i].ClientId;
+                var place = _lobby.GetPlace(clientId);
 
-            if (!place.HasValue) return;
+                if (!place.HasValue)
+                {
+                    Debug.LogError($"Place not found {clientId}", this);
+                    return;
+                }
 
-            var player = _diContainer.InstantiatePrefabForComponent<NetworkObject>
-            (
-                skin,
-                spawnPoints[place.Value].position,
-                Quaternion.identity,
-                null
-            );
+                var player = _diContainer.InstantiatePrefabForComponent<NetworkObject>
+                (
+                    skin,
+                    spawnPoints[place.Value].position,
+                    Quaternion.identity,
+                    null
+                );
 
-            player.Spawn(true);
-            var endGamePlayer = player.GetComponent<EndGamePlayer>();
-            endGamePlayer.UpdateNick(clientId);
-            endGamePlayer.UpdateScore(clientId);
+                player.Spawn(true);
+                var endGamePlayer = player.GetComponent<EndGamePlayer>();
+                endGamePlayer.UpdateNick(clientId);
+                endGamePlayer.UpdateScore(clientId);
+            }
         }
 
         public override void OnDestroy()

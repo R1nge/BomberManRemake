@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.StateMachines;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,39 +14,35 @@ namespace Game
         [SerializeField] private Transform dynamicParent;
         private GameSettings _gameSettings;
         private DiContainer _diContainer;
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController2;
         private MapSelector _mapSelector;
 
         [Inject]
         private void Inject(
             DiContainer diContainer,
             GameSettings gameSettings,
-            GameStateController gameStateController,
+            GameStateController2 gameStateController,
             MapSelector mapSelector
         )
         {
             _diContainer = diContainer;
             _gameSettings = gameSettings;
-            _gameStateController = gameStateController;
+            _gameStateController2 = gameStateController;
             _mapSelector = mapSelector;
         }
 
         private void Awake()
         {
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _gameStateController.OnLoadNextRound += Generate;
+            _gameStateController2.OnStateChanged += StateChanged;
         }
 
-        private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,
-            List<ulong> clientscompleted, List<ulong> clientstimedout)
+        private void StateChanged(GameStates newStates)
         {
-            if (!IsServer) return;
-            if (scenename == "Game")
+            switch (newStates)
             {
-                if (clientscompleted.Count == NetworkManager.Singleton.ConnectedClients.Count)
-                {
+                case GameStates.PreStart:
                     Generate();
-                }
+                    break;
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Game;
+using Game.StateMachines;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,17 +10,28 @@ namespace Misc
 {
     public class DestroyEveryChild : MonoBehaviour
     {
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController gameStateController)
+        private void Inject(GameStateController2 gameStateController)
         {
             _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
-            //_gameStateController.OnCleanUpBeforeEnd += DestroyChildren;
+            _gameStateController.OnStateChanged += StateChanged;
+        }
+
+        private void StateChanged(GameStates newState)
+        {
+            switch (newState)
+            {
+                case GameStates.NextRound:
+                case GameStates.EndGame:
+                    DestroyChildren();
+                    break;
+            }
         }
 
         private void DestroyChildren()
@@ -48,7 +60,7 @@ namespace Misc
 
         private void OnDestroy()
         {
-            _gameStateController.OnCleanUpBeforeEnd -= DestroyChildren;
+            //_gameStateController.OnCleanUpBeforeEnd -= DestroyChildren;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.StateMachines;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,7 +13,7 @@ namespace Player
         [SerializeField] private float sensitivity;
         [SerializeField] private float limitX;
         private float _rotationX, _rotationY;
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController2;
 
         public void Disable()
         {
@@ -21,13 +22,23 @@ namespace Player
         }
 
         [Inject]
-        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
+        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                _gameStateController.OnCleanUpBeforeEnd += Destroy;
+                _gameStateController2.OnStateChanged += StateChanged;
+            }
+        }
+
+        private void StateChanged(GameStates newState)
+        {
+            switch (newState)
+            {
+                case GameStates.NextRound:
+                    Destroy();
+                    break;
             }
         }
 
@@ -41,7 +52,7 @@ namespace Player
             _rotationY = value.Get<Vector2>().x * sensitivity;
             Rotate();
         }
-        
+
         private void Rotate()
         {
             if (!IsOwner) return;
@@ -53,7 +64,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _gameStateController.OnCleanUpBeforeEnd -= Destroy;
+                _gameStateController2.OnStateChanged -= StateChanged;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.StateMachines;
 using Zenject;
 
 namespace Installers
@@ -7,7 +8,7 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<GameStateController>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<GameStateController2>().FromComponentInHierarchy().AsSingle();
             Container.Bind<SpawnerOnGrid>().FromComponentInHierarchy().AsSingle();
             Container.Bind<PlayerSpawnerFPS>().FromComponentInHierarchy().AsSingle();
             Container.Bind<PlayerSpawnerTPS>().FromComponentInHierarchy().AsSingle();

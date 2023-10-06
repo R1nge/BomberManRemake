@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Game.StateMachines;
+using Unity.Netcode;
 using Zenject;
 
 namespace Game
@@ -7,20 +8,36 @@ namespace Game
     {
         private NetworkVariable<float> _currentTime;
         private GameSettings _gameSettings;
-        private GameStateController _gameStateController;
+
+        private GameStateController2 _gameStateController2;
+        private bool _started;
 
         [Inject]
-        private void Inject(GameSettings gameSettings, GameStateController gameStateController)
+        private void Inject(GameSettings gameSettings, GameStateController2 gameStateController)
         {
             _gameSettings = gameSettings;
-            _gameStateController = gameStateController;
+            _gameStateController2 = gameStateController;
         }
 
         private void Awake()
         {
             _currentTime = new NetworkVariable<float>(_gameSettings.RoundTime);
             _currentTime.OnValueChanged += TimeChanged;
-            _gameStateController.OnLoadNextRound += ResetTime; 
+            _gameStateController2.OnStateChanged += StateChanged;
+        }
+
+        private void StateChanged(GameStates newState)
+        {
+            switch (newState)
+            {
+                case GameStates.Start:
+                    _started = true;
+                    break;
+                case GameStates.NextRound:
+                    _started = false;
+                    ResetTime();
+                    break;
+            }
         }
 
         private void ResetTime()
@@ -36,7 +53,7 @@ namespace Game
             if (!IsServer) return;
             if (time <= 0)
             {
-                _gameStateController.Tie();
+                _gameStateController2.SwitchState(GameStates.Tie);
             }
         }
 
@@ -48,10 +65,15 @@ namespace Game
 
         private void Tick()
         {
-            if (!_gameStateController.GameStarted) return;
-            if (_gameStateController.GameEnded) return;
+            if (!_started) return;
             if (_currentTime.Value <= 0) return;
             _currentTime.Value -= 1f / NetworkManager.Singleton.NetworkTickSystem.TickRate;
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            _gameStateController2.OnStateChanged -= StateChanged;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Game.StateMachines;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
 
@@ -9,20 +10,30 @@ namespace Game
         [SerializeField] private int killScore, winScore;
         private SpawnerManager _spawnerManager;
         private Lobby.Lobby _lobby;
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController2;
 
         [Inject]
-        private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, GameStateController gameStateController)
+        private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, GameStateController2 gameStateController)
         {
             _spawnerManager = spawnerManager;
             _lobby = lobby;
-            _gameStateController = gameStateController;
+            _gameStateController2 = gameStateController;
         }
 
         private void Awake()
         {
             _spawnerManager.OnPlayerDeath += AddKillScoreServerRpc;
-            _gameStateController.OnWin += AddWinScore;
+            _gameStateController2.OnStateChanged += StateChanged;
+        }
+
+        private void StateChanged(GameStates newStates)
+        {
+            switch (newStates)
+            {
+                case GameStates.Win:
+                    AddWinScore();
+                    break;
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -61,7 +72,7 @@ namespace Game
         public override void OnDestroy()
         {
             _spawnerManager.OnPlayerDeath -= AddKillScoreServerRpc;
-            _gameStateController.OnCleanUpBeforeEnd -= AddWinScore;
+            _gameStateController2.OnStateChanged -= StateChanged;
         }
     }
 }

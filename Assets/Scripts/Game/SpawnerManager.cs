@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.StateMachines;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,20 +15,20 @@ namespace Game
         private NetworkList<ulong> _playersAlive;
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController2;
         private GameSettings _gameSettings;
         private Lobby.Lobby _lobby;
 
         [Inject]
         private void Inject(
-            GameStateController gameStateController,
+            GameStateController2 gameStateController,
             Lobby.Lobby lobby,
             GameSettings gameSettings,
             PlayerSpawnerFPS playerSpawnerFPS,
             PlayerSpawnerTPS playerSpawnerTPS
         )
         {
-            _gameStateController = gameStateController;
+            _gameStateController2 = gameStateController;
             _lobby = lobby;
             _gameSettings = gameSettings;
             _playerSpawnerFPS = playerSpawnerFPS;
@@ -42,15 +43,25 @@ namespace Game
         {
             _playersAlive = new();
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _gameStateController.OnLoadNextRound += RoundManagerOnOnLoadNextRound;
+            _gameStateController2.OnStateChanged += StateChanged;
             _playersAlive.OnListChanged += OnAlivePlayersChanged;
         }
 
-        private void OnAlivePlayersChanged(NetworkListEvent<ulong> changeevent)
+        private void StateChanged(GameStates newState)
         {
-            if (_playersAlive.Count <= 1 && changeevent.Type == NetworkListEvent<ulong>.EventType.Remove)
+            switch (newState)
             {
-                _gameStateController.Win();
+                case GameStates.NextRound:
+                    RoundManagerOnOnLoadNextRound();
+                    break;
+            }
+        }
+
+        private void OnAlivePlayersChanged(NetworkListEvent<ulong> listEvent)
+        {
+            if (_playersAlive.Count <= 1 && listEvent.Type == NetworkListEvent<ulong>.EventType.Remove)
+            {
+                _gameStateController2.SwitchState(GameStates.Win);
             }
         }
 
@@ -85,7 +96,7 @@ namespace Game
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                
+
                 _playersAlive.Add(clientId);
 
                 OnPlayerSpawn?.Invoke(clientId);
@@ -116,7 +127,7 @@ namespace Game
         public override void OnDestroy()
         {
             base.OnDestroy();
-            _gameStateController.OnLoadNextRound -= RoundManagerOnOnLoadNextRound;
+            _gameStateController2.OnStateChanged -= StateChanged;
         }
     }
 }

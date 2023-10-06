@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Game.StateMachines;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
@@ -11,17 +12,17 @@ namespace Game
         [SerializeField] private Transform dynamicParent;
         [SerializeField] private KillBlock killBlock;
         private GameSettings _gameSettings;
-        private GameStateController _gameStateController;
         private WaitForSeconds _waitForSeconds;
         private Coroutine _coroutine;
         private const int HEIGHT = 4;
         private bool _started;
         private GameTimer _gameTimer;
+        private GameStateController2 _gameStateController2;
 
         [Inject]
-        private void Inject(GameStateController gameStateController, GameSettings gameSettings)
+        private void Inject(GameStateController2 gameStateController, GameSettings gameSettings)
         {
-            _gameStateController = gameStateController;
+            _gameStateController2 = gameStateController;
             _gameSettings = gameSettings;
         }
 
@@ -29,14 +30,23 @@ namespace Game
         {
             _waitForSeconds = new WaitForSeconds(.05f);
             _gameTimer = FindObjectOfType<GameTimer>();
-            _gameStateController.OnCleanUpBeforeEnd += () =>
+            _gameStateController2.OnStateChanged += StateChanged;
+        }
+
+        private void StateChanged(GameStates newState)
+        {
+            switch (newState)
             {
-                _started = false;
-                if (_coroutine != null)
-                {
-                    StopCoroutine(_coroutine);
-                }
-            };
+                case GameStates.Win:
+                case GameStates.Tie:
+                    _started = false;
+                    if (_coroutine != null)
+                    {
+                        StopCoroutine(_coroutine);
+                    }
+
+                    break;
+            }
         }
 
         private void Start() => _gameTimer.CurrentTimer.OnValueChanged += OnValueChanged;

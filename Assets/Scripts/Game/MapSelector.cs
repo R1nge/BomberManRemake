@@ -1,20 +1,36 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Game.StateMachines;
+using Unity.Netcode;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Game
 {
     public class MapSelector : NetworkBehaviour
     {
         [SerializeField] private MapPreset[] presets;
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController2;
         private int _selectedMapIndex;
         public MapPreset SelectedMap => presets[_selectedMapIndex];
 
         [Inject]
-        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
+        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
 
-        private void Awake() => _gameStateController.OnCleanUpBeforeEnd += SelectRandomMap;
+        private void Awake()
+        {
+            _gameStateController2.OnStateChanged += StateChanged;
+        }
+
+        private void StateChanged(GameStates newState)
+        {
+            switch (newState)
+            {
+                case GameStates.PreStart:
+                    SelectRandomMap();
+                    break;
+            }
+        }
 
         public override void OnNetworkSpawn()
         {
@@ -26,8 +42,7 @@ namespace Game
 
         public override void OnDestroy()
         {
-            base.OnDestroy();
-            _gameStateController.OnCleanUpBeforeEnd -= SelectRandomMap;
+            _gameStateController2.OnStateChanged -= StateChanged;
         }
     }
 }

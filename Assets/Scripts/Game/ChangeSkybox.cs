@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.StateMachines;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
@@ -9,21 +10,31 @@ namespace Game
     public class ChangeSkybox : NetworkBehaviour
     {
         private NetworkVariable<int> _selectedSkybox;
-        private GameStateController _gameStateController;
+        private GameStateController2 _gameStateController2;
         private MapSelector _mapSelector;
 
         [Inject]
-        private void Inject(GameStateController gameStateController, MapSelector mapSelector)
+        private void Inject(GameStateController2 gameStateController, MapSelector mapSelector)
         {
-            _gameStateController = gameStateController;
+            _gameStateController2 = gameStateController;
             _mapSelector = mapSelector;
         }
 
         private void Awake()
         {
-            _gameStateController.OnLoadNextRound += SelectSkyboxServerRpc;
+            _gameStateController2.OnStateChanged += StateChanged;
             _selectedSkybox = new NetworkVariable<int>();
             _selectedSkybox.OnValueChanged += OnValueChanged;
+        }
+
+        private void StateChanged(GameStates newState)
+        {
+            switch (newState)
+            {
+                case GameStates.NextRound:
+                    SelectSkyboxServerRpc();
+                    break;
+             }
         }
 
         private void OnValueChanged(int _, int skyboxIndex)
@@ -54,8 +65,7 @@ namespace Game
 
         public override void OnDestroy()
         {
-            base.OnDestroy();
-            _gameStateController.OnLoadNextRound -= SelectSkyboxServerRpc;
+            _gameStateController2.OnStateChanged -= StateChanged;
         }
     }
 }
