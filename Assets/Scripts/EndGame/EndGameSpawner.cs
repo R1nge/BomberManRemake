@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Skins;
+﻿using System.Collections.Generic;
 using Skins.Players;
 using Unity.Netcode;
 using UnityEngine;
@@ -24,7 +22,13 @@ namespace EndGame
             _skinManager = skinManager;
         }
 
-        public override void OnNetworkSpawn()
+        private void Awake()
+        {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+        }
+
+        private void SceneManagerOnOnLoadEventCompleted(string _, LoadSceneMode __, List<ulong> completed,
+            List<ulong> ___)
         {
             if (IsServer)
             {
@@ -55,6 +59,19 @@ namespace EndGame
             var endGamePlayer = player.GetComponent<EndGamePlayer>();
             endGamePlayer.UpdateNick(clientId);
             endGamePlayer.UpdateScore(clientId);
+        }
+
+        public override void OnDestroy()
+        {
+            if (NetworkManager.Singleton)
+            {
+                if (NetworkManager.Singleton.SceneManager != null)
+                {
+                    NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+                }
+            }
+
+            base.OnDestroy();
         }
     }
 }

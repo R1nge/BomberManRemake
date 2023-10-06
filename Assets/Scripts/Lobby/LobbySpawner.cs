@@ -24,22 +24,24 @@ namespace Lobby
             _skinManager = skinManager;
         }
 
-        private void Awake() => _playerModels ??= new List<PlayerModel>();
-
-        public override void OnNetworkSpawn()
+        private void Awake()
         {
+            _playerModels ??= new List<PlayerModel>();
             _lobby.OnPlayerConnected += SpawnPlayer;
             _lobby.OnPlayerConnected += UpdateUIForClients;
             _lobby.OnPlayerDisconnected += DestroyPlayer;
             _lobby.OnReadyStateChanged += ChangeReadyState;
-            
-            if(!IsServer) return;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            if (!IsServer) return;
             SpawnPlayerSkinServerRpc(0);
         }
 
         private void SpawnPlayer(ulong clientId)
         {
-            if(IsServer) return;
+            //if (IsServer) return;
             SpawnPlayerSkinServerRpc(clientId);
         }
 
@@ -67,7 +69,6 @@ namespace Lobby
                 }
             }
         }
-        
 
         [ServerRpc(RequireOwnership = false)]
         private void SpawnPlayerSkinServerRpc(ulong clientId)
@@ -105,10 +106,11 @@ namespace Lobby
 
         public override void OnDestroy()
         {
-            //_lobby.OnPlayerConnected -= SpawnPlayer;
+            _lobby.OnPlayerConnected -= SpawnPlayer;
             _lobby.OnPlayerConnected -= UpdateUIForClients;
             _lobby.OnPlayerDisconnected -= DestroyPlayer;
             _lobby.OnReadyStateChanged -= ChangeReadyState;
+            base.OnDestroy();
         }
     }
 }

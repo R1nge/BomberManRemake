@@ -113,6 +113,7 @@ namespace Lobby
         public override void OnNetworkSpawn()
         {
             start.gameObject.SetActive(IsOwner);
+            start.interactable = _lobby.CanStartGame();
             ready.gameObject.SetActive(true);
             gameSettingsUI.gameObject.SetActive(IsOwner);
             proceduralSettingsUI.gameObject.SetActive(false);

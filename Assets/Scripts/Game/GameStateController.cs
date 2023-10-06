@@ -49,14 +49,6 @@ namespace Game
             if (loaded.Count == NetworkManager.Singleton.ConnectedClients.Count)
             {
                 ResetTimer();
-                OnMapLoaded();
-            }
-        }
-
-        private void OnMapLoaded()
-        {
-            if (IsServer)
-            {
                 StartCoroutine(MapLoaded_C());
             }
         }
@@ -157,11 +149,12 @@ namespace Game
         {
             yield return new WaitForSeconds(2f);
             ResetTimer();
-            CleanupClientRpc();
+
             _roundsElapsed++;
             if (_roundsElapsed < (int)_gameSettings.RoundsAmount)
             {
                 print($"Elapsed: {_roundsElapsed}, Total: {_gameSettings.RoundsAmount}");
+                CleanupClientRpc();
                 LoadNextRoundClientRpc();
             }
             else

@@ -11,6 +11,7 @@ namespace Game
     public class NetworkObjectPool : NetworkBehaviour
     {
         [SerializeField] private List<PoolConfigObject> pooledPrefabsList;
+        [SerializeField] private Transform parent;
         private readonly HashSet<GameObject> _prefabs = new();
         private readonly Dictionary<string, ObjectPool<NetworkObject>> _pooledObjects = new();
         private DiContainer _diContainer;
@@ -88,6 +89,7 @@ namespace Game
             {
                 var instance = _diContainer.InstantiatePrefab(prefab).GetComponent<NetworkObject>();
                 instance.Spawn(true);
+                instance.TrySetParent(parent);
                 return instance;
             }
 
@@ -103,7 +105,11 @@ namespace Game
 
             void ActionOnDestroy(NetworkObject networkObject)
             {
-                Destroy(networkObject.gameObject);
+                if (!IsServer) return;
+                if (networkObject.IsSpawned)
+                {
+                    networkObject.Despawn(true);
+                }
             }
 
             _prefabs.Add(prefab);
@@ -125,7 +131,7 @@ namespace Game
             }
 
             // Register Netcode Spawn handlers
-            NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
+            //NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
         }
 
         [ClientRpc]

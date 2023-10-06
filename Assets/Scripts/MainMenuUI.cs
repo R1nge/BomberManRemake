@@ -4,7 +4,6 @@ using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Zenject;
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -12,22 +11,31 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button host, join;
     [SerializeField] private Button quit;
 
-    private void Awake()
+    private void Start()
     {
-        ip.onEndEdit.AddListener(s =>
-        {
-            NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = s;
-        });
+        ip.onEndEdit.AddListener(SetIp);
 
-        host.onClick.AddListener(() =>
-        {
-            NetworkManager.Singleton.StartHost();
-            NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
-        });
+        host.onClick.AddListener(Host);
 
-        join.onClick.AddListener(() => { NetworkManager.Singleton.StartClient(); });
+        join.onClick.AddListener(StartClient);
 
         quit.onClick.AddListener(Application.Quit);
+    }
+
+    private void SetIp(string s)
+    {
+        NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address = s;
+    }
+
+    private void Host()
+    {
+        NetworkManager.Singleton.StartHost();
+        NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+    }
+
+    private void StartClient()
+    {
+        NetworkManager.Singleton.StartClient();
     }
 
     private void OnDestroy()

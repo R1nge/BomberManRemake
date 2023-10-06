@@ -97,11 +97,6 @@ namespace Lobby
             return null;
         }
 
-        public void PlayerConnected(ulong clientId)
-        {
-            OnPlayerConnected?.Invoke(clientId);
-        }
-
         public void PlayerDisconnected(ulong clientId)
         {
             if (!NetworkManager.Singleton) return;
@@ -121,6 +116,7 @@ namespace Lobby
             _players.Add(data);
             Debug.Log($"Skin index: {data.SkinIndex}");
             Debug.Log($"Bomb skin index: {data.BombSkinIndex}");
+            OnPlayerConnected?.Invoke(clientId);
         }
 
         public void ChangeReadyState(ulong clientId)

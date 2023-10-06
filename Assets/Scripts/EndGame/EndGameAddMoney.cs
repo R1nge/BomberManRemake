@@ -5,7 +5,7 @@ using Zenject;
 
 namespace EndGame
 {
-    public class EndGameAddMoney : MonoBehaviour
+    public class EndGameAddMoney : NetworkBehaviour
     {
         private Lobby.Lobby _lobby;
         private Wallet _wallet;
@@ -19,7 +19,13 @@ namespace EndGame
 
         private void Start()
         {
-            var localId = NetworkManager.Singleton.LocalClientId;
+            GetPlayerScoreServerRpc(NetworkManager.Singleton.LocalClientId);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void GetPlayerScoreServerRpc(ulong localId)
+        {
+            
             var data = _lobby.GetData(localId);
             if (!data.HasValue)
             {
@@ -27,7 +33,24 @@ namespace EndGame
                 return;
             }
 
-            _wallet.Earn(data.Value.Points);
+            var clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new[]
+                    {
+                        localId
+                    }
+                }
+            };
+
+            AddMoneyClientRpc(data.Value.Points, clientRpcParams);
+        }
+
+        [ClientRpc]
+        private void AddMoneyClientRpc(int money, ClientRpcParams clientRpcParams)
+        {
+            _wallet.Earn(money);
             Debug.LogError("EARNED");
         }
     }

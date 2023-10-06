@@ -23,6 +23,10 @@ namespace Misc
             Invoke(nameof(Return), delay);
         }
 
-        private void Return() => _networkObjectPool.ReturnNetworkObject(NetworkObject, prefabName);
+        private void Return()
+        {
+            if (!NetworkObject.IsSpawned) return;
+            _networkObjectPool.ReturnNetworkObject(NetworkObject, prefabName);
+        }
     }
 }

@@ -1181,6 +1181,7 @@ MonoBehaviour:
     prewarmCount: 200
   - prefab: {fileID: 753124103439681731, guid: 5b94ebbe172860d4683767ce3df5c140, type: 3}
     prewarmCount: 200
+  parent: {fileID: 1841619512}
 --- !u!1 &1626084552
 GameObject:
   m_ObjectHideFlags: 0

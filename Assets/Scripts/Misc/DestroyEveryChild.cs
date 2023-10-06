@@ -19,7 +19,7 @@ namespace Misc
 
         private void Awake()
         {
-           _gameStateController.OnCleanUpBeforeEnd += DestroyChildren;
+            //_gameStateController.OnCleanUpBeforeEnd += DestroyChildren;
         }
 
         private void DestroyChildren()
@@ -36,7 +36,12 @@ namespace Misc
                         Debug.LogError($"Skipped {networkObject.name} during children destruction");
                         continue;
                     }
+
                     networkObject.Despawn(true);
+                }
+                else
+                {
+                    Destroy(transform.GetChild(i).gameObject);
                 }
             }
         }

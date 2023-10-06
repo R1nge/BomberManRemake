@@ -48,7 +48,6 @@ namespace Player
             if (!IsOwner) return;
             if (!_playerInput.InputEnabled) return;
             _moveDirection = Vector3.forward * _curSpeedX + Vector3.right * _curSpeedY;
-            print(_moveDirection.magnitude);
 
             if (PlayerAnimator != null)
             {

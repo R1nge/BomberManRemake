@@ -27,21 +27,22 @@ namespace Lobby
         {
             NetworkManager.Singleton.OnClientConnectedCallback += PlayerConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += PlayerDisconnected;
-            _lobby.OnPlayerConnected += LobbyOnOnPlayerConnected;
         }
 
-        private void LobbyOnOnPlayerConnected(ulong clientId)
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+            {
+                PlayerConnected(0);
+            }
+        }
+
+        private void PlayerConnected(ulong clientId)
         {
             if (NetworkManager.Singleton.LocalClientId == clientId)
             {
                 CreatePlayerData(clientId);
             }
-        }
-
-        public override void OnNetworkSpawn()
-        {
-            if (!IsServer) return;
-            PlayerConnected(0);
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -62,12 +63,6 @@ namespace Lobby
             _lobby.CreatePlayerData(clientId, nick, skinIndex, bombSkinIndex);
         }
 
-
-        private void PlayerConnected(ulong clientId)
-        {
-            _lobby.PlayerConnected(clientId);
-        }
-        
         private void PlayerDisconnected(ulong clientId)
         {
             _lobby.PlayerDisconnected(clientId);

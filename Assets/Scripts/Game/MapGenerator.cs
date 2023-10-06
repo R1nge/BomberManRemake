@@ -39,9 +39,13 @@ namespace Game
         private void SceneManagerOnOnLoadEventCompleted(string scenename, LoadSceneMode loadscenemode,
             List<ulong> clientscompleted, List<ulong> clientstimedout)
         {
+            if (!IsServer) return;
             if (scenename == "Game")
             {
-                Generate();
+                if (clientscompleted.Count == NetworkManager.Singleton.ConnectedClients.Count)
+                {
+                    Generate();
+                }
             }
         }
 
@@ -61,7 +65,8 @@ namespace Game
             {
                 for (int z = 0; z < _gameSettings.MapLength; z++)
                 {
-                    Spawn(_mapSelector.SelectedMap.Floor, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, Quaternion.identity);
+                    Spawn(_mapSelector.SelectedMap.Floor, x * _mapSelector.SelectedMap.Size,
+                        z * _mapSelector.SelectedMap.Size, Quaternion.identity);
                 }
             }
         }
@@ -77,28 +82,32 @@ namespace Game
                     if (LeftBottomCorner(x, z))
                     {
                         cornerRotation = Quaternion.Euler(_mapSelector.SelectedMap.LeftBottomCornerRotation);
-                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size,
+                            z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
 
                     if (LeftTopCorner(x, z))
                     {
                         cornerRotation = Quaternion.Euler(_mapSelector.SelectedMap.LeftTopCornerRotation);
-                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size,
+                            z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
 
                     if (RightBottomCorner(x, z))
                     {
                         cornerRotation = Quaternion.Euler(-_mapSelector.SelectedMap.LeftBottomCornerRotation);
-                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size,
+                            z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
 
                     if (RightTopCorner(x, z))
                     {
                         cornerRotation = Quaternion.Euler(-_mapSelector.SelectedMap.LeftTopCornerRotation);
-                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, cornerRotation);
+                        Spawn(_mapSelector.SelectedMap.Corner, x * _mapSelector.SelectedMap.Size,
+                            z * _mapSelector.SelectedMap.Size, cornerRotation);
                         continue;
                     }
 
@@ -134,7 +143,8 @@ namespace Game
         {
             if (x == _gameSettings.MapWidth && z < _gameSettings.MapLength + 1)
             {
-                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size,
+                    z * _mapSelector.SelectedMap.Size,
                     Quaternion.Euler(_mapSelector.SelectedMap.LeftBorderRotation));
             }
         }
@@ -143,7 +153,8 @@ namespace Game
         {
             if (x == -1 && z < _gameSettings.MapLength + 1)
             {
-                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size,
+                    z * _mapSelector.SelectedMap.Size,
                     Quaternion.Euler(-_mapSelector.SelectedMap.LeftBorderRotation));
             }
         }
@@ -152,7 +163,8 @@ namespace Game
         {
             if (x < _gameSettings.MapWidth + 1 && z == _gameSettings.MapLength)
             {
-                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size,
+                    z * _mapSelector.SelectedMap.Size,
                     Quaternion.Euler(_mapSelector.SelectedMap.TopBorderRotation));
             }
         }
@@ -161,7 +173,8 @@ namespace Game
         {
             if (x < _gameSettings.MapWidth + 1 && z == -1)
             {
-                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size,
+                Spawn(_mapSelector.SelectedMap.Border, x * _mapSelector.SelectedMap.Size,
+                    z * _mapSelector.SelectedMap.Size,
                     Quaternion.Euler(_mapSelector.SelectedMap.BottomBorderRotation));
             }
         }
@@ -176,7 +189,8 @@ namespace Game
                     {
                         if (IsCenter(x, z)) continue;
 
-                        Spawn(_mapSelector.SelectedMap.Wall, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, Quaternion.identity);
+                        Spawn(_mapSelector.SelectedMap.Wall, x * _mapSelector.SelectedMap.Size,
+                            z * _mapSelector.SelectedMap.Size, Quaternion.identity);
                     }
                 }
             }
@@ -204,7 +218,8 @@ namespace Game
 
                     if (IsCenter(x, z)) continue;
 
-                    Spawn(_mapSelector.SelectedMap.Destructable, x * _mapSelector.SelectedMap.Size, z * _mapSelector.SelectedMap.Size, Quaternion.identity);
+                    Spawn(_mapSelector.SelectedMap.Destructable, x * _mapSelector.SelectedMap.Size,
+                        z * _mapSelector.SelectedMap.Size, Quaternion.identity);
                 }
             }
         }
