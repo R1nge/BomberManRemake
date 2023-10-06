@@ -14,26 +14,26 @@ namespace Game
         [SerializeField] private Transform dynamicParent;
         private GameSettings _gameSettings;
         private DiContainer _diContainer;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
         private MapSelector _mapSelector;
 
         [Inject]
         private void Inject(
             DiContainer diContainer,
             GameSettings gameSettings,
-            GameStateController2 gameStateController,
+            GameStateController gameStateController,
             MapSelector mapSelector
         )
         {
             _diContainer = diContainer;
             _gameSettings = gameSettings;
-            _gameStateController2 = gameStateController;
+            _gameStateController = gameStateController;
             _mapSelector = mapSelector;
         }
 
         private void Awake()
         {
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
         }
 
         private void StateChanged(GameStates newStates)

@@ -10,10 +10,10 @@ namespace Misc
 {
     public class DestroyEveryChild : MonoBehaviour
     {
-        private GameStateController2 _gameStateController;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController)
+        private void Inject(GameStateController gameStateController)
         {
             _gameStateController = gameStateController;
         }

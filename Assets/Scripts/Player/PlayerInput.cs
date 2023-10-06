@@ -1,5 +1,4 @@
-﻿using System;
-using Game.StateMachines;
+﻿using Game.StateMachines;
 using Unity.Netcode;
 using Zenject;
 
@@ -8,12 +7,12 @@ namespace Player
     public class PlayerInput : NetworkBehaviour
     {
         private NetworkVariable<bool> _enabled;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         public bool InputEnabled => _enabled.Value;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake() => _enabled = new NetworkVariable<bool>();
 
@@ -21,7 +20,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _gameStateController2.OnStateChanged += StateChanged;
+                _gameStateController.OnStateChanged += StateChanged;
             }
         }
 
@@ -47,7 +46,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _gameStateController2.OnStateChanged -= StateChanged;
+                _gameStateController.OnStateChanged -= StateChanged;
             }
 
             base.OnDestroy();

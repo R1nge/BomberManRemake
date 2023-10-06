@@ -9,21 +9,21 @@ namespace Game
         private NetworkVariable<float> _currentTime;
         private GameSettings _gameSettings;
 
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
         private bool _started;
 
         [Inject]
-        private void Inject(GameSettings gameSettings, GameStateController2 gameStateController)
+        private void Inject(GameSettings gameSettings, GameStateController gameStateController)
         {
             _gameSettings = gameSettings;
-            _gameStateController2 = gameStateController;
+            _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
             _currentTime = new NetworkVariable<float>(_gameSettings.RoundTime);
             _currentTime.OnValueChanged += TimeChanged;
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
         }
 
         private void StateChanged(GameStates newState)
@@ -53,7 +53,7 @@ namespace Game
             if (!IsServer) return;
             if (time <= 0)
             {
-                _gameStateController2.SwitchState(GameStates.Tie);
+                _gameStateController.SwitchState(GameStates.Tie);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Game
         public override void OnDestroy()
         {
             base.OnDestroy();
-            _gameStateController2.OnStateChanged -= StateChanged;
+            _gameStateController.OnStateChanged -= StateChanged;
         }
     }
 }

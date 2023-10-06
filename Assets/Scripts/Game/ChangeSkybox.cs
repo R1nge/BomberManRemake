@@ -1,28 +1,26 @@
-﻿using System;
-using Game.StateMachines;
+﻿using Game.StateMachines;
 using Unity.Netcode;
 using UnityEngine;
 using Zenject;
-using Random = UnityEngine.Random;
 
 namespace Game
 {
     public class ChangeSkybox : NetworkBehaviour
     {
         private NetworkVariable<int> _selectedSkybox;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
         private MapSelector _mapSelector;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController, MapSelector mapSelector)
+        private void Inject(GameStateController gameStateController, MapSelector mapSelector)
         {
-            _gameStateController2 = gameStateController;
+            _gameStateController = gameStateController;
             _mapSelector = mapSelector;
         }
 
         private void Awake()
         {
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
             _selectedSkybox = new NetworkVariable<int>();
             _selectedSkybox.OnValueChanged += OnValueChanged;
         }
@@ -65,7 +63,7 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _gameStateController2.OnStateChanged -= StateChanged;
+            _gameStateController.OnStateChanged -= StateChanged;
         }
     }
 }

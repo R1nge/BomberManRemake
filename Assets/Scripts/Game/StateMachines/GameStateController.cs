@@ -8,10 +8,9 @@ using Zenject;
 
 namespace Game.StateMachines
 {
-    public class GameStateController2 : NetworkBehaviour
+    public class GameStateController : NetworkBehaviour
     {
         public event Action<GameStates> OnStateChanged;
-        [SerializeField] private int countdownTime;
         private GameStates _currentState;
         private int _roundsElapsed;
         private GameSettings _gameSettings;
@@ -35,10 +34,10 @@ namespace Game.StateMachines
             {
                 SwitchState(GameStates.PreStart);
             }
-            else if (newState == GameStates.PreStart)
-            {
-                StartCoroutine(Switch_C());
-            }
+            // else if (newState == GameStates.PreStart)
+            // {
+            //     StartCoroutine(Switch_C());
+            // }
             else if (newState == GameStates.Tie || newState == GameStates.Win)
             {
                 OnStateChanged -= OnOnStateChanged;
@@ -55,11 +54,11 @@ namespace Game.StateMachines
             }
         }
 
-        private IEnumerator Switch_C()
-        {
-            yield return new WaitForSeconds(countdownTime);
-            SwitchState(GameStates.Start);
-        }
+        // private IEnumerator Switch_C()
+        // {
+        //     yield return new WaitForSeconds(countdownTime);
+        //     SwitchState(GameStates.Start);
+        // }
 
         private void LoadCompleted(string _, LoadSceneMode __, List<ulong> clients, List<ulong> ___)
         {

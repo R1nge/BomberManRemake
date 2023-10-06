@@ -8,16 +8,16 @@ namespace Player
 {
     public class PlayerDestroy : NetworkBehaviour
     {
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                _gameStateController2.OnStateChanged += StateChanged;
+                _gameStateController.OnStateChanged += StateChanged;
             }
         }
 
@@ -37,7 +37,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _gameStateController2.OnStateChanged -= StateChanged;
+                _gameStateController.OnStateChanged -= StateChanged;
             }
         }
     }

@@ -13,7 +13,7 @@ namespace Player
         [SerializeField] private float sensitivity;
         [SerializeField] private float limitX;
         private float _rotationX, _rotationY;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         public void Disable()
         {
@@ -22,13 +22,13 @@ namespace Player
         }
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                _gameStateController2.OnStateChanged += StateChanged;
+                _gameStateController.OnStateChanged += StateChanged;
             }
         }
 
@@ -64,7 +64,7 @@ namespace Player
         {
             if (IsServer)
             {
-                _gameStateController2.OnStateChanged -= StateChanged;
+                _gameStateController.OnStateChanged -= StateChanged;
             }
         }
     }

@@ -936,6 +936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1352547122}
   - component: {fileID: 1352547123}
+  - component: {fileID: 1352547124}
   - component: {fileID: 1352547121}
   m_Layer: 0
   m_Name: CountDownUI
@@ -992,6 +993,19 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &1352547124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352547120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a30fcd98f9456a829d763c2b12e54b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  countdownTime: 5
 --- !u!1 &1380124788
 GameObject:
   m_ObjectHideFlags: 0
@@ -2100,7 +2114,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0674b9fa6a143bd9a8ae6aaf8404daa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  countdownTime: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

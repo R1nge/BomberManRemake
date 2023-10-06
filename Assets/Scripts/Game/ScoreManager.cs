@@ -10,20 +10,20 @@ namespace Game
         [SerializeField] private int killScore, winScore;
         private SpawnerManager _spawnerManager;
         private Lobby.Lobby _lobby;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, GameStateController2 gameStateController)
+        private void Inject(SpawnerManager spawnerManager, Lobby.Lobby lobby, GameStateController gameStateController)
         {
             _spawnerManager = spawnerManager;
             _lobby = lobby;
-            _gameStateController2 = gameStateController;
+            _gameStateController = gameStateController;
         }
 
         private void Awake()
         {
             _spawnerManager.OnPlayerDeath += AddKillScoreServerRpc;
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
         }
 
         private void StateChanged(GameStates newStates)
@@ -72,7 +72,7 @@ namespace Game
         public override void OnDestroy()
         {
             _spawnerManager.OnPlayerDeath -= AddKillScoreServerRpc;
-            _gameStateController2.OnStateChanged -= StateChanged;
+            _gameStateController.OnStateChanged -= StateChanged;
         }
     }
 }

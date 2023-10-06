@@ -17,12 +17,12 @@ namespace Game
         private const int HEIGHT = 4;
         private bool _started;
         private GameTimer _gameTimer;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController, GameSettings gameSettings)
+        private void Inject(GameStateController gameStateController, GameSettings gameSettings)
         {
-            _gameStateController2 = gameStateController;
+            _gameStateController = gameStateController;
             _gameSettings = gameSettings;
         }
 
@@ -30,7 +30,7 @@ namespace Game
         {
             _waitForSeconds = new WaitForSeconds(.05f);
             _gameTimer = FindObjectOfType<GameTimer>();
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
         }
 
         private void StateChanged(GameStates newState)

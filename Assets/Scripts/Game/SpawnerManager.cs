@@ -15,20 +15,20 @@ namespace Game
         private NetworkList<ulong> _playersAlive;
         private PlayerSpawnerFPS _playerSpawnerFPS;
         private PlayerSpawnerTPS _playerSpawnerTPS;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
         private GameSettings _gameSettings;
         private Lobby.Lobby _lobby;
 
         [Inject]
         private void Inject(
-            GameStateController2 gameStateController,
+            GameStateController gameStateController,
             Lobby.Lobby lobby,
             GameSettings gameSettings,
             PlayerSpawnerFPS playerSpawnerFPS,
             PlayerSpawnerTPS playerSpawnerTPS
         )
         {
-            _gameStateController2 = gameStateController;
+            _gameStateController = gameStateController;
             _lobby = lobby;
             _gameSettings = gameSettings;
             _playerSpawnerFPS = playerSpawnerFPS;
@@ -43,7 +43,7 @@ namespace Game
         {
             _playersAlive = new();
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
             _playersAlive.OnListChanged += OnAlivePlayersChanged;
         }
 
@@ -61,7 +61,7 @@ namespace Game
         {
             if (_playersAlive.Count <= 1 && listEvent.Type == NetworkListEvent<ulong>.EventType.Remove)
             {
-                _gameStateController2.SwitchState(GameStates.Win);
+                _gameStateController.SwitchState(GameStates.Win);
             }
         }
 
@@ -127,7 +127,7 @@ namespace Game
         public override void OnDestroy()
         {
             base.OnDestroy();
-            _gameStateController2.OnStateChanged -= StateChanged;
+            _gameStateController.OnStateChanged -= StateChanged;
         }
     }
 }

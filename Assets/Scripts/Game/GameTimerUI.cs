@@ -9,15 +9,15 @@ namespace Game
     {
         [SerializeField] private TextMeshProUGUI roundTime;
         private GameTimer _gameTimer;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController2) => _gameStateController2 = gameStateController2;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake()
         {
             _gameTimer = GetComponent<GameTimer>();
-            _gameStateController2.OnStateChanged += GameStateChanged;
+            _gameStateController.OnStateChanged += GameStateChanged;
         }
 
         private void GameStateChanged(GameStates newState)
@@ -25,10 +25,10 @@ namespace Game
             switch (newState)
             {
                 case GameStates.PreStart:
-                    Show();
+                    Hide();
                     break;
                 case GameStates.Start:
-                    Hide();
+                    Show();
                     break;
             }
         }
@@ -41,6 +41,6 @@ namespace Game
 
         private void UpdateUI(float _, float time) => roundTime.text = "Time left: " + time.ToString("#");
 
-        private void OnDestroy() => _gameStateController2.OnStateChanged -= GameStateChanged;
+        private void OnDestroy() => _gameStateController.OnStateChanged -= GameStateChanged;
     }
 }

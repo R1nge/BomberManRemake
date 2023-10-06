@@ -10,16 +10,16 @@ namespace Game
     public class MapSelector : NetworkBehaviour
     {
         [SerializeField] private MapPreset[] presets;
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
         private int _selectedMapIndex;
         public MapPreset SelectedMap => presets[_selectedMapIndex];
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake()
         {
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
         }
 
         private void StateChanged(GameStates newState)
@@ -42,7 +42,7 @@ namespace Game
 
         public override void OnDestroy()
         {
-            _gameStateController2.OnStateChanged -= StateChanged;
+            _gameStateController.OnStateChanged -= StateChanged;
         }
     }
 }

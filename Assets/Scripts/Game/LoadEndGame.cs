@@ -1,6 +1,5 @@
 ﻿using Game.StateMachines;
 using Unity.Netcode;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -8,14 +7,14 @@ namespace Game
 {
     public class LoadEndGame : NetworkBehaviour
     {
-        private GameStateController2 _gameStateController2;
+        private GameStateController _gameStateController;
 
         [Inject]
-        private void Inject(GameStateController2 gameStateController) => _gameStateController2 = gameStateController;
+        private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
         private void Awake()
         {
-            _gameStateController2.OnStateChanged += StateChanged;
+            _gameStateController.OnStateChanged += StateChanged;
         }
 
         private void StateChanged(GameStates newState)
@@ -24,7 +23,6 @@ namespace Game
             {
                 case GameStates.EndGame:
                     RoundManagerOnOnLoadEndGame();
-                    Debug.Log("LOADENDGAME");
                     break;
             }
         }
@@ -34,6 +32,6 @@ namespace Game
             NetworkManager.Singleton.SceneManager.LoadScene("GameEnd", LoadSceneMode.Single);
         }
 
-        public override void OnDestroy() => _gameStateController2.OnStateChanged -= StateChanged;
+        public override void OnDestroy() => _gameStateController.OnStateChanged -= StateChanged;
     }
 }

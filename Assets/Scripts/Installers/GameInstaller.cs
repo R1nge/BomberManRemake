@@ -8,10 +8,15 @@ namespace Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<GameStateController2>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<GameStateController>().FromComponentInHierarchy().AsSingle();
             Container.Bind<SpawnerOnGrid>().FromComponentInHierarchy().AsSingle();
+            
+            //I can safely get rid of them 
+            
+            //
             Container.Bind<PlayerSpawnerFPS>().FromComponentInHierarchy().AsSingle();
             Container.Bind<PlayerSpawnerTPS>().FromComponentInHierarchy().AsSingle();
+            //
             Container.Bind<SpawnerManager>().FromComponentInHierarchy().AsSingle();
             Container.Bind<MapSelector>().FromComponentInHierarchy().AsSingle();
             Container.Bind<NetworkObjectPool>().FromComponentInHierarchy().AsSingle();
