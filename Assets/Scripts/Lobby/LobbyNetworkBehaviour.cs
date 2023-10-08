@@ -60,7 +60,7 @@ namespace Lobby
         [ServerRpc(RequireOwnership = false)]
         private void CreatePlayerDataServerRpc(ulong clientId, NetworkString nick, int skinIndex, int bombSkinIndex)
         {
-            _lobby.CreatePlayerData(clientId, nick, skinIndex, bombSkinIndex);
+            _lobby.CreatePlayerData( nick, clientId,skinIndex, bombSkinIndex);
         }
 
         private void PlayerDisconnected(ulong clientId)

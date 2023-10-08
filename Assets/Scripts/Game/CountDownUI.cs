@@ -24,6 +24,6 @@ namespace Game
             }
         }
 
-        private void OnDestroy() => _countDown.TimeChanged -= TimeChanged;
+        public override void OnDestroy() => _countDown.TimeChanged -= TimeChanged;
     }
 }

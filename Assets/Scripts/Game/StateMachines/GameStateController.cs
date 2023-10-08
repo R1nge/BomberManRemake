@@ -14,6 +14,7 @@ namespace Game.StateMachines
         private GameStates _currentState;
         private int _roundsElapsed;
         private GameSettings _gameSettings;
+        private bool _gameEnded;
 
         [Inject]
         private void Inject(GameSettings gameSettings)
@@ -28,19 +29,20 @@ namespace Game.StateMachines
             OnStateChanged += OnOnStateChanged;
         }
 
+        //Maybe create a queue for the states?
+        //I can't because of 'win' and 'tie' states
+        //TODO: fix: nextround doesn't work
+
         private void OnOnStateChanged(GameStates newState)
         {
+            if (_gameEnded) return;
+            
             if (newState == GameStates.Loaded)
             {
                 SwitchState(GameStates.PreStart);
             }
-            // else if (newState == GameStates.PreStart)
-            // {
-            //     StartCoroutine(Switch_C());
-            // }
             else if (newState == GameStates.Tie || newState == GameStates.Win)
             {
-                OnStateChanged -= OnOnStateChanged;
                 _roundsElapsed++;
                 if (_roundsElapsed < (int)_gameSettings.RoundsAmount)
                 {
@@ -49,16 +51,15 @@ namespace Game.StateMachines
                 }
                 else
                 {
+                    _gameEnded = true;
                     SwitchState(GameStates.EndGame);
                 }
             }
+            else if (newState == GameStates.NextRound)
+            {
+                SwitchState(GameStates.Loaded);
+            }
         }
-
-        // private IEnumerator Switch_C()
-        // {
-        //     yield return new WaitForSeconds(countdownTime);
-        //     SwitchState(GameStates.Start);
-        // }
 
         private void LoadCompleted(string _, LoadSceneMode __, List<ulong> clients, List<ulong> ___)
         {

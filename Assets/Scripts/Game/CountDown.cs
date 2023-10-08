@@ -51,10 +51,20 @@ namespace Game
         {
             switch (newState)
             {
-                case GameStates.PreStart:
+                case GameStates.Loaded:
                     _timerStarted = true;
                     break;
+                case GameStates.NextRound:
+                    _timerStarted = false;
+                    _currentTime.Value = countdownTime;
+                    break;
             }
+        }
+
+        public override void OnDestroy()
+        {
+            _gameStateController.OnStateChanged -= StateChanged;
+            base.OnDestroy();
         }
     }
 }

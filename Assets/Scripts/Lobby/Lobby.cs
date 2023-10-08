@@ -13,26 +13,18 @@ namespace Lobby
         public event Action<ulong> OnPlayerDisconnected;
         public event Action<ulong, bool> OnReadyStateChanged;
 
-        private List<LobbyData> _players = new();
+        private Dictionary<ulong, LobbyData> _players = new();
 
-        public List<LobbyData> PlayerData => _players;
+        public Dictionary<ulong, LobbyData> PlayerData => _players;
 
-        public void ResetLobby()
-        {
-            _players = new List<LobbyData>();
-        }
+        public void ResetLobby() => _players = new Dictionary<ulong, LobbyData>();
 
         public LobbyData? GetData(ulong clientId)
         {
-            for (int i = 0; i < _players.Count; i++)
+            if (_players.TryGetValue(clientId, out var data))
             {
-                if (_players[i].ClientId == clientId)
-                {
-                    return _players[i];
-                }
+                return data;
             }
-
-            Debug.LogError("Lobby: Player data not found");
 
             return null;
         }
@@ -46,9 +38,9 @@ namespace Lobby
 
             bool everyoneIsReady = true;
 
-            for (int i = 0; i < _players.Count; i++)
+            foreach (var data in _players)
             {
-                if (!_players[i].IsReady)
+                if (!data.Value.IsReady)
                 {
                     everyoneIsReady = false;
                 }
@@ -59,37 +51,32 @@ namespace Lobby
 
         public void AddPoints(ulong clientId, int amount)
         {
-            for (int i = 0; i < _players.Count; i++)
+            if (_players.TryGetValue(clientId, out var data))
             {
-                if (_players[i].ClientId == clientId)
+                _players[clientId] = new LobbyData
                 {
-                    _players[i] = new LobbyData
-                    {
-                        ClientId = _players[i].ClientId,
-                        IsReady = true,
-                        NickName = _players[i].NickName,
-                        Points = _players[i].Points + amount,
-                        SkinIndex = _players[i].SkinIndex,
-                        BombSkinIndex = _players[i].BombSkinIndex
-                    };
-                    break;
-                }
+                    ClientId = data.ClientId,
+                    IsReady = true,
+                    NickName = data.NickName,
+                    Points = data.Points + amount,
+                    SkinIndex = data.SkinIndex,
+                    BombSkinIndex = data.BombSkinIndex
+                };
             }
-        }
-        
-        public void SortDescending()
-        {
-            _players = _players.OrderByDescending(data => data.Points).ToList();
         }
 
         public int? GetPlace(ulong clientId)
         {
-            for (int i = 0; i < _players.Count; i++)
+            int place = 0;
+
+            foreach (var id in _players.Keys)
             {
-                if (_players[i].ClientId == clientId)
+                if (id == clientId)
                 {
-                    return i;
+                    return place;
                 }
+
+                place++;
             }
 
             Debug.LogError("Lobby: Player not found");
@@ -97,48 +84,52 @@ namespace Lobby
             return null;
         }
 
+
+        public void SortDescending()
+        {
+            var sorted = _players.OrderByDescending(data => data.Value.Points);
+            _players = sorted.ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
+
         public void PlayerDisconnected(ulong clientId)
         {
             if (!NetworkManager.Singleton) return;
             if (!NetworkManager.Singleton.IsServer) return;
-            var data = GetData(clientId);
-            if (data != null)
-            {
-                _players?.Remove(data.Value);
-            }
-
+            _players?.Remove(clientId);
             OnPlayerDisconnected?.Invoke(clientId);
         }
 
-        public void CreatePlayerData(ulong clientId, NetworkString nick, int skinIndex, int bombSkinIndex)
+        public void CreatePlayerData(NetworkString nick, ulong clientId, int skinIndex, int bombSkinIndex)
         {
             var data = new LobbyData(nick, clientId, false, 0, skinIndex, bombSkinIndex);
-            _players.Add(data);
-            Debug.Log($"Skin index: {data.SkinIndex}");
-            Debug.Log($"Bomb skin index: {data.BombSkinIndex}");
-            OnPlayerConnected?.Invoke(clientId);
+
+            if (_players.TryAdd(clientId, data))
+            {
+                OnPlayerConnected?.Invoke(clientId);
+            }
+            else
+            {
+                Debug.LogError("Can't create lobby data for the player");
+            }
+
+            Debug.Log($"PLAYER DATA: {data.SkinIndex}");
         }
 
         public void ChangeReadyState(ulong clientId)
         {
-            for (int i = 0; i < _players.Count; i++)
+            if (_players.TryGetValue(clientId, out var data))
             {
-                if (_players[i].ClientId == clientId)
+                _players[clientId] = new LobbyData
                 {
-                    _players[i] = new LobbyData
-                    {
-                        NickName = _players[i].NickName,
-                        ClientId = clientId,
-                        IsReady = !_players[i].IsReady,
-                        BombSkinIndex = _players[i].BombSkinIndex,
-                        Points = _players[i].Points,
-                        SkinIndex = _players[i].SkinIndex
-                    };
+                    NickName = data.NickName,
+                    ClientId = clientId,
+                    IsReady = !data.IsReady,
+                    Points = data.Points,
+                    SkinIndex = data.SkinIndex,
+                    BombSkinIndex = data.BombSkinIndex
+                };
 
-                    var isReady = _players[i].IsReady;
-
-                    OnReadyStateChanged?.Invoke(clientId, isReady);
-                }
+                OnReadyStateChanged?.Invoke(clientId, _players[clientId].IsReady);
             }
         }
     }

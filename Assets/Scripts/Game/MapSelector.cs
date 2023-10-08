@@ -17,10 +17,7 @@ namespace Game
         [Inject]
         private void Inject(GameStateController gameStateController) => _gameStateController = gameStateController;
 
-        private void Awake()
-        {
-            _gameStateController.OnStateChanged += StateChanged;
-        }
+        private void Awake() => _gameStateController.OnStateChanged += StateChanged;
 
         private void StateChanged(GameStates newState)
         {
@@ -40,9 +37,6 @@ namespace Game
 
         private void SelectRandomMap() => _selectedMapIndex = Random.Range(0, presets.Length);
 
-        public override void OnDestroy()
-        {
-            _gameStateController.OnStateChanged -= StateChanged;
-        }
+        public override void OnDestroy() => _gameStateController.OnStateChanged -= StateChanged;
     }
 }

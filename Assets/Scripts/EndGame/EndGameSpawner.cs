@@ -42,11 +42,11 @@ namespace EndGame
 
         private void SpawnPlayers()
         {
-            for (int i = 0; i < _lobby.PlayerData.Count; i++)
+            foreach (var data in _lobby.PlayerData.Values)
             {
-                var skinIndex = _lobby.PlayerData[i].SkinIndex;
+                var skinIndex = data.SkinIndex;
                 var skin = _skinManager.GetEndGame(skinIndex);
-                var clientId = _lobby.PlayerData[i].ClientId;
+                var clientId = data.ClientId;
                 var place = _lobby.GetPlace(clientId);
 
                 if (!place.HasValue)
@@ -69,6 +69,7 @@ namespace EndGame
                 endGamePlayer.UpdateScore(clientId);
             }
         }
+
 
         public override void OnDestroy()
         {

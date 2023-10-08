@@ -39,20 +39,21 @@ namespace Lobby
             SpawnPlayerSkinServerRpc(0);
         }
 
-        private void SpawnPlayer(ulong clientId)
-        {
-            //if (IsServer) return;
-            SpawnPlayerSkinServerRpc(clientId);
-        }
+        private void SpawnPlayer(ulong clientId) => SpawnPlayerSkinServerRpc(clientId);
 
         private void UpdateUIForClients(ulong clientId)
         {
             if (!IsServer) return;
 
-            for (int i = 0; i < _playerModels.Count; i++)
+            var index = 0;
+
+            foreach (var data in _lobby.PlayerData)
             {
-                var data = _lobby.PlayerData[i];
-                _playerModels[i].UpdateUIServerRpc(data.NickName, data.IsReady);
+                var value = data.Value;
+
+                _playerModels[index].UpdateUIServerRpc(value.NickName, value.IsReady);
+
+                index++;
             }
         }
 
@@ -60,13 +61,18 @@ namespace Lobby
         {
             if (!IsServer) return;
 
-            for (int i = 0; i < _playerModels.Count; i++)
+            var index = 0;
+
+            foreach (var data in _lobby.PlayerData)
             {
-                if (_playerModels[i].OwnerClientId == clientId)
+                var value = data.Value;
+
+                if (_playerModels[index].OwnerClientId == clientId)
                 {
-                    var data = _lobby.PlayerData[i];
-                    _playerModels[i].UpdateUIServerRpc(data.NickName, isReady);
+                    _playerModels[index].UpdateUIServerRpc(value.NickName, isReady);
                 }
+
+                index++;
             }
         }
 

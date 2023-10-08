@@ -23,16 +23,12 @@ namespace Game
         private void Inject(
             GameStateController gameStateController,
             Lobby.Lobby lobby,
-            GameSettings gameSettings,
-            PlayerSpawnerFPS playerSpawnerFPS,
-            PlayerSpawnerTPS playerSpawnerTPS
+            GameSettings gameSettings
         )
         {
             _gameStateController = gameStateController;
             _lobby = lobby;
             _gameSettings = gameSettings;
-            _playerSpawnerFPS = playerSpawnerFPS;
-            _playerSpawnerTPS = playerSpawnerTPS;
         }
 
         public ulong LastPlayerAlive => _playersAlive[0];
@@ -45,6 +41,9 @@ namespace Game
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
             _gameStateController.OnStateChanged += StateChanged;
             _playersAlive.OnListChanged += OnAlivePlayersChanged;
+
+            _playerSpawnerFPS = GetComponent<PlayerSpawnerFPS>();
+            _playerSpawnerTPS = GetComponent<PlayerSpawnerTPS>();
         }
 
         private void StateChanged(GameStates newState)
@@ -82,16 +81,18 @@ namespace Game
 
         private void Spawn()
         {
-            for (int index = 0; index < _lobby.PlayerData.Count; index++)
+            var position = 0;
+            
+            foreach (var data in _lobby.PlayerData)
             {
-                var clientId = _lobby.PlayerData[index].ClientId;
+                var clientId = data.Key;
                 switch (_gameSettings.PerspectiveMode)
                 {
                     case GameSettings.PerspectiveModes.Fps:
-                        _playerSpawnerFPS.Spawn(clientId, index);
+                        _playerSpawnerFPS.Spawn(clientId, position);
                         break;
                     case GameSettings.PerspectiveModes.Tps:
-                        _playerSpawnerTPS.Spawn(clientId, index);
+                        _playerSpawnerTPS.Spawn(clientId, position);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -100,6 +101,8 @@ namespace Game
                 _playersAlive.Add(clientId);
 
                 OnPlayerSpawn?.Invoke(clientId);
+
+                position++;
             }
         }
 
@@ -128,6 +131,7 @@ namespace Game
         {
             base.OnDestroy();
             _gameStateController.OnStateChanged -= StateChanged;
+            _playersAlive.OnListChanged -= OnAlivePlayersChanged;
         }
     }
 }
